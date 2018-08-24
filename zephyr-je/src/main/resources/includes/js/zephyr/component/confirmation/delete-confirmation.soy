@@ -1,0 +1,23 @@
+{namespace ZEPHYR.Project.Confirmation}
+
+/**
+ * Render the generic dialog for delete confirmation
+ * @param entityName
+ */
+{template .deleteConfirmationDialog}
+	<h2 class="dialog-title">{getText('attachment.operation.delete.label')}: {$entityName}</h2>
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+			<div class="aui-message info">
+                <span class="aui-icon icon-info"></span>
+                {getText('viewissue.remove.attachment.msg')}
+            </div>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="attachment-delete-form-submit" value="{getText('common.words.delete')}" />
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}

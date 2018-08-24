@@ -1,0 +1,19 @@
+{namespace ZEPHYR.Templates.InAppMessage}
+
+/**
+ * Renders opt out confirmation dialog
+ */
+{template .optOutConfirmation}
+	<h2 class="dialog-title">Are you sure to opt out ?</h2>
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+            <label>We won’t be able to suggest you some products that might be of your interest</label>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="opt-out-submit" value="Confirm" />
+	            <a href="#" class="cancel cycle-close">Cancel</a>
+	        </div>
+	    </div>
+	</form>
+{/template}

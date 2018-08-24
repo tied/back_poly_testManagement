@@ -1,0 +1,77 @@
+{namespace ZEPHYR.Templates.Feedback}
+
+/** 
+* Renders dialog 
+*/ 
+{template .testing autoescape="false"}
+<div>
+    <h1 class='dialog-title'>
+        Feedback
+    </h1>  
+    <br/>  
+    <fieldset class='aui' id='create-feedback-dialog'>  
+        <form id='zephyr-feedback-form' class='aui' action='#'>  
+            <div class="zephyr-aui-message-bar" id="zephyr-feedback-aui-message-bar" class="form-body"></div>
+            <fieldset class='form-body' id="feedback-form">
+
+                <div class="field-group">
+                    <label for="summary-select">
+                        Category
+                    <span class='aui-icon icon-required'>Required</span>
+                    </label>
+                    <select class="select" id="summary-select" name="summary-select">
+                        <option>UI</option>
+                        <option>Usability</option>
+                        <option>Missing Feature</option>
+                        <option>Price</option>
+                        <option>Documentation</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label for="summary-input">
+                        Summary
+                    <span class='aui-icon icon-required'>Required</span>
+                    </label>
+                    <input class="text" type="text" placeholder="Enter Summary" id="summary-input" name="summary-input">
+                </div>
+                <div class="field-group">
+                    <label for="description-input">
+                        Description
+                    <span class='aui-icon icon-required'>Required</span>
+                    </label>
+                    <textarea rows="6" id="description-text-area" class="textarea description-text-area" name="description-input" placeholder="Your description here..."></textarea>
+                </div>
+                <div class="field-group">
+                    <label for="name-input">
+                        Name
+                        <span class="aui-icon icon-required" id="name-required-icon">required</span>
+                    </label>
+                    <input class="text" type="text" placeholder="Enter Name" id="name-input" name="name-input">
+                </div>
+                <div class="field-group">
+                    <label for="email-input">
+                        Email ID
+                        <span class="aui-icon icon-required" id="email-required-icon">required</span>
+                    </label>
+                    <input class="text" type="email" placeholder="Enter Email ID" id="email-input" name="email-input">
+                </div>
+                <fieldset class="group" id="send-aconymouslt-container">
+                    <input class="checkbox" type="checkbox" name="send-anonymously-checkbox" id="send-anonymously">
+                    <label for="send-anonymously">Send anonymously</label>
+                </fieldset>
+            </fieldset>  
+
+            <footer class="aui-dialog-footer">
+                <!-- Actions to render on the right of the footer -->
+                <div id="feedback-buttons-container" class="buttons-container form-footer">
+                    <div class="buttons">
+                        <button id="submit-feedback" class="aui-button aui-button-primary">Submit</button>
+                        <button id="cancel-feedback" class="aui-button aui-button-link">Cancel</button>
+                    </div>
+                </div>
+            </footer>
+        </form>
+    </div>
+</div>
+{/template}

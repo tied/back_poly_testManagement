@@ -1,0 +1,275 @@
+{namespace ZEPHYR.Templates.StepExecution}
+/**
+ * Render a stepResult row
+ * @param teststep
+ * @param teststepResult
+ * @param selectedStepExecStatus
+ * @param stepExecutionStatuses
+ * @param baseUrl
+ * @param? stepColumns
+ * @param? customFieldsOrder
+ */
+{template .stepResultRow autoescape="false"}
+		<td>{$teststep.orderId ? $teststep.orderId : ''}</td>
+
+		<td class="breakword execution-step-row {$stepColumns and ($stepColumns.testStep.isVisible == 'true') ? 'tableCell': 'hide'}">{$teststep.htmlStep ? $teststep.htmlStep : ''}</td>
+		<td class="breakword execution-step-row {$stepColumns and ($stepColumns.testdata.isVisible == 'true') ? 'tableCell': 'hide'}">{$teststep.htmlData ? $teststep.htmlData : ''}</td>
+		<td class="breakword execution-step-row {$stepColumns and ($stepColumns.expectedResult.isVisible == 'true') ? 'tableCell': 'hide'}">{$teststep.htmlResult ? $teststep.htmlResult : ''}</td>
+    <td class="breakword execution-step-row {$stepColumns and ($stepColumns.stepAttachment.isVisible == 'true') ? 'tableCell': 'hide'}">
+      {if $teststep.attachmentsMap}
+      {if $teststep.attachmentsMap.length}
+      <a id="step-attachment-inlineDialog-{$teststepResult.id}" class="attachment-inline-dialog-trigger cursor-pointer" onclick='triggerInlineDialogStepAttachment({$teststepResult.id})'>{getText('attachment.operation.view.message')}</a>
+      <div id="step-attachment-content-container-{$teststepResult.id}" class="attachment-container" style="display: none;">
+        <div class="attachment-content-wrapper" data-id="{$teststepResult.id}">
+          <ol>
+            {foreach $attachment in $teststep.attachmentsMap}
+            	<li class="attachment-content" id="attachment-content{$attachment.fileId}">
+                <div class="step-attachment-wrapper">
+                  <a href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">
+                       <img width="16" height="16" border="0" alt="{$attachment.fileIconAltText}" src="{$baseUrl}/images/icons/attach/{$attachment.fileIcon}">
+                  </a>
+            		  <a title="{$attachment.fileName}" href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">{$attachment.fileName}</a>
+                </div>
+              </li>
+            {/foreach}
+          </ol>
+        </div>
+      </div>
+      {/if}
+      {/if}
+    </td>
+
+		{if $teststepResult }
+		<td class="{$stepColumns and ($stepColumns.status.isVisible == 'true') ? 'tableCell': 'hide'}">
+    	   <fieldset>
+        		<div class="field-group execution-field-current-status">
+					<div id="execution-field-current-status-stepresult-{$teststepResult.id}">
+			        	<div id="executionStatus-value-stepresult-{$teststepResult.id}" class="labels exec-status-container">
+			        		<dl class="test-status-execution-wrapper">
+			        			<dt>{getText('project.cycle.schedule.table.column.status')}</dt>
+			        			<div class="zfj-editable-field">
+			        				<dd id="current-execution-status-dd-stepresult-{$teststepResult.id}" class="new-session-status" style="background-color:{$selectedStepExecStatus.color};"  title="{$selectedStepExecStatus.name}{$selectedStepExecStatus.description ? (': ' + $selectedStepExecStatus.description) : '' }">{$selectedStepExecStatus.name}</dd>
+    								<a id="executionStatus-labels-stepresult-{$teststepResult.id}" href="#" class="icon icon-edit-sml zfj-overlay-icon"><span>{$selectedStepExecStatus.name}</span></a>
+    							</div>
+			        		</dl>
+			        	</div>
+				    </div>
+					<div id="execution-field-select-stepresult-{$teststepResult.id}" class="displaynone execution-field-select-stepresult">
+
+						{if $stepExecutionStatuses and $stepExecutionStatuses.length > 0}
+							<select id="exec_status-stepresult-{$teststepResult.id}" class="select exec_status-stepresult-select">
+								{foreach $stepExecStatus in $stepExecutionStatuses}
+									{if $selectedStepExecStatus.id == $stepExecStatus.id}
+										<option value="{$stepExecStatus.id}" selected="selected" rel="{$stepExecStatus.color}" title="{$stepExecStatus.description}">{$stepExecStatus.name}</option>
+									{else}
+										<option value="{$stepExecStatus.id}" rel="{$stepExecStatus.color}" title="{$stepExecStatus.description}">{$stepExecStatus.name}</option>
+									{/if}
+								{/foreach}
+							</select>
+							<div class="update_cancel-buttons" tabindex="1">
+								<button id="execution_update-schedule-{$teststepResult.id}" class="zfj-button submit" type="button">
+									<span class="icon icon-save"></span>
+								</button>
+								<button id="execution_cancel-schedule-{$teststepResult.id}" class="zfj-button cancel" type="cancel">
+									<span class="icon icon-cancel"></span>
+								</button>
+							</div>
+						{/if}
+
+					</div>
+				</div>
+			</fieldset>
+		</td>
+		<td class="{$stepColumns and ($stepColumns.comment.isVisible == 'true') ? 'tableCell': 'hide'}">
+    		<div class="field-group comment-current-status-stepresult">
+				<div id="comment-current-status-stepresult-{$teststepResult.id}" class="labels">
+	        		<div id="current-comment-status-dd-stepresult-{$teststepResult.id}" class="current-comment-status-dd-stepresult zfj-editable-field">
+	        			<a id="comment-area-labels-stepresult-{$teststepResult.id}" href="#" class="icon icon-edit-sml zExecute zfj-overlay-icon floatright"></a>
+						<div class="editable-field active comment-current-status-stepresult-editable" id="comment-current-status-stepresult-editable" title="Click on pencil icon to edit">{$teststepResult.htmlComment ? $teststepResult.htmlComment : '<em style="color: #979797;" class="floatleft">' + getText('zephyr.stepResultRow.enterComment') + '</em>'}</div>
+	        		</div>
+                </div>
+    			<div id="comment-edit-field-select-stepresult-{$teststepResult.id}" class="comment-edit-field-select-stepresult">
+                    <div class="aui-message-bar"></div>
+                    <div class="notifications zfj-permission-message-bar" id="zfj-permission-message-bar-step-result-execution-detail"/>
+                    <span class="overlay-icon icon loading comment-edit-field-select-stepresult-icon"></span>
+                    <div style="position: relative;"><textarea wrap="virtual" rows="5" name="comment" id="comment-status-stepresult-{$teststepResult.id}" cols="40" class="textarea field comment-status-stepresult">{$teststepResult.comment ? $teststepResult.comment : ''}</textarea>
+    			    <div class="update_cancel-buttons" tabindex="1">
+						<button id="comment-edit-field-select-update" class="zfj-button submit" type="button">
+							<span class="icon icon-save"></span>
+						</button>
+						<button  id="comment-edit-field-select-cancel" class="zfj-button cancel" type="cancel">
+							<span class="icon icon-cancel"></span>
+						</button>
+					</div></div>
+    			    <label id="stepresult-comment-counter-{$teststepResult.id}" class="stepresult-comment-counter">750</label>
+    			</div>
+            </div>
+		</td>
+		<td class="{$stepColumns and ($stepColumns.attachments.isVisible == 'true') ? 'tableCell': 'hide'}">
+			<div class="mod-header" id="attachmentexecutionmodule_heading">
+				<ul class="ops">
+					<li>
+						<a id="add-attachments-link" title="{getText('execute.test.attachment.tooltip.label')}" class="zephyr-file-dialog icon icon-add16 add-attachments-link" href="{contextPath}/secure/AttachFileAction!default.jspa?id={ZEPHYR.Schedule.Execute.data.issueId}&entityId={$teststepResult.id}&entityType=TESTSTEPRESULT&projectId={ZEPHYR.Schedule.Execute.data.pid}">
+							<span>{getText('execute.test.attachment.tooltip.label')}</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="mod-content">
+				<ol class="item-attachments" id="step-result-id-{$teststepResult.id}-file-attachments"></ol>
+			</div>
+		</td>
+		<td class="{$stepColumns and ($stepColumns.defects.isVisible == 'true') ? 'tableCell': 'hide'}">
+			<div class="field-group readonly-defect-values-stepresult-container">
+				<div id="readonly-defect-values-stepresult-{$teststepResult.id}">
+		        	<div id="defectpicker-pencil-stepresult-{$teststepResult.id}" class="labels readonly-defect-values-stepresult zfj-editable-field">
+		        		<a id="defectpicker-stepresult-{$teststepResult.id}" href="#" class="icon icon-edit-sml zfj-overlay-icon floatright"><span>{getText('enav.status.label')}</span></a>
+		        		<div id="current-defectpicker-status-dd-stepresult-{$teststepResult.id}" class="editable-field active brkword current-defectpicker-status-dd-stepresult">
+		        			{if $teststepResult.defects.length == 0}
+		        				<em style="color: #979797;" class="floatleft">{getText('cycle.enterdefects.label')}</em>
+		        			{/if}
+		        			{foreach $defect in $teststepResult.defects}
+		        				{call .defectLink}
+									{param defect: $defect/}
+								{/call}
+								{if not isLast($defect)},{/if}
+		        			{/foreach}
+		        		</div>
+                    </div>
+                </div>
+            	<div id="editable-defect-values-stepresult-{$teststepResult.id}" class="field-group editable-defect-values-stepresult-container" tabindex='1'>
+					<select name="zephyrJEdefectskey-stepresult-{$teststepResult.id}" id="zephyrJEdefectskey-stepresult-{$teststepResult.id}" multiple="multiple"
+							class="aui-field-defectpickers  hidden zephyrJEdefectskey-stepresult" size="4"
+							        data-remove-on-un-select="true"
+									data-ajax-options.query="true"
+									data-ajax-options.url="{contextPath}/rest/api/1.0/issues/picker"
+									data-ajax-options.data.current-issue-key=""
+									data-ajax-options.data.current-project-id="">
+                	</select>
+    				<a class="aui-button zephyr_je_create_issue_link-stepresult create-issue" id="zephyr_je_create_issue_link-stepresult-{$teststepResult.id}" title="{getText('execute.test.create.new.button.title')}" hidefocus="hidefocus"
+	    				  tabindex='1' accesskey="c" href="$requestContext.baseUrl/secure/CreateIssue!default.jspa">
+    				  	{getText('execute.test.create.new.button.label')}
+    				</a>
+				</div>
+			</div>
+		</td>
+		{/if}
+    {foreach $customField in $customFieldsOrder}
+      <td class="{$stepColumns and ($stepColumns[$customField.customfieldId].isVisible == 'true') ? 'tableCell': 'hide'}">
+        <span class="customFields" data-field-type={$customField.customFieldType} data-field-name={$customField.customFieldName}>
+          {if $customField.customFieldType == 'CHECKBOX'}
+            {if $teststep.customFields[$customField.customfieldId]}
+              <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+            {else}
+              <span>{$customField.customDefaultValue}</span>
+            {/if}
+          {elseif $customField.customFieldType == 'RADIO_BUTTON'}
+            {if $teststep.customFields[$customField.customfieldId]}
+              <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+            {else}
+              <span>{$customField.customDefaultValue}</span>
+            {/if}
+          {elseif $customField.customFieldType == 'MULTI_SELECT'}
+            {if $teststep.customFields[$customField.customfieldId]}
+              <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+            {else}
+              <span>{$customField.customDefaultValue}</span>
+            {/if}
+          {elseif $customField.customFieldType == 'SINGLE_SELECT'}
+            {if $teststep.customFields[$customField.customfieldId]}
+              <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+            {else}
+              <span>{$customField.customDefaultValue}</span>
+            {/if}
+          {elseif $customField.customFieldType == 'NUMBER'}
+            {if $teststep.customFields[$customField.customfieldId]}
+              <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+            {else}
+              <span>{$customField.customDefaultValue}</span>
+            {/if}
+          {elseif $customField.customFieldType == 'LARGE_TEXT'}
+            {if $teststep.customFields[$customField.customfieldId]}
+              <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+            {else}
+              <span>{$customField.customDefaultValue}</span>
+            {/if}
+          {elseif $customField.customFieldType == 'TEXT'}
+            {if $teststep.customFields[$customField.customfieldId]}
+              <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+            {else}
+              <span>{$customField.customDefaultValue}</span>
+            {/if}
+          {elseif $customField.customFieldType == 'DATE_TIME'}
+            <span>{call convertDate}
+                    {param value: $teststep.customFields[$customField.customfieldId] ? $teststep.customFields[$customField.customfieldId].value : $customField.customDefaultValue /}
+                    {param isDateTime : true /}
+                  {/call}
+            </span>
+          {elseif $customField.customFieldType == 'DATE'}
+            <span>{call convertDate}
+                    {param value: $teststep.customFields[$customField.customfieldId] ? $teststep.customFields[$customField.customfieldId].value : $customField.customDefaultValue  /}
+                    {param isDateTime : false /}
+                  {/call}</span>
+          {/if}
+          </span>
+      </td>
+    {/foreach}
+		<td></td>
+{/template}
+
+/**
+* Creates a issue anchor
+* @param? defect
+*/
+{template .defectLink}
+	{let $defectStatus}{call convertToLowerCase data="[$defect.status]" /}{/let}
+	{if $defect.maskedIssueKey == 'XXXXX'}
+	    <span {if $defect.resolution} style="text-decoration:line-through;"{/if} >{$defect.maskedIssueKey}</span>
+	{else}
+	    <a {if $defect.resolution} style="text-decoration:line-through;"{/if} href="{contextPath}/browse/{$defect.key}" title="{$defect.summary} : {$defect.status}">{$defect.key}</a>
+    {/if}
+{/template}
+
+/**
+* Creates a editable defect
+* @param defect
+*/
+{template .editableDefect}
+	<li class="item-row" title="{$defect}">
+		<button class="value-item" tabindex="-1" type="button">
+			<span>
+				<span class="value-text">
+					{$defect}
+				</span>
+			</span>
+		</button>
+		<em class="item-delete" title="Remove">
+		</em>
+	</li>
+{/template}
+
+/**
+ * Render the dialog for showing auto schedule execution. Autoescape is false so that we can pass html in font color
+ * @param entityName
+ * @param stepStatus
+ * @param options
+ * @param imgUrl
+ */
+{template .autoExecuteConfirmationDialog autoescape="false"}
+	<h2 class="dialog-title">{getText('execute.test.autoexecute.dialog.header')}: {$entityName}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui autoExecutionForm" action="#" method="post">
+		<div class="form-body autoExecutionFormBody all-step-status-suggestion-container">
+			{getText('execute.test.autoexecute.dialog.msg', $stepStatus)}
+			<div>
+				<drop-down id="executeTestStatus" options='{$options}' imgurl='{$imgUrl}'></drop-down>
+			</div>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="attachment-delete-form-submit" value="{getText('webfragments.view.issue.opsbar.zephyr-je.test.execute')}" />
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}

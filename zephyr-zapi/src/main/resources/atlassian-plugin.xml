@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}.${version.prefix}${git.buildnumber}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+		<param name="zephyr.je.current.version">${project.version}.${version.prefix}${git.buildnumber}</param>
+        <param name="zephyr.je.product.version">${project.version}</param>
+        <!-- Support for the following marketing assets has been implemented -->
+        <param name="plugin-icon">includes/images/icons/zapi_icon_16x16.png</param>
+        <param name="plugin-logo">includes/images/icons/zapi_icon_48x48.png</param>
+        <!--<param name="plugin-banner">includes/images/zephyr_banner_920x450.png</param>-->
+        <param name="atlassian-licensing-enabled">true</param>
+        <param name="atlassian-data-center-compatible">true</param>
+    </plugin-info>
+
+<!-- =========================================================================================== -->
+<!-- ========================================= RESOURCES START ================================= -->
+	<resource type="download" name="images/" location="includes/images/" />
+<!-- ========================================= RESOURCES END =================================== -->
+<!-- =========================================================================================== -->
+
+
+	<component-import key="pluginAccessor" interface="com.atlassian.plugin.PluginAccessor"/>
+	<component-import key="pluginController" interface="com.atlassian.plugin.PluginController"/>
+	<component-import key="txTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate"/>
+	<component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+	<component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
+	<component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
+	<component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider"/>
+	<component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
+    <component-import key="pluginLicenseManager" interface="com.atlassian.upm.api.license.PluginLicenseManager"/>
+
+	<component key="zephyr-je-Licensemanager" name="Zephyr JE License Manager"
+		class="com.thed.zephyr.zapi.license.ZephyrLicenseManagerImpl" public="true">
+		<interface>com.thed.zephyr.zapi.license.ZephyrLicenseManager</interface>
+	</component>
+
+<!-- =========================================================================================== -->
+<!-- =================================== REST ENDPOINT START =================================== -->
+
+ 	<rest key="zephyr-api-rest" name="ZAPI for ZFJ" path="/zfjapi" version="1.0">
+        <description>Provides the REST endPoints used in ZFJ.</description>
+    </rest>
+    
+<!-- ==================================== REST ENDPOINT END ==================================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- =================================== ZAPI component/service exported =================================== -->
+
+    <component key="zapiComponent" name="ZAPI component"
+               class="com.thed.zephyr.zapi.component.ZapiImpl" public="true">
+        <interface>com.thed.zephyr.zapi.component.Zapi</interface>
+    </component>
+
+<!-- ==================================== REST ENDPOINT END ==================================== -->
+<!-- =========================================================================================== -->
+
+
+</atlassian-plugin>

@@ -1,0 +1,99 @@
+{namespace ZEPHYR.Templates.Workflow}
+
+/**
+ *
+ */
+{template .createWorkflowButtons autoescape="true"}
+	<div class="workflow-button-wrapper">
+        <span>
+            <a onclick="return false;" class="aui-button aui-button-primary disabled-primary" id="workflowTodo" title="{getText('execute.test.workflow.todo.button.title')}">
+                {getText('execute.test.workflow.todo.button.label')}
+            </a>
+        </span>
+        <span>
+            <a class="aui-button" id="workflowInprogress" title="{getText('execute.test.workflow.inprogress.button.title')}">
+                {getText('execute.test.workflow.inprogress.button.label')}
+            </a>
+        </span>
+         <span>
+            <a class="aui-button" id="workflowReopen" title="{getText('execute.test.workflow.reopen.button.title')}">
+                {getText('execute.test.workflow.reopen.button.label')}
+            </a>
+        </span>
+        <span>
+            <a class="aui-button" id="workflowDone" title="{getText('execute.test.workflow.done.button.title')}">
+                {getText('execute.test.workflow.done.button.label')}
+            </a>
+        </span>
+    </div>
+{/template}
+
+/**
+ *
+ * @param estimatedTime
+ * @param loggedTime
+ * @param estimatedTimeTitle
+ * @param loggedTimeTitle
+ */
+{template .createWorkflowProgressWrapper autoescape="true"}
+    <div class="width-full timeIndicator executionDetailsElement">
+        <div class="field-group flex">
+            <label for="estimatedTime">{getText('execute.test.workflow.estimated.time.label')}:</label>
+            <div class="value-field-wrapper">
+                <div class="value-field">
+                    <div id="estimatedTimeId" class="aui-progress-indicator ">
+                        <span class="aui-progress-indicator-value"></span>
+                    </div>
+                </div>
+                <div><label id="estimatedTimeValue" title="{$estimatedTimeTitle}">{$estimatedTime}</label></div>
+            </div>
+        </div>
+    </div>
+    <div class="width-full timeIndicator executionDetailsElement">
+        <div class="field-group flex">
+            <label for="loggedTime">{getText('execute.test.workflow.logged.time.label')}:</label>
+            <div class="value-field-wrapper">
+                <div class="value-field">
+                  <div id="loggedTimeId" class="aui-progress-indicator">
+                    <span class="aui-progress-indicator-value"></span>
+                  </div>
+                </div>
+                <div class="logged-time-value-wrapper">
+                    <div><label id="loggedTimeValue" title="{$loggedTimeTitle}">{$loggedTime}</label></div>
+                    <div class="modify-logged-time-wrapper">
+                        <a class="modify-logged-time" id="modifyLoggedTime">{getText('execute.test.workflow.modify.time.label')}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{/template}
+
+/**
+ *
+ */
+{template .renderModifyLoggedTimeDialog autoescape="false"}
+    <section role="dialog" id="modifyLoggedTimeDialog" class="zephyr-dialog2 aui-layer aui-dialog2 small" aria-hidden="true" data-aui-remove-on-hide="true" data-aui-modal="true">
+        <header class="aui-dialog2-header">
+            <h2 class="aui-dialog2-header-main">{getText('execute.test.workflow.modify.logged.time.label')}</h2>
+        </header>
+        <div class="aui-dialog2-content">
+            <span class="message-bar"></span>
+            <span class="dialog2-content">
+                <form id='workflowloggedTimeForm' class="aui">
+                    <div>
+                        <input class="text" type="text" id="workflowloggedTime" />
+                        <label>{getText('execute.test.workflow.timeexample.label')}</label>
+                    </div>
+                </form>
+            </span>
+        </div>
+        <footer class="aui-dialog2-footer">
+            <div class="aui-dialog2-footer-actions">
+                <span id="dialog-icon-wait" class="aui-icon aui-icon-wait zfj-icon-wait" style="display:none">{getText('execute.test.workflow.loading.label')}</span>
+                <button id="logTimeSubmit" class="aui-button">{getText('execute.test.workflow.confirm.label')}</button>
+                <button id="closeLogTimeDialog" class="aui-button aui-button-link">{getText('execute.test.workflow.cancel.label')}</button>
+            </div>
+        </footer>
+    </section>
+{/template}

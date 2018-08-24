@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="__UP_executionName__"
+                 directory_title="__MSG_je.gadget.zql.filter.directory.title__"
+                 description="__MSG_je.gadget.zql.filter.description__"
+                 author="Zephyr" author_affiliation="Zephyr"
+                 author_email="sales@getzephyr.com"
+                 author_location="Fremont, California"
+                 thumbnail='#staticResourceUrl("com.thed.zephyr.je:zephyr-je-gadget-zql-filter-resources", "images/gadgets/test-execution-details-preview.png")'>
+        <Optional feature="gadget-directory">
+            <Param name="categories">
+            	ZEPHYR
+            </Param>
+        </Optional>
+        <Optional feature='auth-refresh' />
+        <Require feature="dynamic-height"/>
+        <Require feature="oauthpopup"/>
+        <Require feature="setprefs"/>
+        <Require feature="settitle"/>
+        <Require feature="views"/>
+        <Optional feature="atlassian.util"/>
+        #oauth
+        #supportedLocales("gadget.common,je.gadget,je.gadget.zql.filter,cycle.reorder.executions,enav,execute.test,project.cycle,plugin.license")
+    </ModulePrefs>
+    <UserPref name="refresh" datatype="hidden" default_value="false" />
+    <UserPref name="isConfigured" datatype="hidden" default_value="false"/>
+    <UserPref name="executionName" datatype="hidden" default_value="Execution Details" />
+    <UserPref name="zfjQueryType" datatype="hidden"/>
+    <UserPref name="filterId" datatype="hidden"/>
+    <UserPref name="filterName" datatype="hidden"/>
+    <UserPref name="offset" datatype="hidden"/>
+    <UserPref name="columnNames" datatype="hidden" default_value="cyclename|issuekey|testsummary|labels|projectname|priority|component|version|executionstatus|executedby|executedon|creationdate|executiondefects"/>
+    <UserPref name="zqltext" datatype="hidden" default_value=""/>
+    <UserPref name="howMany" datatype="hidden" default_value="5" />
+    
+    	
+    <Content type="html" view="home,zephyr,default">
+    	<![CDATA[
+    		#requireResource("com.atlassian.jira.gadgets:jira-global")
+    		#requireResource("com.thed.zephyr.je:zephyr-je-gadget-zql-filter-resources")
+    		#includeResources()
+
+        <script type="text/javascript">
+        (function () {
+            window.zqlGadgetBaseUrl = "__ATLASSIAN_BASE_URL__";
+            var gadget = AJS.Gadget({
+                baseUrl: "__ATLASSIAN_BASE_URL__",
+                useOauth: "/rest/gadget/1.0/currentUser",
+                config: {
+                    descriptor: function(args)
+                    {
+                        return GADGET.descriptor(this, args, "__ATLASSIAN_BASE_URL__");
+                    },
+                    args: GADGET.descriptorArgs("__ATLASSIAN_BASE_URL__")
+                },
+                view: {
+                    onResizeAdjustHeight: true,
+                    enableReload: true,
+                    template: function (args) {
+                        return GADGET.template(this, args, "__ATLASSIAN_BASE_URL__");
+                    },
+                    args: GADGET.templateArgs("__ATLASSIAN_BASE_URL__")
+                }
+            });
+        })();
+        </script>
+    	]]>
+    </Content>
+</Module>

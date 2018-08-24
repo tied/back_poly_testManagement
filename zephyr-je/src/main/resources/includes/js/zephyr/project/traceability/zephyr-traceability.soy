@@ -1,0 +1,899 @@
+{namespace ZEPHYR.Templates.Project.Traceability}
+
+
+/**
+ * Traceability requirement wrapper
+ * @param isDefToReqSelected
+ */
+{template .traceabilityRequirementView}
+ <section id="requirement-section">
+    <header class="saved-search-selector">
+        <div id="search-header-view">
+            <div class="header-section-primary">
+                <h1 class="search-title" title="{getText('zephyr-je.pdb.traceability.requirement.section.label')}">{getText('zephyr-je.pdb.traceability.requirement.section.label')}</h1>
+            </div>
+			<div id="requirement-message"></div>
+            <div class="header-section-secondary">
+                <h2 class="search-title" title="{getText('zephyr-je.pdb.traceability.search.header.label')}">{getText('zephyr-je.pdb.traceability.search.header.label')}</h2>
+            </div>
+        </div>
+    </header>
+    <form id="selectRequirements" class="navigator-search query-component generic-styled aui">
+        <ul class="aui-group traceability-aui-group">
+            <li class="fix-version">
+                <ul>
+                    <li>{getText('je.gadget.common.version.label')}/* Span is only to add padding (16X16 px) for it to match with Type */<span class="aui-icon"></span></li>
+                    <li id="traceabilityVersions"></li>
+                </ul>
+            </li>
+            <li class="issueType">
+                <ul>
+                    <li>{getText('zephyr-je.pdb.traceability.search.form.type.label')}<span class="aui-icon aui-icon-required required"></span></li>
+                    <li id="issueTypes"></li>
+                </ul>
+            </li>
+            <li>
+                <button class="aui-button aui-button-subtle search-button" type="button" original-title="Search for issues">
+                    <span class="aui-icon aui-icon-small aui-iconfont-search">Search</span>
+                </button>
+            </li>
+        </ul>
+        <ul class="notifications" id="traceability-message-bar"></ul>
+    </form>
+    <div id="issue-grid" class="list-view">
+    </div>
+    <div id="navigateToReport" class="hide">
+        <ul class="navigateToReportOptions">
+            <li>
+                <input type="radio" name="traceabilityReportType" id="requirementToDefect" {if not $isDefToReqSelected}checked="true"{/if}>
+                <label for="requirementToDefect">{getText('zephyr-je.pdb.traceability.report.requirements.to.defects.label')}</label>
+            </li>
+            <li>
+                <input type="radio" name="traceabilityReportType" id="defectToRequirement" {if $isDefToReqSelected}checked="true"{/if}>
+                <label for="defectToRequirement">{getText('zephyr-je.pdb.traceability.report.defects.to.requirements.label')}</label>
+            </li>
+        </ul>
+        <a id="traceabilityReport" class="aui-button reportButton" disabled="disabled">
+            {getText('zephyr-je.generate.button.title')}
+        </a>
+    </div>
+</section>
+{/template}
+
+/**
+ * Render the Versions
+ * @param versions
+ * @param selectedVersionId
+ */
+{template .renderFixVersions}
+	<select id="traceabilityVersions-dd" name="traceabilityVersions-dd" class="traceabilityVersions-dd">
+    	{if $versions.unreleasedVersions and $versions.unreleasedVersions.length != 0}
+    		<optgroup label="{getText('je.gadget.common.version.unreleased.label')}">
+    			{foreach $unreleasedVersion in $versions.unreleasedVersions}
+	    			{if $selectedVersionId != $unreleasedVersion.value and $unreleasedVersion.archived == false}
+				    	<option title="{$unreleasedVersion.label}" {if index($unreleasedVersion) == 1} selected="selected"{/if} value="{$unreleasedVersion.value}">{$unreleasedVersion.label}</option>
+				    {/if}
+			    {/foreach}
+			</optgroup>
+		{/if}
+		{if $versions.releasedVersions and $versions.releasedVersions.length != 0}
+    		<optgroup label="{getText('je.gadget.common.version.released.label')}">
+    			{foreach $releasedVersion in $versions.releasedVersions}
+	    			{if $selectedVersionId != $releasedVersion.value and $releasedVersion.archived == false}
+				    	<option title="{$releasedVersion.label}" {if index($releasedVersion) == 1} selected="selected"{/if} value="{$releasedVersion.value}">{$releasedVersion.label}</option>
+				    {/if}
+			    {/foreach}
+			</optgroup>
+		{/if}
+    </select>
+{/template}
+
+/**
+ * Render the Versions
+ * @param issueTypes
+ * @param testIssueTypeId
+ */
+{template .renderIssueTypes}
+	<select id="issueTypes-dd" name="issueTypes-dd" class="issueTypes-dd">
+		{foreach $issueType in $issueTypes}
+			{if $issueType.id != $testIssueTypeId}
+		    	<option style="background-image:url({$issueType.iconUrl});" title="{$issueType.name}" value="{$issueType.id}">{$issueType.name}</option>
+		    {/if}
+		{/foreach}
+    </select>
+{/template}
+
+/**
+ * Render the Versions
+ * @param issueTypes
+ * @param testIssueTypeId
+ */
+{template .renderLinkedIssueTypes}
+	<select id="linkedIssueTypes-dd" name="linkedIssueTypes-dd" class="linkedIssueTypes-dd">
+		{foreach $issueType in $issueTypes}
+			{if $issueType.id != $testIssueTypeId}
+		    	<option style="background-image:url({$issueType.iconUrl});" title="{$issueType.name}" value="{$issueType.id}">{$issueType.name}</option>
+		    {/if}
+		{/foreach}
+    </select>
+{/template}
+
+/**
+ * Render the Versions
+ * @param issuesList
+ * @param maxAllowed
+ * @param currentIndex
+ * @param linksNew
+ */
+{template .renderIssuesGrid}
+	<div class="aui-group aui-group-split issue-table-info-bar">
+        <div class="aui-item">
+            <span class="results-count-text">
+                <span class="results-count-start">1</span>–
+                <span class="results-count-end">20</span> of <span class="results-count-total results-count-link">{$issuesList.total}</span>
+            </span>
+            <a href="#" class="refresh-table" title="Refresh results">
+                <span class="aui-icon aui-icon-small aui-iconfont-build">Refresh results</span>
+            </a>
+            <div id="selection-count-id" />
+        </div>
+    </div>
+    <div class="issue-table-container">
+        <div>
+            <table id="issue-table" class="aui">
+                <thead>
+                    <tr class="rowHeader">
+                        <th class="colHeaderLink" id="headerrow-id-select_issues" style="width: 5%;">
+                            <input type="checkbox" class="selectAllID" name="selectAllID" id="selectAllID">
+                        </th>
+                        <th class="colHeaderLink headerrow-issuetype" data-id="issuetype" title="{getText('zephyr-je.pdb.traceability.requirement.issuetype.title')}" style="width: 5%;">
+                            <span>{getText('zephyr-je.pdb.traceability.requirement.issuetype.label')}</span>
+                        </th>
+                        <th class="colHeaderLink headerrow-issuekey" data-id="issuekey" title="{getText('zephyr-je.pdb.traceability.requirement.issuekey.title')}" style="width: 20%;">
+                            <span>{getText('zephyr-je.pdb.traceability.requirement.issuekey.label')}</span>
+                        </th>
+                        <th class="colHeaderLink headerrow-summary" data-id="summary" title="{getText('zephyr-je.pdb.traceability.requirement.summary.title')}" style="width: 70%;">
+                            <span>{getText('zephyr-je.pdb.traceability.requirement.summary.label')}</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="issue-table-body">
+                	{foreach $issue in $issuesList.issues}
+					    <tr id="issuerow-{$issue.id}" data-issueid="{$issue.id}" data-issuekey={$issue.key} class="issuerow">
+	                        <td>
+	                            <input type="checkbox" class="select-issues" id="issueCheck-{$issue.id}">
+	                        </td>
+	                        <td class="issuetype">
+	                            <a class="hidden-link issue-link" data-issue-key="{$issue.key}" href="{contextPath}/browse/{$issue.key}" title="{$issue.key}"></a>
+	                            <a class="issue-link" data-issuekey="{$issue.key}" href="{contextPath}/browse/{$issue.key}">
+	                                <img src="{$issue.fields.issuetype.iconUrl}" height="16" width="16" border="0" alt="{$issue.fields.issuetype.name}" title="{$issue.fields.issuetype.description}">
+	                            </a>
+	                        </td>
+	                        <td class="issuekey">
+	                            <a class="issue-link" data-issue-key="{$issue.key}" href="{contextPath}/browse/{$issue.key}">{$issue.key}</a>
+	                        </td>
+	                        <td class="summary">
+	                            <p>
+	                                <a class="issue-link" data-issue-key="{$issue.key}" href="{contextPath}/browse/{$issue.key}">{$issue.fields.summary}</a>
+	                            </p>
+	                        </td>
+	                    </tr>
+					{/foreach}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="end-of-stable-message"></div>
+    <div class="aui-group aui-group-split count-pagination">
+        <div class="aui-item">
+            <span class="results-count-text">
+                <span class="results-count-start">1</span>–<span class="results-count-end">{$maxAllowed}</span> of <span class="results-count-total results-count-link">{$issuesList.total}</span>
+            </span>
+            <a href="#" class="refresh-table" title="Refresh results">
+                <span class="aui-icon aui-icon-small aui-iconfont-build">Refresh results</span>
+            </a>
+        </div>
+    <div class="aui-item">
+        <div class="pagination" data-displayable-total="{$maxAllowed}">
+            {call .renderPaginationFooter}
+                {param issuesList: $issuesList /}
+                {param maxAllowed: $maxAllowed /}
+                {param currentIndex: $currentIndex /}
+                {param linksNew: $linksNew /}
+            {/call}
+        </div>
+    </div>
+{/template}
+
+/**
+ * Render the pagination footer
+ * @param issuesList
+ * @param maxAllowed
+ * @param currentIndex
+ * @param linksNew
+ */
+{template .renderPaginationFooter}
+    {if $issuesList.total > $maxAllowed}
+        {if $currentIndex > 1}
+            <a data-currentindex="1" href='#' class="issues-pagination" class="issues-pagination" id='issues-pagination-0' data-pageid='0'>&lt;&lt;</a>
+            <a href='#' class="issues-pagination previous" id='issues-pagination-{($currentIndex-2) * $maxAllowed}' data-pageid='{($currentIndex-2) * $maxAllowed}'>&lt;</a>
+        {/if}
+        <!--{for $link in range(ceiling($issuesList.total/$maxAllowed))}
+            {if $link+1 == $currentIndex}
+                <strong id="selectedIndex">{$link+1}&nbsp;</strong>
+            {else}
+                <a data-currentindex="{$link+1}" href='#' class="issues-pagination" id='issues-pagination-{($link)*$maxAllowed}' data-pageid='{($link)*$maxAllowed}'>{$link+1}&nbsp;</a>
+            {/if}
+        {/for}-->
+        {foreach $link in $linksNew}
+        	{if $link == $currentIndex}
+                <strong id="selectedIndex">{$link}&nbsp;</strong>
+            {else}
+                <a data-currentindex="{$link}" href='#' class="issues-pagination" id='issues-pagination-{($link-1)*$maxAllowed}' data-pageid='{($link-1)*$maxAllowed}'>{$link}&nbsp;</a>
+            {/if}
+        {/foreach}
+        {if $currentIndex * $maxAllowed < $issuesList.total}
+            <a href='#' class="issues-pagination next" id='issues-pagination-{$currentIndex * $maxAllowed}' data-pageid='{$currentIndex * $maxAllowed}'>&gt;</a>
+            <a data-currentindex="{ceiling($issuesList.total/$maxAllowed)}" href='#' class="issues-pagination" id='issues-pagination-{(ceiling($issuesList.total/$maxAllowed) - 1) * $maxAllowed}' data-pageid='{(ceiling($issuesList.total/$maxAllowed) - 1) * $maxAllowed}'>&gt;&gt;</a>
+        {/if}
+    {/if}
+{/template}
+
+/**
+ * Render the traceability report layout
+ *
+ */
+{template .traceabilityReportView}
+<section id="report-section">
+    <header class="saved-search-selector">
+        <div id="search-header-view">
+            <div class="header-section-primary">
+                <h1 class="search-title" title="{getText('zephyr-je.pdb.traceability.report.label')}">{getText('zephyr-je.pdb.traceability.report.label')}</h1>
+            </div>
+        </div>
+    </header>
+    <div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" class="traceability-message-bar"></div>
+	<div id="traceability-report-wrapper">
+		<header class="aui-page-header" id="traceability-header">
+		</header>
+		<div id="report-table-container">
+		</div>
+		<div id="report-pagination-container"/>
+		<div id="report-export-wrapper">
+    		<a id="export-dropdown2-link" aria-owns="export-dropdown2-list" aria-haspopup="true" title="{getText('zephyr-je.pdb.traceability.report.export.title')}" href="#" class="aui-button aui-dropdown2-trigger standard icon-export">
+    			<span>{getText('enav.export.label')}</span>
+    		</a>
+    		<div id="export-dropdown2-list" class="aui-dropdown2 aui-style-default">
+    			<div class="aui-dropdown2-section">
+    				<ul class="aui-list-truncate">
+						<li class="export-report-html-li"><a data-exporttype="html" class="aui-list-item-link exportExecutions" id="htmlExecutionId" rel="nofollow" href="javascript:void(0);">{getText('enav.export.html.schedule.label')}</a> </li>
+					</ul>
+    			</div>
+    			<div class="aui-dropdown2-section">
+        			<ul class="aui-list-truncate">
+						<li class="export-report-excel-li"><a data-exporttype="excel" class="aui-list-item-link exportExecutions" id="xlsExecutionId" rel="nofollow" href="javascript:void(0);">{getText('enav.export.excel.schedule.label')}</a> </li>
+					</ul>
+    			</div>
+			</div>
+		</div>
+	</div>
+</section>
+{/template}
+
+/**
+ * Renders header
+ * @param reportBreadcrumbs
+ * @param toggleReqDef
+ *
+ */
+{template .attachReportHeader}
+    <div class="aui-page-header-inner">
+        <div class="aui-page-header-main">
+        	<div id="traceability-report-breadcrumbs">
+        		<strong class="font-size-16">{$reportBreadcrumbs[0].label}</strong>&nbsp;&nbsp;
+        		<span class="aui-icon aui-icon-small aui-iconfont-devtools-arrow-right traceability-report-arrow-right"></span>&nbsp;&nbsp;
+        		<strong class="font-size-16">{$reportBreadcrumbs[1].label}</strong>&nbsp;&nbsp;
+        		<span class="aui-icon aui-icon-small aui-iconfont-devtools-arrow-right traceability-report-arrow-right"></span>&nbsp;&nbsp;
+        		<strong class="font-size-16">{$reportBreadcrumbs[2].label}</strong>&nbsp;&nbsp;
+        		<span class="aui-icon aui-icon-small aui-iconfont-devtools-arrow-right traceability-report-arrow-right"></span>&nbsp;&nbsp;
+        		<strong class="font-size-16">{$reportBreadcrumbs[3].label}</strong>
+        	</div>
+        </div>
+        <div class="aui-page-header-actions">
+            <div class="aui-buttons">
+                <button id="report-back" class="aui-button">
+                <span class="aui-icon aui-icon-small aui-iconfont-configure"></span>&nbsp;
+                {getText('zephyr-je.configure.button.title')}</button>
+                <!--<button id="{$toggleReqDef.id}" class="aui-button"><span class="aui-icon aui-icon-small aui-iconfont-switch-small"></span> {$toggleReqDef.label}</button>-->
+            </div>
+        </div>
+    </div>
+{/template}
+
+/**
+ * Renders pagination for requirement
+ * @param totalCount
+ * @param currentIndex
+ * @param maxAllowed
+ * @param linksNew
+ *
+ */
+{template .addRequirementPaginationFooter}
+<div class="aui-group count-pagination navigator-results" id="displayDetailId">
+	<div class="results-count aui-item">
+		{if ($currentIndex * $maxAllowed) < $totalCount}
+			 <span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span><span>-</span><span class="results-count-end">{$currentIndex * $maxAllowed}</span><span> of </span><span class="results-count-total results-count-link"> {$totalCount} </span>
+		{else}
+			 <span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span><span>-</span><span class="results-count-end">{$totalCount}</span><span> of </span><span class="results-count-total results-count-link"> {$totalCount} </span>
+		{/if}
+		<a href="#" id='refreshREQId' class="refresh-table" title="Refresh results"><span class="aui-icon aui-icon-small aui-iconfont-build">{getText('issue.nav.refresh')}</span></a>
+	</div>
+	{if $linksNew.length > 0}
+		<div class="pagination aui-item" id="reqPageId">
+			{if $currentIndex > 1}
+				<a href='#' id='req-pagination-0 * {$maxAllowed}' page-id='0'>&lt;&lt;&nbsp;</a>
+				<a href='#' id='req-pagination-{$currentIndex-2} * {$maxAllowed}' page-id='{$currentIndex-2}*{$maxAllowed}'>&lt;</a>
+			{/if}
+			{foreach $link in $linksNew}
+				{if $link == $currentIndex}
+        			<strong>{$link}&nbsp;</strong>
+				{else}
+					<a href='#' id='req-pagination-{$link-1}*{$maxAllowed}' page-id='{$link-1}*{$maxAllowed}'>{$link}&nbsp;</a>
+				{/if}
+			{/foreach}
+			{if $currentIndex * $maxAllowed < $totalCount}
+				<a href='#' id='req-pagination-{$currentIndex} * {$maxAllowed}' page-id='{$currentIndex} * {$maxAllowed}'>&gt;&nbsp;</a>
+				<a href='#' id='req-pagination-{ceiling($totalCount/$maxAllowed) - 1} * {$maxAllowed}' page-id='{ceiling($totalCount/$maxAllowed) - 1} * {$maxAllowed}'>&gt;&gt;</a>
+			{/if}
+		</div>
+	{/if}
+</div>
+{/template}
+
+/**
+ *
+ * @param testsByRequirement
+ * @param maxTestAllowed
+ */
+{template .requirementToDefectsView}
+<div class="report-table" id="requirement-defect-table">
+	<div class="report-thead">
+		<div class="report-th"><div class="report-cell">{getText('zephyr-je.pdb.traceability.report.requirement.label')}</div></div>
+		<div class="report-th"><div class="report-cell">{getText('com.thed.zephyr.je.topnav.tests.label')}</div></div>
+		<div class="report-th"><div class="report-cell">{getText('enav.schedule.entity.name')}</div></div>
+		<div class="report-th"><div class="report-cell">{getText('execute.test.defect.label')}</div></div>
+	</div>
+	<div class="report-tbody">
+		{foreach $testByRequirement in $testsByRequirement}
+			{if $testByRequirement.tests and $testByRequirement.tests.length > 0}
+			<div class="rtod-report-tr-container" id="rtod-tr-container-{$testByRequirement.requirement.id}" data-reqId={$testByRequirement.requirement.id}>
+			{foreach $test in $testByRequirement.tests}
+				{if isFirst($test)}
+					<div class="report-tr-left" data-testId="{$test.test.id}" data-reqId={$testByRequirement.requirement.id} id="requirement-tr-{$testByRequirement.requirement.id}">
+						<div class="report-td-req report-requirement-cell" {if $testByRequirement.tests.length}rowspan="{$testByRequirement.tests.length}"{/if}><div class="report-cell-req">
+						{call .issueKeyWithLink}{param issueKey: $testByRequirement.requirement.key /}{param maskedIssueKey: $testByRequirement.requirement.maskedIssueKey /}{/call}
+						{call ZEPHYR.Traceability.Report.Status.getIssueStatus data="[$testByRequirement.requirement.status, $testByRequirement.requirement.statusId]" /}
+						<br/>
+						{$testByRequirement.requirement.summary}<br/>
+                        <strong class="total-defects-label">{getText('zephyr-je.pdb.traceability.report.total.unique.defects.label')}:&nbsp;</strong><span class="total-defects-label">{$testByRequirement.totalDefects}</span>
+						</div></div>
+					</div>
+				{/if}
+				{if index($test) <= ($maxTestAllowed - 1)}
+				<div class="report-tr-right" data-testId="{$test.test.id}" data-reqId={$testByRequirement.requirement.id} id="requirement-{$testByRequirement.requirement.id}">
+					<div class="report-td report-test-cell">
+						<div class="report-cell">
+							<a><span data-testId="{$test.test.id}" class="aui-icon aui-icon-small aui-iconfont-list-collapse"></span></a>
+							&nbsp;{call .issueKeyWithLink}{param issueKey: $test.test.key /}{param maskedIssueKey: $test.test.maskedIssueKey /}{/call}<br/>
+							{$test.test.summary}</div></div>
+					<div id="tests-executions-wrapper">
+						{call .testExecutionsWrapperView}
+							{param test: $test /}
+						{/call}
+					</div>
+				</div>
+				{/if}
+			{/foreach}
+			{if $testByRequirement.tests.length > $maxTestAllowed}
+				<div class="report-tr-right" id="test-show-more-wrapper" data-reqId={$testByRequirement.requirement.id} data-testShowMore="true">
+					{call .testShowMoreView  /}
+				</div>
+			{/if}
+			</div>
+			{else}
+			<div class="rtod-report-tr-container" id="rtod-tr-container-{$testByRequirement.requirement.id}" data-reqId={$testByRequirement.requirement.id}>
+				<div class="report-tr-left" data-reqId={$testByRequirement.requirement.id} id="requirement-tr-{$testByRequirement.requirement.id}">
+					<div class="report-td-req">
+						<div class="report-cell-req">
+							{call .issueKeyWithLink}{param issueKey: $testByRequirement.requirement.key /}{param maskedIssueKey: $testByRequirement.requirement.key /}{/call}
+							{call ZEPHYR.Traceability.Report.Status.getIssueStatus data="[$testByRequirement.requirement.status, $testByRequirement.requirement.statusId]" /}
+							<br/>
+							{$testByRequirement.requirement.summary}<br/>
+							 <span class="total-defects-label"><strong class="total-defects-label">{getText('zephyr-je.pdb.traceability.report.total.unique.defects.label')}:&nbsp;</strong>{$testByRequirement.totalDefects}<span/>
+						</div>
+					</div>
+				</div>
+				<div class="report-tr-right" data-reqId={$testByRequirement.requirement.id} id="requirement-{$testByRequirement.requirement.id}">
+					<div class="report-td"><div class="report-cell">&#45;</div></div>
+					<div class="report-td"><div class="report-cell">&#45;</div></div>
+					<div class="report-td"><div class="report-cell">&#45;</div></div>
+				</div>
+			</div>
+			{/if}
+		{/foreach}
+	<div>
+</div>
+{/template}
+
+/**
+ *
+ * @param defectStatistics
+ *
+ */
+{template .defectToRequirementsView}
+<div class="report-table" id="defect-requirement-table">
+	<div class="report-thead">
+		<div class="report-th"><div class="report-cell">{getText('execute.test.defect.label')}</div></div>
+		<div class="report-th"><div class="report-cell">{getText('enav.schedule.entity.name')}</div></div>
+		<div class="report-th"><div class="report-cell">{getText('com.thed.zephyr.je.topnav.tests.label')}</div></div>
+		<div class="report-th"><div class="report-cell">{getText('zephyr-je.pdb.traceability.report.requirement.label')}</div></div>
+	</div>
+	<div class="report-tbody">
+		{foreach $defect in $defectStatistics}
+			<div class="report-tr" data-defectId={$defect.defect.id} id="defect-{$defect.defect.id}">
+				<div class="report-td" id="defect-cell">
+					<div class="report-cell">
+						<div>
+							{if $defect.PERM_DENIED}
+			 					{$defect.PERM_DENIED}
+							{else}
+								{if $defect.executionStat.total > 0}
+								<a><span data-defectId={$defect.defect.id} class="aui-icon aui-icon-small aui-iconfont-list-collapse"></span></a>
+								{/if}
+								{call .issueKeyWithLink}{param issueKey: $defect.defect.key /}{param maskedIssueKey: $defect.defect.maskedIssueKey /}{/call}
+								{call ZEPHYR.Traceability.Report.Status.getIssueStatus data="[$defect.defect.status, $defect.defect.statusId]" /}
+							{/if}
+						</div>
+						{$defect.defect.summary}
+					</div>
+				</div>
+				<div id="defects-executions-wrapper">
+					{call .defectExecutionsWrapperView}
+						{param defect: $defect /}
+					{/call}
+				</div>
+			</div>
+		{/foreach}
+	</div>
+</div>
+{/template}
+
+/**
+ *
+ * @param test
+ */
+{template .testExecutionsWrapperView}
+<div class="report-td" id="execution-row">
+	<div class="report-cell">
+		{if $test.PERM_DENIED}
+			 {$test.PERM_DENIED}
+		{else}
+			{call .executionStatistics}
+					{param executionStat: $test.executionStat /}
+			{/call}
+		{/if}
+
+	</div>
+</div>
+<div class="report-td" id="defect-row">
+	<div class="report-cell">
+		{if $test.PERM_DENIED}
+			 {$test.PERM_DENIED}
+		{else}
+			{call .defectStatistics}
+				{param defectStat: $test.defectStat /}
+				{param defects: $test.defects /}
+			{/call}
+		{/if}
+	</div>
+</div>
+{/template}
+
+/**
+ *
+ * @param defect
+ *
+ */
+{template .defectExecutionsWrapperView}
+<div class="report-td" id="execution-row">
+	<div class="report-cell">
+		{if $defect.PERM_DENIED}
+			 {$defect.PERM_DENIED}
+		{else}
+			{call .executionStatistics}
+				{param executionStat: $defect.executionStat /}
+			{/call}
+		{/if}
+	</div>
+</div>
+<div class="report-td" id="test-row">
+	<div class="report-cell">
+		{if $defect.PERM_DENIED}
+			 {$defect.PERM_DENIED}
+		{else}
+			{call .testStatistics}
+				{param testStat: $defect.testStat /}
+			{/call}
+		{/if}
+	</div>
+</div>
+<div class="report-td" id="requirement-row">
+	<div class="report-cell">
+		{if $defect.PERM_DENIED}
+			 {$defect.PERM_DENIED}
+		{else}
+			{call .reqStatistics}
+				{param reqStat: $defect.reqStat /}
+				{param requirements: $defect.requirements /}
+			{/call}
+		{/if}
+	</div>
+</div>
+{/template}
+
+/**
+ * display execution statistics
+ * @param executionStat
+ *
+ */
+{template .executionStatistics}
+	<div class="execution-stats"><strong>{getText('zephyr-je.pdb.traceability.report.total.label')}:</strong> {$executionStat.total}<br/>
+	{foreach $status in $executionStat.statuses}
+		<strong>{$status.status}:</strong> {$status.count}
+		{if not isLast($status)}, {/if}
+	{/foreach}</div>
+{/template}
+
+/**
+ * display defect statistics
+ * @param defectStat
+ * @param defects
+ */
+{template .defectStatistics}
+	<!--<div class="defect-stats"><strong>{getText('zephyr-je.pdb.traceability.report.total.label')}:</strong> {$defectStat.total}</div>-->
+	{foreach $defect in $defects}
+	{if index($defect) < 5}
+		{call .issueKeyWithLink}{param issueKey: $defect.key /}{param maskedIssueKey: $defect.maskedIssueKey /}{/call}
+		{if index($defect) < ($defects.length - 1)}
+			,&nbsp;
+		{/if}
+	{/if}
+	{/foreach}
+	{if $defects.length > 5}
+		&nbsp;...&nbsp;<a id="execution-defects-show-more" href="#"><span>{getText('zephyr-je.pdb.traceability.report.show.more.label')}</span></a>
+	{/if}
+{/template}
+
+/**
+ * display test statistics
+ * @param testStat
+ *
+ */
+{template .testStatistics}
+	<div class="test-stats"><strong>{getText('zephyr-je.pdb.traceability.report.total.label')}:</strong> {$testStat.count}</div>
+{/template}
+
+/**
+ * display requirement statistics
+ * @param reqStat
+ * @param requirements
+ */
+{template .reqStatistics}
+	<!--<div class="test-stats"><strong>{getText('zephyr-je.pdb.traceability.report.total.label')}:</strong> {$reqStat.count}</div>-->
+	{foreach $requirement in $requirements}
+		{if index($requirement) < 5}
+		{call .issueKeyWithLink}{param issueKey: $requirement.key /}{param maskedIssueKey: $requirement.maskedIssueKey /}{/call}
+		{if index($requirement) < ($requirements.length - 1)}
+			,&nbsp;
+		{/if}
+		{/if}
+	{/foreach}
+	{if $requirements.length > 5}
+		&nbsp;...&nbsp;<a id="execution-requirements-show-more" href="#"><span>{getText('zephyr-je.pdb.traceability.report.show.more.label')}</span></a>
+	{/if}
+{/template}
+
+/**
+ * Show execution statistics details
+ * @param executions
+ * @param appendView
+ * @param totalCount
+ * @param currentCount
+ * @param PERM_DENIED
+ *
+ */
+{template .executionsSummary}
+	{if not $appendView}<table id="execution-row-table" class="aui"><tbody id="execution-row-tbody">{/if}
+	{if $executions and $executions.length > 0}
+		{foreach $execution in $executions}
+			{foreach $defect in $execution.defects}
+			<tr>
+				{if isFirst($defect)}
+					<td {if $execution.defects.length or $execution.stepDefects.length}rowspan="{$execution.defects.length + $execution.stepDefects.length}"{/if}>
+						<strong>{$execution.execution.folderName ? $execution.execution.folderName + ' / ' : ''}{$execution.execution.testCycle}</strong>
+						{call ZEPHYR.Traceability.Report.Status.getExecutionStatus data="[$execution.execution.status, $execution.execution.statusId]" /}
+					</td>
+				{/if}
+				<td id="excution-row-{$defect.key}" data-executionId="{$execution.execution.id}">
+					<div>
+						{call .issueKeyWithLink}{param issueKey: $defect.key /}{param maskedIssueKey: $defect.maskedIssueKey /}{/call}
+						{call ZEPHYR.Traceability.Report.Status.getIssueStatus data="[$defect.status, $defect.statusId]" /}
+					</div>
+					{$defect.summary}
+				</td>
+			</tr>
+			{/foreach}
+			{foreach $stepDefect in $execution.stepDefects}
+			<tr>
+				{if $execution.defects.length == 0 and isFirst($stepDefect)}
+					<td {if $execution.stepDefects.length}rowspan="{$execution.stepDefects.length}"{/if}>
+						<strong>{$execution.execution.folderName ? $execution.execution.folderName + ' / ' : ''}{$execution.execution.testCycle}</strong>
+						{call ZEPHYR.Traceability.Report.Status.getExecutionStatus data="[$execution.execution.status, $execution.execution.statusId]" /}
+					</td>
+				{/if}
+				<td id="excution-row-{$stepDefect.key}" data-executionId="{$execution.execution.id}">
+					<div>
+						{call .issueKeyWithLink}{param issueKey: $stepDefect.key /}{param maskedIssueKey: $stepDefect.maskedIssueKey /}{/call}
+						{call ZEPHYR.Traceability.Report.Status.getIssueStatus data="[$stepDefect.status, $stepDefect.statusId]" /}
+						<span class="aui-badge report-aui-badge status-right">{getText('zephyr-je.pdb.traceability.report.step.level.label')}</span>
+					</div>
+					{$stepDefect.summary}
+				</td>
+			</tr>
+			{/foreach}
+			{if $execution.defects.length == 0 and $execution.stepDefects.length == 0}
+			<tr>
+				<td>
+					<strong>{$execution.execution.folderName ? $execution.execution.folderName + ' / ' : ''}{$execution.execution.testCycle}</strong>
+					{call ZEPHYR.Traceability.Report.Status.getExecutionStatus data="[$execution.execution.status, $execution.execution.statusId]" /}
+				</td>
+				<td>&#45;</td>
+			</tr>
+			{/if}
+		{/foreach}
+	{else}
+		<tr>
+			<td>
+			{if $PERM_DENIED}
+		 		{$PERM_DENIED}
+		 	{else}
+		 		&#45;
+			{/if}
+			</td>
+			<td>
+			{if $PERM_DENIED}
+		 		{$PERM_DENIED}
+		 	{else}
+		 		&#45;
+			{/if}
+			</td>
+		</tr>
+	{/if}
+	{if not $appendView}</tbody>
+	{if $totalCount > $currentCount}
+		<tfoot>
+		<tr>
+			<td colspan="3" id="show-more-wrapper" />
+		</tr>
+		</tfoot>
+	{/if}
+	</table>{/if}
+{/template}
+
+/**
+ * Show execution statistics details
+ * @param executions
+ * @param appendView
+ * @param totalCount
+ * @param currentCount
+ * @param PERM_DENIED
+ */
+{template .executionsSummaryByDefect}
+	{if not $appendView}<table id="execution-row-table" class="aui"><tbody id="execution-row-tbody">{/if}
+	{if $executions and $executions.length > 0}
+	{foreach $execution in $executions}
+// if test doesn't have any requirements
+		{if $execution.requirement and $execution.requirement.length == 0}
+			<tr>
+				<td>
+					<div>
+						<strong>{$execution.execution.folderName ? $execution.execution.folderName + ' / ' : ''}{$execution.execution.testCycle}</strong>
+						{call ZEPHYR.Traceability.Report.Status.getExecutionStatus data="[$execution.execution.status, $execution.execution.statusId]" /}
+					</div>
+					{if $execution.execution.stepLevel}<span class="aui-badge report-aui-badge status-right">{getText('zephyr-je.pdb.traceability.report.step.level.label')}</span>{/if}
+				</td>
+				<td {if $execution.requirement.length}rowspan="{$execution.requirement.length}"{/if}>
+				    {if $execution.test == 'PERM_DENIED'}
+                        {getText('zephyr.viewissue.permission.error','Test','Execution')}
+                    {else}
+                        {call .issueKeyWithLink}{param issueKey: $execution.test.key /}{param maskedIssueKey: $execution.test.maskedIssueKey /}{/call}<br/>
+                        {$execution.test.summary}
+                    {/if}
+
+				</td>
+				<td>
+                	-
+                </td>
+			</tr>
+		{/if}
+        {foreach $req in $execution.requirement}
+        <tr>
+            {if isFirst($req)}
+            <td {if $execution.requirement.length}rowspan="{$execution.requirement.length}"{/if}>
+                <div>
+                    <strong>{$execution.execution.folderName ? $execution.execution.folderName + ' / ' : ''}{$execution.execution.testCycle}</strong>
+                    {call ZEPHYR.Traceability.Report.Status.getExecutionStatus data="[$execution.execution.status, $execution.execution.statusId]" /}
+                </div>
+                {if $execution.execution.stepLevel}<span class="aui-badge report-aui-badge status-right">{getText('zephyr-je.pdb.traceability.report.step.level.label')}</span>{/if}
+            </td>
+            <td {if $execution.requirement.length}rowspan="{$execution.requirement.length}"{/if}>
+                {call .issueKeyWithLink}{param issueKey: $execution.test.key /}{param maskedIssueKey: $execution.test.maskedIssueKey /}{/call}<br/>
+                {$execution.test.summary}
+            </td>
+            {/if}
+            <td id="excution-row-{$req.id}" data-executionId="{$req.id}">
+                {call .issueKeyWithLink}{param issueKey: $req.key /}{param maskedIssueKey: $req.maskedIssueKey /}{/call}
+                {call ZEPHYR.Traceability.Report.Status.getIssueStatus data="[$req.status, $req.statusId]" /}
+                <br/>
+                {$req.summary}
+            </td>
+        </tr>
+        {/foreach}
+	{/foreach}
+	{else}
+		<tr>
+			<td>
+			{if $PERM_DENIED}
+		 		{$PERM_DENIED}
+		 	{else}
+		 		&#45;
+			{/if}
+			</td>
+			<td>
+			{if $PERM_DENIED}
+		 		{$PERM_DENIED}
+		 	{else}
+		 		&#45;
+			{/if}
+			</td>
+			<td>
+			{if $PERM_DENIED}
+		 		{$PERM_DENIED}
+		 	{else}
+		 		&#45;
+			{/if}
+			</td>
+		</tr>
+	{/if}
+	{if not $appendView}</tbody>
+	{if $totalCount > $currentCount}
+		<tfoot>
+		<tr>
+			<td colspan="3" id="show-more-wrapper" />
+		</tr>
+		</tfoot>
+	{/if}
+	</table>{/if}
+{/template}
+
+/**
+ * Show more UI
+ *
+ */
+{template .executionShowMoreView}
+	<div class="exec-show-more-container">
+		<a id="exec-show-more" href="#"><span>{getText('zephyr-je.pdb.traceability.report.show.more.label')}...</span></a>
+	</div>
+{/template}
+
+/**
+ * Show more UI
+ *
+ */
+{template .testShowMoreView}
+	<div class="test-show-more-container">
+		<a id="test-show-more" href="#"><span>{getText('zephyr-je.pdb.traceability.report.show.more.label')}...</span></a>
+	</div>
+{/template}
+
+/**
+ * Show defect statistics details
+ * @param executions
+ * @param appendView
+ */
+{template .defectsSummary}
+	{if not $appendView}<div class="rTable" id="defect-row-table">{/if}
+	 {foreach $execution in $executions}
+	 	{foreach $defect in $execution.defects}
+	 	<div class="rTableRow">
+			<div class="rTableCell table-cell-with-border-top" id="excution-row-{$defect.key}" data-defectId="{$defect.id}">
+				<div>
+				{call .issueKeyWithLink}{param issueKey: $defect.key /}{param maskedIssueKey: $defect.maskedIssueKey /}{/call}
+				{call ZEPHYR.Traceability.Report.Status.getIssueStatus data="[$defect.status, $defect.statusId]" /}
+				</div>
+				{$defect.summary}
+			</div>
+		</div>
+		{/foreach}
+		{foreach $stepDefect in $execution.stepDefects}
+		<div class="rTableRow">
+			<div class="rTableCell table-cell-with-border-top" id="excution-row-{$stepDefect.key}" data-defectId="{$stepDefect.id}">
+				<div>
+				{call .issueKeyWithLink}{param issueKey: $stepDefect.key /}{param maskedIssueKey: $stepDefect.maskedIssueKey /}{/call}
+				{call ZEPHYR.Traceability.Report.Status.getIssueStatus data="[$stepDefect.status, $stepDefect.statusId]" /}
+				</div>
+				{$stepDefect.summary}
+			</div>
+		</div>
+		{/foreach}
+	{/foreach}
+	{if not $appendView}</div>{/if}
+{/template}
+
+/**
+ * Show error
+ * @param message
+ */
+{template .showErrorField}
+	<div class="navigator-content empty-result">
+		<div class="jira-adbox jira-adbox-medium no-results no-results-message">
+			<h3>
+				<p class="no-results-message">{$message}</p>
+			</h3>
+		</div>
+	</div>
+{/template}
+
+/**
+ * @param issueKey
+ * @param maskedIssueKey
+ */
+{template .issueKeyWithLink}
+    {if $maskedIssueKey and $maskedIssueKey == 'XXXXX'}
+	    <span>{$maskedIssueKey}</span>
+    {else}
+	    <a href="{contextPath}/browse/{$issueKey}" rel="">{$issueKey}</a>
+	{/if}
+{/template}
+
+/**
+ * Requirement page description
+ */
+{template .requirementDescription autoescape="false"}
+	<a class="requirement-description-help-icon" href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Traceability"><span class="aui-icon aui-icon-small aui-iconfont-help"></span></a>
+	<p>{getText('zephyr-je.pdb.traceability.requirement.description')}</p>
+{/template}
+
+/**
+ * Attach the tests
+ * @param tests
+ * @param requirementId
+ */
+{template .requirementTestView}
+	{foreach $test in $tests}
+	<div class="report-tr-right test-on-show-more-row" data-testId="{$test.test.id}" data-reqId={$requirementId} id="requirement-{$requirementId}">
+		<div class="report-td report-test-cell">
+			<div class="report-cell">
+				<a><span data-testId="{$test.test.id}" class="aui-icon aui-icon-small aui-iconfont-list-collapse"></span></a>
+				&nbsp;{call .issueKeyWithLink}{param issueKey: $test.test.key /}{param maskedIssueKey: $test.test.maskedIssueKey /}{/call}<br/>
+				{$test.test.summary}</div></div>
+				<div id="tests-executions-wrapper">
+					{call .testExecutionsWrapperView}
+						{param test: $test /}
+					{/call}
+				</div>
+			</div>
+		</div>
+	</div>
+	{/foreach}
+{/template}

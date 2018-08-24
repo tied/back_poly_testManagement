@@ -1,0 +1,98 @@
+@baseBorder: 1px solid #BBB;
+@baseBorderRadius: 3px;
+
+div.zfj-defect-hover {
+	padding: 4px 6px !important;
+	min-width: 100px;
+}
+
+span.aui-lozenge-defects {
+	background-color: #F9F9F9;
+	border-color: #BBB;
+}
+
+div.zfj-defect-hover.active {
+	border: @baseBorder;
+	border-radius: @baseBorderRadius;
+	padding: 3px 5px !important;
+	-webkit-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.15);
+	-moz-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.15);
+	box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.15);
+	-ms-box-shadow: 2px 2px 2px 0px rgba(0,0,0,0.15);
+}
+
+div.execution-defects-container {
+	border: @baseBorder;
+	border-radius: @baseBorderRadius;
+	margin: 10px;
+	padding: 0 10px 10px 10px;
+	max-height: 300px;
+	overflow-y: auto;
+	
+	div.step-defects-header {
+		margin-top: 10px;
+		border-top: @baseBorder;	
+	}
+	table.execution-defects-table,
+	table.step-defects-table {
+		width: 100%;
+		tbody.execution-defects:first-child,
+		tbody.step-defects:first-child {
+			tr.execution-defects-row:first-child td,
+			tr.step-defects-row:first-child td {
+				border-top: @baseBorder;
+				&:first-child {
+					border-top-left-radius: @baseBorderRadius;	
+				}						
+				&:last-child {
+					border-top-right-radius: @baseBorderRadius;
+				}				
+			}	
+		}
+		tbody.execution-defects:last-child,
+		tbody.step-defects:last-child {
+			tr.execution-defects-row:first-child td,
+			tr.step-defects-row:first-child td {
+				&:first-child {
+					border-bottom-left-radius: @baseBorderRadius;
+				}
+			}
+			tr.execution-defects-row:last-child td,
+			tr.step-defects-row:last-child td {				
+				&:last-child {
+					border-bottom-right-radius: @baseBorderRadius;
+				}				
+			}
+	
+		}
+		tr.execution-defects-row,
+		tr.step-defects-row {
+			&:first-child td {
+				&:first-child {
+					border-bottom: @baseBorder;	
+					border-left: @baseBorder;
+					border-right: @baseBorder;
+				}
+			}
+			&:last-child td {
+				border-bottom: @baseBorder;
+			}
+			td:last-child {
+				border-right: @baseBorder;
+			}			
+			td.inline-defects-text-wrap {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				max-width: 200px;				
+			}
+			td {
+				padding: 3px;
+			}
+		}
+	}
+		
+	table.step-defects-table {
+		margin-bottom: 5px;
+	}
+}

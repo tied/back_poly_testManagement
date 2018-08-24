@@ -1,0 +1,28 @@
+#disable_html_escaping()
+#if ($value)
+<steps>
+    #foreach ($singleStep in $value)
+        <step>
+            <orderId>$!singleStep.orderId</orderId>
+            <step><![CDATA[ $!singleStep.step ]]></step>
+            <data><![CDATA[ $!singleStep.data ]]></data>
+            <result><![CDATA[ $!singleStep.result ]]></result>
+            #if($singleStep.attachmentsMap && $singleStep.attachmentsMap.size() > 0)
+                <attachments>
+                    #foreach($attachment in $singleStep.attachmentsMap)
+                        <attachment><![CDATA[ $!attachment.fileName ]]></attachment>
+                    #end
+                </attachments>
+            #end
+
+            #if($singleStep.customFieldValuesMap && $singleStep.customFieldValuesMap.size() > 0)
+                <testStepCustomFields>
+                    #foreach ($entry in $singleStep.customFieldValuesMap.entrySet())
+                        <$entry.key>$entry.value</$entry.key>
+                    #end
+                </testStepCustomFields>
+            #end
+        </step>
+    #end
+</steps>
+#end

@@ -1,0 +1,14 @@
+<div class="field-group aui-field-projectconstant">
+	<label for="searcher-version">${i18n.getText(${searcherName})}</label>
+	$!{auiparams.put("controlHeaderClass", "aui-field-projectconstant")}
+	##searcherEditHeader ($searcherId ${i18n.getText($searcherNameKey)})
+	<select class="select" id="searcher-${searcherId}" multiple="multiple" name="${searcherId}" size="#minSelectSize ($selectListOptions 2 5)">
+	<option class="headerOption" value="">${i18n.getText('common.filters.any')}</option>
+	#if ($extraOption) <option class="headerOption" #if ($selectedValues && $selectedValues.contains($extraOption.key)) selected="selected" #end value="$extraOption.key">$extraOption.value</option> #end
+	#foreach ($option in $cycles)
+		<option #if ($option.cssClass) class="$option.cssClass"#end #if ($selectedValues && $selectedValues.contains($option.ID)) selected="selected"#end value="$option.ID">$textutils.htmlEncode($option.name)</option>
+	#end
+	</select>
+	##searcherEditFooter ($searcherId '')
+	$!{auiparams.clear()}
+</div>

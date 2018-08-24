@@ -1,0 +1,521 @@
+$webResourceManager.requireResourcesForContext("com.thed.zephyr.je:zephyr-project-sidebar-test")
+#if(!${isIE})
+    $webResourceManager.requireResourcesForContext("com.zephyr.je.grid-context-adapter")
+#else
+    $webResourceManager.requireResourcesForContext("com.zephyr.je.grid-context")
+#end
+$webResourceManager.requireResourcesForContext("com.zephyr.je.vanilla-grid")
+
+<div id="breadcrumbs-wrapper" class="breadcrumbs-wrapper"></div>
+<div class="aui-tabs horizontal-tabs" role="application" id="zephyr-project-view-tabs">
+    <ul class="tabs-menu" role="tablist">
+        <li class="menu-item" role="presentation">
+            <a href="#test-summary-tab" id="aui-test-summary-tab" role="tab" aria-selected="true"><strong>$i18n.getText('zephyr-je.pdb.test.summary.label')</strong></a>
+        </li>
+        <li class="menu-item" role="presentation">
+            <a href="#test-cycles-tab" id="aui-test-cycles-tab" role="tab" aria-selected="false"><strong>$i18n.getText('cycle.cyclesummary.label')</strong></a>
+        </li>
+        <li class="menu-item" role="presentation">
+            <a href="#traceability-tab" id="aui-traceability-tab" role="tab" aria-selected="false"><strong>$i18n.getText('zephyr-je.pdb.traceability.label')</strong></a>
+        </li>
+    </ul>
+
+    <!--  =======================================================================================  -->
+    <!--  =================================== Test Summary Tab ==================================  -->
+
+    <div class="tabs-pane" id="test-summary-tab" role="tabpanel" aria-hidden="false" style="padding-top:15px;padding-left:15px">
+        ## <h2>$i18n.getText('zephyr-je.pdb.test.summary.label')</h2>
+        #macro (testcaseCountByProperty $groupCollection $type)
+            <table class="aui">
+                <thead>
+                    <tr>
+                        <th>$i18n.getText('zql.filter.dialog.name.label')</th>
+                        <th>$i18n.getText('je.gadget.common.sprint.sortby.count.label')</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   #foreach($item in $groupCollection)
+                      <tr>
+                          <!-- Adding inline style because there is no stylesheet inherited by this page -->
+                          <td><a style="word-break: break-all; word-wrap: break-word;" href="$baseurl$item.url" title="$item.name">$item.name</a></td>
+                          <td>$item.tcCnt</td>
+                      </tr>
+                  #end
+                </tbody>
+            </table>
+        #end
+
+
+        <div class="aui-group" id="test-summary-tab-content">
+            <input type="hidden" id="zerrors" value="$!errors"/>
+            <input type="hidden" id="projKey" value="${pKey}"/>
+            <input type="hidden" id="projId" value="${pid}"/>
+            <input type="hidden" id="testIssueTypeId" value="${testIssueTypeId}"/>
+            <input type="hidden" id="zephyrBaseUrl" value="${zephyrBaseUrl}"/>
+
+            #if($!errors && $!errors.length() > 0)
+                <div style="opacity:0.9;">
+                    <div class="aui-dialog-content">
+                        <div class="form-body">
+                            <div class="zephyr-je-ex-error aui-message error" style="top:10px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    var showError = function (e) {
+                        var zError = AJS.$('input#zerrors').val();
+                        if (zError && zError.length > 0) {
+                            var error = "<span class='aui-icon icon-error'></span>";
+                            error += zError;
+                            AJS.$("div.zephyr-je-ex-error").html(decHTMLifEnc(error));
+                        }
+                    };
+                    var isLoadedInIframe = function () {
+                        try {
+                            return (window !== window.parent);
+                        } catch (e) {
+                            return false;
+                        }
+                    };
+
+                    var InitPageContent = function (initCallback) {
+                        if (isLoadedInIframe()) {
+                            AJS.$(window).load(function () {
+                                initCallback();
+                            });
+                        } else {
+                            AJS.$(document).ready(function () {
+                                initCallback();
+                            });
+                        }
+                    };
+
+                    InitPageContent(function () {
+                        setTimeout(function () {
+                            showError();
+                        }, 50);
+                    });
+                </script>
+            #else
+                #*
+                <div id="primary" class="aui-item">
+                    <div class="content">
+                        <div class="module">
+                            <div class="mod-header">
+                                <h3>$i18n.getText('zephyr-je.pdb.test.summary.label')</h3>
+                            </div>
+                            <!-- <div class="mod-content">
+                                <div class="version">
+                                    <span class="stat">${totalTestsByProjCnt}</span>
+                                    <a href="${baseurl}${totalTestsByProjectUrl}" title="$i18n.getText('project.testcase.summary.section.total.tests')">$i18n.getText('project.testcase.summary.section.total.tests')</a>
+                                </div>
+                                <div class="version">
+                                    <span class="stat">$totatUnexecutedTestsByProjCnt</span>
+                                    <a href="${baseurl}${totatUnexecutedTestsByProjCntUrl}" title="$i18n.getText('project.testcase.summary.section.total.remaining')">$i18n.getText('project.testcase.summary.section.total.remaining')</a>
+                                </div>
+                                <div class="version">
+                                    <span class="stat">${totalExecutionsByProjCnt}</span>
+                                    <a href="${baseurl}${totalExecutionsByProjCntUrl}" title="$i18n.getText('project.testcase.summary.section.total.executed')">$i18n.getText('project.testcase.summary.section.total.executed')</a>
+                                </div>
+                                <div class="version">
+                                    <span class="stat">${totalUnscheduledTestsCnt}</span>
+                                    $i18n.getText('project.testcase.summary.section.total.distinct.remaining')
+                                </div>
+                            </div> -->
+                        </div>
+                        <div class="module">
+                            <div class="mod-header">
+                                <h3>$i18n.getText('project.testcase.by.version.section.label')</h3>
+                            </div>
+                            <div class="mod-content">
+                                #testcaseCountByProperty($versions "version")
+                            </div>
+                        </div>
+                        <div class="module">
+                            <div class="mod-header">
+                                <h3>$i18n.getText('project.testcase.by.component.section.label')</h3>
+                            </div>
+                            <div class="mod-content">
+                                #testcaseCountByProperty($components "version")
+                            </div>
+                        </div>
+                        <div class="module">
+                            <div class="mod-header">
+                                <h3>$i18n.getText("project.testcase.by.label.section.label")</h3>
+                            </div>
+                            <div class="mod-content">
+                                #testcaseCountByProperty($labels "version")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div id="secondary" class="aui-item">
+                    <div class="content">
+                        <div class="module">
+                            <div class="mod-header">
+                                <h3>$i18n.getText("project.testcase.summary.section.testcases.chart",30)</h3>
+                            </div>
+                            <div class="mod-content zephyr-chart">
+                                <div id="testcases-creation-chart-id" class="loading">
+                                    <span class="icon loading"></span>
+                                </div>
+                                <p id="chart-details-id" style="text-align:left;"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <div class="module">
+                            <div class="mod-header">
+                                <h3>$i18n.getText("project.testcase.summary.section.execution.chart", 30)</h3>
+                            </div>
+                            <div class="mod-content zephyr-chart">
+                                <div id="execution-creation-chart-id">
+                                    <span class="notifications" id="zfj-permission-message-bar"/>
+                                    <span class="icon loading"></span>
+                                </div>
+                                <p id="execution-details-id" style="text-align:left;"/>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+                *#
+
+                <div class="test-summary-container">
+                    <div>
+                        <h3 class="test-summary-header">$i18n.getText('zephyr-je.pdb.test.summary.label')</h3>
+                        <div class="zfj-test-summary-counts-wrapper">
+                            <div class="zfj-test-summary-counts summarybox-total-tests">
+                                <div>
+                                    <span class="summary-count">${totalTestsByProjCnt}</span>
+                                    <span class="summary-title">$i18n.getText('project.testcase.summary.section.total.tests')</span>
+                                </div>
+                            </div>
+                            <div class="zfj-test-summary-counts summarybox-total-remaining">
+                                <div>
+                                    <span class="summary-count">${totatUnexecutedTestsByProjCnt}</span>
+                                    <span class="summary-title">$i18n.getText('project.testcase.summary.section.total.remaining')</span>
+                                </div>
+                            </div>
+                            <div class="zfj-test-summary-counts summarybox-total-executed">
+                                <div>
+                                    <span class="summary-count">${totalExecutionsByProjCnt}</span>
+                                    <span class="summary-title">$i18n.getText('project.testcase.summary.section.total.executed')</span>
+                                </div>
+                            </div>
+                            <div class="zfj-test-summary-counts summarybox-total-distinct">
+                                <div>
+                                    <span class="summary-count">${totalUnscheduledTestsCnt}</span>
+                                    <span class="summary-title">$i18n.getText('project.testcase.summary.section.total.distinct.remaining')</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    #if(!${allFilterDisabled})
+                        <div>
+                            <div class="test-summary-flex-module test-summary-grid-wrapper">
+                                <span class="flex">
+                                    <div class="grid-container" id="version-grid">
+
+                                    </div>
+                                </span>
+                                <span class="flex">
+                                    <div class="grid-container" id="component-grid">
+
+                                    </div>
+                                </span>
+                                #if(!${labelFilterDisabled})
+                                    <span class="flex">
+                                        <div class="grid-container" id="label-grid">
+                                        </div>
+                                    </span>
+                                #end
+                            </div>
+                        </div>
+                    #end
+                    <div>
+                        <div class="test-summary-flex-module">
+                            <span>
+                                <div class="content">
+                                    <div class="module">
+                                        <div class="mod-header">
+                                            <h3>$i18n.getText("project.testcase.summary.section.testcases.chart",30)</h3>
+                                        </div>
+                                        <div class="mod-content zephyr-chart">
+                                            <div id="testcases-creation-chart-id" class="loading">
+                                                <span class="icon loading"></span>
+                                            </div>
+                                            <p id="chart-details-id" style="text-align:left;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>
+                            <span>
+                                <div class="content">
+                                    <div class="module">
+                                        <div class="mod-header">
+                                            <h3>$i18n.getText("project.testcase.summary.section.execution.chart", 30)</h3>
+                                        </div>
+                                        <div class="mod-content zephyr-chart">
+                                            <div id="execution-creation-chart-id">
+                                                <span class="notifications" id="zfj-permission-message-bar"/>
+                                                <span class="icon loading"></span>
+                                            </div>
+                                            <p id="execution-details-id" style="text-align:left;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            #end
+        </div>
+    </div>
+
+    <!--  =======================================================================================  -->
+    <!--  ================================ Test Summary Tab ENDS ================================  -->
+
+    <!--  =======================================================================================  -->
+    <!--  ==================================== Test Cycle Tab ===================================  -->
+## lastvisitedVersion is not used anymore
+#set ($isNewUI = true)
+#macro(versionOptions $versions)
+    #if ($versions && $versions.size() > 0)
+        #foreach($version in $versions)
+            #if($version.getName().length() > 50)
+                #set($separator = '...')
+                #set($name = $version.getName().substring(0, 50))
+            #else
+                #set($separator = '')
+                #set($name = $version.getName())
+            #end
+            #set($title = $version.getName())
+            <option value="$version.getId()" title="$title" #if($version.getId().toString() == $!lastvisitedVersion)class="active-version" selected="selected"#end>$name$separator</option>
+        #end
+    #end
+#end
+
+    <div class="tabs-pane" id="test-cycles-tab" role="tabpanel" aria-hidden="true" style="padding-top:15px;padding-left:15px">
+        <div id="zephyr-aui-message-bar" class="cycle-summary-message-bar zephyr-aui-message-bar"></div>
+        <div class="notifications zfj-permission-message-bar" id="zfj-permission-message-bar-project-$project.getId()"></div>
+        #set($projectUrlPrefix = "${baseurl}/browse/${projectKey}?selectedTab=com.atlassian.jira.plugin.system.project:zephyr_tc-panel")
+        <input type="hidden" id="zdateformat" value="$datePickerFormat"/>
+        <div class='gridComponentTesting'>
+            #parse("templates/velocity/single-select.vm")
+            #parse("templates/velocity/custom-checkbox.vm")
+            #parse("templates/velocity/custom-radio.vm")
+            #parse("templates/velocity/custom-textarea.vm")
+            #parse("templates/velocity/custom-text.vm")
+            #parse("templates/velocity/drop-down.vm")
+            #parse("templates/velocity/drop-downdate.vm")
+            #parse("templates/velocity/drop-downCheckbox.vm")
+	        #parse("templates/velocity/drop-downRadio.vm")
+            #parse("templates/velocity/drop-downmultiselect.vm")
+        </div>
+        <a class="trigger-delete-dialog" style="display: none"></a>
+        <div class="aui-item" id="test-cycles-tab-content">
+                 #if($!errors && $!errors.length() > 0)
+                    <div style="opacity:0.9;">
+                        <div class="aui-dialog-content">
+                            <div class="form-body">
+                                <div class="zephyr-je-ex-error aui-message error" style="top:10px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        var showError = function (e) {
+                            var zError = AJS.$('input#zerrors').val();
+                            if (zError && zError.length > 0) {
+                                var error = "<span class='aui-icon icon-error'></span>";
+                                error += zError;
+                                AJS.$("div.zephyr-je-ex-error").html(decHTMLifEnc(error));
+                            }
+                        };
+                        var isLoadedInIframe = function () {
+                            try {
+                                return (window !== window.parent);
+                            } catch (e) {
+                                return false;
+                            }
+                        };
+
+                        var InitPageContent = function (initCallback) {
+                            if (isLoadedInIframe()) {
+                                AJS.$(window).load(function () {
+                                    initCallback();
+                                });
+                            } else {
+                                AJS.$(document).ready(function () {
+                                    initCallback();
+                                });
+                            }
+                        };
+
+                        InitPageContent(function () {
+                            setTimeout(function () {
+                                showError();
+                            }, 50);
+                        });
+                    </script>
+                 #else
+                    <ul class="versionBannerList styled-parent" id="dropDown-standard">
+                        <div class="module" id="cyclesummarymodule">
+
+                            <div class="mod-content">
+                                <nav class="aui-toolbar">
+                                    <div class="toolbar-split toolbar-split-right">
+                                        #if ($isNewUI)
+                                        <ul style="display:none" class="toolbar-group">
+                                            <li class="toolbar-item">
+                                                <a href="#" class="toolbar-trigger zfj-trigger-dialog" id="pdb-create-cycle-dialog" title="$i18n.getText('zephyr-je.pdb.cycle.add.title')" style="float:right">
+                                                    <span class="icon icon-add16"></span>
+                                                    $i18n.getText('zephyr-je.pdb.cycle.add.label')
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        #end
+                                    </div>
+                                    <ul class="aui-dropdowns">
+                                    ## Removing li - coz versionBannerList li adds a hover on background
+                                    ##<li class="dropdown-item">
+                                        <input type="hidden" id="zprojectId" value="$project.getId()"/>
+                                        #if ($isNewUI)
+                                        <span style="display:none">
+                                        $i18n.getText('project.cycle.version.selection.label'): &nbsp;&nbsp;
+
+                                            <select id="select-version2" class="aui select" >
+                                                <optgroup label="$i18n.getText('common.filters.unreleasedversions')">
+                                                <option value="$unscheduledVersionId" title="$i18n.getText("zephyr.je.version.unscheduled")">$i18n.getText("zephyr.je.version.unscheduled")</option>
+                                                #versionOptions($unreleasedVersions)
+                                                #if ($releasedVersions && $releasedVersions.size() > 0)
+                                                    <optgroup label="$i18n.getText('common.filters.releasedversions')">
+                                                        #versionOptions($releasedVersions)
+                                                    </optgroup>
+                                                #end
+                                            </select>
+                                        </span>
+                                        #else
+                                            <span>
+                                        $i18n.getText('project.cycle.version.selection.label'): &nbsp;&nbsp;
+
+                                            <select id="select-version2" class="aui select" >
+                                                <optgroup label="$i18n.getText('common.filters.unreleasedversions')">
+                                                <option value="$unscheduledVersionId" title="$i18n.getText("zephyr.je.version.unscheduled")">$i18n.getText("zephyr.je.version.unscheduled")</option>
+                                                #versionOptions($unreleasedVersions)
+                                                #if ($releasedVersions && $releasedVersions.size() > 0)
+                                                    <optgroup label="$i18n.getText('common.filters.releasedversions')">
+                                                        #versionOptions($releasedVersions)
+                                                    </optgroup>
+                                                #end
+                                            </select>
+                                        </span>
+                                        #end
+                                            <span class="icon"></span>
+                                    <li class="dropdown-item">
+                                        <div id="project-panel-cycle-summary"/>
+                                    </li>
+                                </ul>
+                                </nav>
+                                #if ($isNewUI)
+                                    <div id="cycle-view-wrap"></div>
+                                    <ul style="display:none" id="project-panel-cycle-list-summary" class="versionBannerList page-type-issuenav">
+                                    </ul>
+                                #else
+                                    <ul id="project-panel-cycle-list-summary" class="versionBannerList page-type-issuenav">
+                                    </ul>
+                                #end
+                            </div>
+                        </div>
+                    </ul>
+                 #end
+        </div>
+        <iframe id="csvDownloadFrame" style="visibility:hidden;height:0px;width:0px;"></iframe>
+        <!--
+        <div id="foo" class="disable" style="top:40px;height:400px;width:85%">
+             #if($errors)
+                    #parse("/templates/zephyr/common/licenseerror.vm")
+             #end
+        </div>
+
+        <div class='execution-details-wrapper'>
+
+        </div>
+        -->
+    </div>
+
+    <!--  =======================================================================================  -->
+    <!--  ================================= Test Cycle Tab ENDS =================================  -->
+
+    <!--  =======================================================================================  -->
+    <!--  =================================== Traceability Tab ==================================  -->
+
+    <div class="tabs-pane" id="traceability-tab" role="tabpanel" aria-hidden="true" style="padding-top:15px;padding-left:15px">
+        <div class="navigator-body">
+            <div class="contained-content">
+                #if($!errors && $!errors.length() > 0)
+                    <div style="opacity:0.9;">
+                        <div class="aui-dialog-content">
+                            <div class="form-body">
+                                <div class="zephyr-je-ex-error aui-message error" style="top:10px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        var showError = function (e) {
+                            var zError = AJS.$('input#zerrors').val();
+                            if (zError && zError.length > 0) {
+                                var error = "<span class='aui-icon icon-error'></span>";
+                                error += zError;
+                                AJS.$("div.zephyr-je-ex-error").html(decHTMLifEnc(error));
+                            }
+                        };
+                        var isLoadedInIframe = function () {
+                            try {
+                                return (window !== window.parent);
+                            } catch (e) {
+                                return false;
+                            }
+                        };
+
+                        var InitPageContent = function (initCallback) {
+                            if (isLoadedInIframe()) {
+                                AJS.$(window).load(function () {
+                                    initCallback();
+                                });
+                            } else {
+                                AJS.$(document).ready(function () {
+                                    initCallback();
+                                });
+                            }
+                        };
+
+                        InitPageContent(function () {
+                            setTimeout(function () {
+                                showError();
+                            }, 50);
+                        });
+                    </script>
+                #else
+                    <div id="traceability-container"></div>
+                #end
+            </div>
+        </div>
+    </div>
+    <!--  =================================== Traceability Tab  ENDS==================================  -->
+    <!--  ============================================================================================  -->
+    <input type="hidden" id="isProjectCentricViewEnabled" value="true">
+
+</div>
+<input type="hidden" id="inAppMessageUrlField" value="${inAppMessageUrl}">
+<input type="hidden" id="analyticUrlField" value="${analyticUrl}">
+<input type="hidden" id="analyticsEnabled" value="${analyticsEnabled}">
+
+<script type="text/javascript">
+   var globalCycle = {};
+        globalCycle.allVersions = "${versions}";
+        globalCycle.releasedVersions = "${releasedVersions}";
+        globalCycle.unreleasedVersions = "${unreleasedVersions}";
+</script>

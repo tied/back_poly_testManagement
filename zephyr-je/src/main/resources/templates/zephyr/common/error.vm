@@ -1,0 +1,19 @@
+<div class="dialog-title hidden">Error</div>
+<div class="aui-dialog-content">
+    
+    <div class="form-body">
+        <header>
+            <h1>$i18n.getText("common.words.error")</h1>
+        </header>
+        <div class="aui-message error"><span class="aui-icon icon-error"></span>
+			<p>$action.errors</p>
+        </div>
+        #if(!$user)
+	        <div class="aui-message warning"><span class="aui-icon icon-warning"></span>
+	        	<p> $i18n.getText("perm.violation.desc")</p>
+	        	<p> $i18n.getText("login.required.signup.description", "<a href='$baseurl/login.jsp'>$i18n.getText('login.required.login')</a>", "<a href='$baseurl/secure/Signup!default.jspa'>", "</a>") </p>
+	        	<p> $i18n.getText("contact.admin.for.perm", "please contact your <a href='$baseurl/secure/ContactAdministrators!default.jspa'>JIRA Administrators</a>") </p>
+	        </div>
+        #end
+	</div>
+</div>

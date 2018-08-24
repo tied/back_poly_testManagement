@@ -1,0 +1,45 @@
+<FindBugsFilter>
+	<!-- Following is list of bugs that will be excluded -->
+	<!--
+		Fields entityManager is injected with ActiveObjectsJUnitRunner. 
+		Hence let's exclude all Tests with this field uninitialized.
+		Reference: https://developer.atlassian.com/display/AO/Testing
+	-->
+     <Match>
+		<!-- test classes are suffixed by 'Test' -->
+		<And>
+			<Class name="~.*Test$"/>
+			<Field name="entityManager"/>
+			<Bug pattern="UWF_UNWRITTEN_FIELD"/>
+		</And>
+     </Match>
+
+     <Match>
+		<!-- We are doing this to inject our own beans which are not available through JIRA ComponentAccessor!-->
+		<And>
+			<Class name="com.thed.zephyr.util.ZephyrComponentAccessor"/>
+			<Field name="instance"/>
+			<Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/>
+		</And>
+     </Match>
+
+	<Match>
+		<And>
+			<Class name="com.thed.zephyr.je.service.impl.TeststepManagerImpl"/>
+			<Bug pattern="NP_BOOLEAN_RETURN_NULL"/>
+			<Or>
+				<Method name="copySteps"/>
+				<Method name="copyStepsInBulk"/>
+			</Or>	
+		</And>
+	</Match>		
+	
+	<Match>
+		<Or>
+			<Class name="com.thed.zephyr.je.issue.IssueOperationsBarUtil" />
+			<Class name="com.thed.zephyr.je.issue.ViewIssue" />
+		</Or>
+		<Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS"/>
+	</Match>		
+
+</FindBugsFilter>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0 5.78345006 7.62935625 5.78345006 7.62935625 -0.0001468125 0 -0.0001468125"></polygon>
+    </defs>
+    <g id="UC-A-02" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-660.000000, -466.000000)">
+        <g id="Group-2" transform="translate(660.000000, 466.000000)">
+            <g id="Tick-Icon" transform="translate(2.400000, 3.600000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="Clip-2"></g>
+            </g>
+            <g id="Group">
+                <rect id="Rectangle-23-Copy-3" stroke="#42526E" x="0.5" y="0.5" width="11" height="11" rx="2"></rect>
+                <path d="M9.37429045,4.91404137 L5.45583409,8.83249773 C5.30497621,8.98258592 5.10870704,9.05801486 4.91166818,9.05801486 C4.71462932,9.05801486 4.51759046,8.98258592 4.36750227,8.83249773 L2.62570955,7.09070501 C2.32476348,6.79052862 2.32476348,6.30331926 2.62570955,6.00237319 C2.92665562,5.70142712 3.4130953,5.70142712 3.71404137,6.00237319 L4.91166818,7.2 L8.28595863,3.82570955 C8.5869047,3.52476348 9.07334438,3.52476348 9.37429045,3.82570955 C9.67523652,4.12665562 9.67523652,4.6130953 9.37429045,4.91404137" id="Fill-1" fill="#42526E"></path>
+            </g>
+        </g>
+    </g>
+</svg>

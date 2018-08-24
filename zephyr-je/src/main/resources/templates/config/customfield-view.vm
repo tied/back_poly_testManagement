@@ -1,0 +1,107 @@
+<html lang="en">
+    <head>
+    $webResourceManager.requireResource("com.thed.zephyr.je:zephyr-custom-field")
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+        <meta name="admin.active.tab" content="zephyr_custom_field"/>
+        <title>$i18n.getText("zephyr.je.admin.plugin.test.section.item.zephyr.custom.label")</title>
+    <style>
+
+    </style>
+
+</head>
+<body>
+<div class="module">
+    <input type="hidden" id="zerrors" value="$!errors" />
+     #if($!errors && $!errors.length() > 0)
+        <div style="opacity:0.9;">
+            <div class="aui-dialog-content">
+                <div class="form-body">
+                    <div class="zephyr-je-ex-error aui-message error" style="top:10px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            var showError = function (e) {
+                var zError = AJS.$('input#zerrors').val();
+                if (zError && zError.length > 0) {
+                    var error = "<span class='aui-icon icon-error'></span>";
+                    error += zError;
+                    AJS.$("div.zephyr-je-ex-error").html(decHTMLifEnc(error));
+                }
+            };
+            var isLoadedInIframe = function () {
+                try {
+                    return (window !== window.parent);
+                } catch (e) {
+                    return false;
+                }
+            };
+
+            var InitPageContent = function (initCallback) {
+                if (isLoadedInIframe()) {
+                    AJS.$(window).load(function () {
+                        initCallback();
+                    });
+                } else {
+                    AJS.$(document).ready(function () {
+                        initCallback();
+                    });
+                }
+            };
+
+            InitPageContent(function () {
+                setTimeout(function () {
+                    showError();
+                }, 50);
+            });
+        </script>
+    #else
+        <div id="general-config-aui-message-bar"></div>
+        <form class="aui aui-form">
+            <div class="aui-tabs horizontal-tabs custom-fields">
+                <ul class="tabs-menu">
+                    <li class="menu-item active-tab">
+                        <a href="#custom-fields-executions" name="EXECUTION" onClick="setAttrbute(this)">$i18n.getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.executions')</a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#custom-fields-test-steps" name="TESTSTEP" onClick="setAttrbute(this)">$i18n.getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.testStep')</a>
+                    </li>
+                    <li class="icon-help help-item" role="help"></li>
+                    <div id="more-details-help" style="display: none;">
+                        <div><strong>$i18n.getText('zephyr.je.audit.history.entity.type.EXECUTION')</strong>: $i18n.getText('zephyr.customfield.tnc.execution')</div>
+                        <div><strong>$i18n.getText('zephyr.je.audit.history.entity.type.TESTSTEP')</strong>: $i18n.getText('zephyr.customfield.tnc.teststep')</div>
+                    </div>
+                </ul>
+                <div class="tabs-pane active-pane" id="custom-fields-executions">
+                    <div class="executionContainer">
+                        </br>
+                        <input id="addCustomField" class="aui-button addCustomFieldButton" type="button" value="$i18n.getText("admin.issuefields.customfields.add.custom.field")" onclick="dataCardCustomFieldDetails();" />
+                    </div>
+                    <div id="existingCustomFields">
+
+                    </div>
+                    <div id="creatingNewCustomFieldModelBox">
+
+                    </div>
+                </div>
+                <div class="tabs-pane" id="custom-fields-test-steps">
+                    <div class="executionContainer">
+                        </br>
+                        <input id="addCustomFieldTestSteps" class="aui-button addCustomFieldButton" type="button" value="$i18n.getText("admin.issuefields.customfields.add.custom.field")" onclick="dataCardCustomFieldDetails();" />
+                    </div>
+                    <div id="existingCustomFieldsTestSteps">
+
+                    </div>
+                    <div id="creatingNewCustomFieldModelBoxTestSteps">
+
+                    </div>
+                </div>
+            </div>
+        </form>
+     #end
+</div>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<html>
+	<head>
+			<meta charset="UTF-8">
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <title>ZFJ - Html Report for Executions</title>
+            <script type="text/javascript">
+            function altRows(id){
+            	if(document.getElementsByTagName){  
+            		
+            		var table = document.getElementById(id);  
+            		var rows = table.getElementsByTagName("tr"); 
+            		 
+            		for(i = 0; i < rows.length; i++){          
+            			if(i % 2 == 0){
+            				rows[i].className = "evenrowcolor";
+            			}else{
+            				rows[i].className = "oddrowcolor";
+            			}      
+            		}
+            	}
+            }
+            window.onload=function(){
+            	altRows('alternatecolor');
+            }
+            </script>			
+			<style type="text/css">
+                table.altrowstable {
+                	font-family: verdana,arial,sans-serif;
+                	font-size:9px;
+					padding-left:50px;
+                	color:#333333;
+                	border-width: 1px;
+                	border-color: #a9c6c9;
+                	border-collapse: collapse;
+                }
+                table.altrowstable th {
+                	border-width: 1px;
+                	padding: 8px;
+                	border-style: solid;
+                	border-color: #a9c6c9;
+                }
+				table.altrowstable thead {
+                	font-weight: bold;
+                }
+                table.altrowstable td {
+                	border-width: 1px;
+                	padding: 8px;
+                	border-style: solid;
+                	border-color: #a9c6c9;
+                }
+                .oddrowcolor{
+                	background-color:#d4e3e5;
+                }
+                .evenrowcolor{
+                	background-color:none;
+                }
+           </style>
+	</head>	
+	<body>
+		<table class="altrowstable" id="alternatecolor" border="1" cellspacing="0" cellpadding="0" style="padding-left:50px;overflow-y=scroll;">
+				<thead>
+                    <td>ExecutionId</td>
+                    <td>CycleName</td>
+                    <td>Issue Key</td>
+                    <td>Test Summary</td>
+                    <td>Labels</td>
+                    <td>Project</td>
+                    <td>Component</td>
+                    <td>Version</td>
+                    <td>Priority</td>     
+                    <td>Assigned To</td>
+                    <td>Executed By</td>
+                    <td>Executed On</td>
+                    <td>Execution Status</td>
+                    <td>Comment</td>
+                    <td>Execution Defect(s)</td>
+					<td>Creation Date</td>
+                    <td>Folder Name</td>
+                    <td>Custom Fields</td>
+                    <td>StepId</td>
+                    <td>OrderId</td>
+                    <td>Step</td>
+                    <td>Test Data</td>
+                    <td>Expected Result</td>
+                    <td>Step Result</td>
+                    <td>Comments</td>
+                    <td>Test Step Custom Fields</td>
+                </thead>
+			   #if ($schedules && $schedules.size() > 0)
+				<tbody>
+        		#foreach($schedule in $schedules)
+					#set($canViewIssue = $schedule.canViewIssue)
+                    #set($defectsAsString = '')
+                    #set($customFieldDataString = '')
+                    #set($testStepCustomFieldDataString = '')
+                    #foreach( $executionDefect in $schedule.executionDefects )
+						#set($defectsAsString = $defectsAsString + $executionDefect.defectKey)
+						#if($velocityCount != $schedule.executionDefects.size())
+							#set($defectsAsString = $defectsAsString + ', ')
+						#end
+					#end
+					#if($schedule.stepDefects && $schedule.stepDefects.size() > 0)
+						#set($defectsAsString = $defectsAsString + " | ")
+						#foreach( $stepDefect in $schedule.stepDefects)
+							#set($defectsAsString = $defectsAsString + $stepDefect)
+							#if($velocityCount != $schedule.stepDefects.size())
+								#set($defectsAsString = $defectsAsString + ', ')
+							#end
+						#end
+					#end
+                    #if($schedule.customFieldsValueMap && $schedule.customFieldsValueMap.size() > 0)
+                        #foreach ($entry in $schedule.customFieldsValueMap.entrySet())
+                            #set($customFieldName = $customFieldNameMapping.get($entry.key))
+                            #set($customFieldDataString = $customFieldDataString + $customFieldName + ':' + $entry.value)
+                            #if($velocityCount != $schedule.customFieldsValueMap.size())
+                                #set($customFieldDataString = $customFieldDataString + '| ')
+                            #end
+                        #end
+                    #end
+					#if($schedule.testStepBean && $schedule.testStepBean.size() > 0)
+						#set($rowspanSize = $schedule.testStepBean.size())
+						#set($firstElem = $schedule.testStepBean.remove(0))
+
+                        #if($firstElem.customFieldValuesMap && $firstElem.customFieldValuesMap.size() > 0)
+                            #foreach ($entry in $firstElem.customFieldValuesMap.entrySet())
+                                #set($testStepCustomFieldDataString = $testStepCustomFieldDataString + $entry.key + ':' + $entry.value)
+                                #if($velocityCount != $firstElem.customFieldValuesMap.size())
+                                    #set($testStepCustomFieldDataString = $testStepCustomFieldDataString + '| ')
+                                #end
+                            #end
+                        #end
+
+        					<tr>
+                				<td rowspan=$rowspanSize>$schedule.id</td>
+        						<td rowspan=$rowspanSize>$schedule.cycleName</td>
+                				<td rowspan=$rowspanSize>$schedule.issueKey</td>
+                                <td rowspan=$rowspanSize>$schedule.issueSummary</td>
+                                <td rowspan=$rowspanSize>
+									#foreach($label in $schedule.labels)
+										$label
+										#if($velocityCount != $schedule.labels.size())
+                                            ,
+										#end
+									#end
+								</td>
+                				<td rowspan=$rowspanSize>$schedule.project</td>
+                				<td rowspan=$rowspanSize>
+                				#foreach($component in $schedule.components)
+                					$component.name
+                					#if($velocityCount != $schedule.components.size())
+                					,
+                					#end
+                				#end
+                				</td>
+                				<td rowspan=$rowspanSize>$schedule.versionName</td>
+                				<td rowspan=$rowspanSize>$schedule.priority</td>                				
+                				<td rowspan=$rowspanSize>$schedule.assignee</td>
+                				<td rowspan=$rowspanSize>$schedule.executedBy</td>
+                				<td rowspan=$rowspanSize>$schedule.executedOn</td>
+								#if($canViewIssue)
+                                    <td rowspan=$rowspanSize>$schedule.status.name</td>
+								#else
+                                    <td rowspan=$rowspanSize>XXXXX</td>
+								#end
+                				<td rowspan=$rowspanSize>$schedule.htmlComment</td>
+                				<td rowspan=$rowspanSize>$defectsAsString</td>
+								<td rowspan=$rowspanSize>$schedule.creationDate</td>
+                                #if($schedule.folderName)
+                                    <td rowspan=$rowspanSize>$schedule.folderName</td>
+                                #else
+                                    <td rowspan=$rowspanSize></td>
+                                #end
+                                <td rowspan=$rowspanSize>$customFieldDataString</td>
+								<td>$firstElem.id</td>
+								<td>$firstElem.orderId</td>
+								<td>$firstElem.htmlStep</td>
+								<td>$firstElem.htmlData</td>
+								<td>$firstElem.htmlResult</td>
+								<td>$firstElem.stepExecutionStatus</td>
+								<td>$firstElem.htmlStepComment</td>
+                                <td>$testStepCustomFieldDataString</td>
+							</tr>
+							#foreach($testStep in $schedule.testStepBean)
+                                #set($testStepCustomFieldDataString = '')
+                                #if($testStep.customFieldValuesMap && $testStep.customFieldValuesMap.size() > 0)
+                                    #foreach ($entry in $testStep.customFieldValuesMap.entrySet())
+                                        #set($testStepCustomFieldDataString = $testStepCustomFieldDataString + $entry.key + ':' + $entry.value)
+                                        #if($velocityCount != $testStep.customFieldValuesMap.size())
+                                            #set($testStepCustomFieldDataString = $testStepCustomFieldDataString + '| ')
+                                        #end
+                                    #end
+                                #end
+
+	        					<tr>
+									<td>$testStep.id</td>
+									<td>$testStep.orderId</td>
+									<td>$testStep.htmlStep</td>
+									<td>$testStep.htmlData</td>
+									<td>$testStep.htmlResult</td>
+									<td>$testStep.stepExecutionStatus</td>
+									<td>$testStep.htmlStepComment</td>
+                                    <td>$testStepCustomFieldDataString</td>
+								</tr>							
+							#end
+					#else
+	        			<tr>
+            				<td>$schedule.id</td>
+    						<td>$schedule.cycleName</td>
+            				<td>$schedule.issueKey</td>
+                            <td>$schedule.issueSummary</td>
+							<td>
+								#foreach($label in $schedule.labels)
+									$label
+									#if($velocityCount != $schedule.labels.size())
+	                                    ,
+									#end
+								#end
+							</td>                              
+            				<td>$schedule.project</td>
+            				<td>
+							#foreach($component in $schedule.components)
+            					$component.name
+            					#if($velocityCount != $schedule.components.size())
+            					,
+            					#end
+            				#end
+							</td>
+            				<td>$schedule.versionName</td>
+            				<td>$schedule.priority</td>
+            				<td>$schedule.assignee</td>
+            				<td>$schedule.executedBy</td>
+            				<td>$schedule.executedOn</td>
+							#if($canViewIssue)
+                                <td>$schedule.status.name</td>
+							#else
+                                <td>XXXXX</td>
+							#end
+            				<td>$schedule.htmlComment</td>
+            				<td>$defectsAsString</td>
+							<td>$schedule.creationDate</td>
+                            <td>
+                                #if($schedule.folderName)
+                                    $schedule.folderName
+                                #end
+                            </td>
+                            <td>$customFieldDataString</td>
+							<td/>
+							<td/>
+							<td/>
+							<td/>
+							<td/>
+							<td/>
+							<td/>
+                            <td/>
+                        </tr>
+					#end	
+				#end
+				</tbody>
+			   #end
+        </table>
+	</body>
+</html>

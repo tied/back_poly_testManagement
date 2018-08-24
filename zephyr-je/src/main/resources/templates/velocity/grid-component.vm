@@ -1,0 +1,851 @@
+<dom-module id="grid-component">
+  <template>
+    <custom-style>
+      <style>
+        #unfreezeColumns .table-cell,
+        #freezeColumns .table-cell {
+          min-width: 120px;
+        }
+
+        #unfreezeColumns .step .table-cell,
+        #freezeColumns .step .table-cell,
+        #unfreezeColumns .data .table-cell,
+        #freezeColumns .data .table-cell,
+        #unfreezeColumns .result .table-cell,
+        #freezeColumns .result .table-cell {
+          width: 200px;
+          min-width: 200px;
+        }
+
+        #draggableColumn .table-cell .dragItss img {
+          cursor: move;
+        }
+
+        #draggableColumn .table-cell .dragItss:active {
+          cursor: move;
+        }
+
+        /* .table-wrapper {
+          max-height: 200px;
+          overflow: auto;
+        } */
+
+        .table-wrapper,
+        .table-row {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          min-height: 45px;
+        }
+
+        .unfreezed-cells .table-columns, .freezed-cells .table-columns {
+          border-bottom: 1px solid #ECEDF0;
+        }
+
+        .table-row.selected .table-columns {
+          background-color: #EBECF0;
+        }
+
+        .table-row.edit.selected .table-columns {
+          background-color: inherit;
+        }
+
+        .table-wrapper .table-columns {
+         padding: 5px 0;
+        }
+
+        .table-wrapper .table-columns.disabled {
+          pointer-events: none;
+          opacity: 0.4
+        }
+
+        .table-columns-wrapper {
+          display: flex;
+          flex-direction: column;
+          /* padding-bottom: 10px; */
+          position: relative;
+        }
+
+        .table-columns {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          flex: auto;
+          /* width: 100%; */
+        }
+
+        .table-columns.TEXT .table-cell,
+        .table-columns.LARGE_TEXT .table-cell {
+          width: 200px;
+        }
+
+        .table-cell {
+          display: flex;
+          flex-direction: row;
+          min-height: 35px;
+          width: 120px;
+          justify-content: flex-start;
+          padding: 0 5px;
+          word-break: normal;
+          word-wrap: break-word;
+          color: #172B4D;
+        }
+
+        .table-wrapper .table-row.table-headerRow .table-columns {
+          padding: 0;
+        }
+
+        .table-row.table-headerRow .table-cell {
+          align-items: flex-end;
+          color: #5E6C84;
+          padding-bottom: 7px;
+        }
+
+        .table-row.table-headerRow .table-cell .cell-wrapper {
+          display: flex;
+        }
+
+        .table-row.table-headerRow .table-cell .cell-wrapper span.column-header {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          max-width: 85px;
+        }
+
+        .table-wrapper.issueView .table-row.table-headerRow .table-columns {
+          padding: 0;
+        }
+
+        .selected .icon-pushpin {
+          color: black;
+        }
+
+        .icon-pushpin {
+          color: grey;
+          margin-right: 5px;
+          cursor: pointer;
+        }
+
+        .unfreezed-cells.table-columns-wrapper {
+          width: 100%;
+          overflow: auto;
+        }
+
+        .freezed-cells.table-columns-wrapper {
+          max-width: 260px;
+          background: #F6F7F8;
+        }
+
+        .action-cell.table-columns-wrapper {
+          min-width: 70px;
+        }
+
+        .check-cell.table-columns-wrapper {
+          max-width: 25px;
+          background: #F6F7F8;
+        }
+
+        .check-cell .table-cell {
+          width: 25px;
+          padding: 0 5px;
+          overflow: hidden;
+        }
+
+        .drag-cell {
+          max-width: 25px;
+        }
+
+        .sortable {
+          margin-left: 5px;
+          cursor: pointer;
+        }
+
+        #gridActions {
+          background-color: #F6F7F8;
+          position: relative;
+        }
+
+        #gridActions.testDetailExecution
+        {
+          display: none;
+        }
+
+        .action-row {
+          display: flex;
+          justify-content: space-around;
+
+        }
+
+        .action-row .table-cell {
+          min-width: unset;
+          width: auto;
+        }
+
+        .actions-wrapper {
+          background-color: #deebff;
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          text-align: center;
+          border-radius: 3px;
+        }
+
+
+        .actions-wrapper img {
+          width: 15px;
+          height: 10px;
+        }
+
+        .actions-wrapper:hover {
+          background: #B2D4FF;
+        }
+
+        .action-row .table-columns {
+          justify-content: space-evenly;
+        }
+
+        .freeze-toggle {
+          cursor: pointer;
+          margin-right: 5px;
+        }
+
+        .table-headerRow .table-columns {
+          border-bottom: 1px solid #ECEDF0;
+        }
+
+        #grid-actions .table-headerRow .table-columns {
+          padding: 0 10px;
+        }
+
+        .bulkAction-container button,
+        .buttonPanel button {
+          background-color: #deebff;
+          color: #42526e;
+          min-width: 100px;
+          outline: none;
+          border: 0px;
+          box-sizing: border-box;
+          border-radius: 3.01px;
+          cursor: pointer;
+          display: flex;
+          font-family: inherit;
+          font-size: 14px;
+          font-variant: normal;
+          font-weight: 300;
+          height: 2.14285714em;
+          line-height: 1.42857143;
+          padding: 4px 10px;
+          text-decoration: none;
+          vertical-align: baseline;
+          text-align: left;
+          white-space: nowrap;
+        }
+
+        .bulkAction-container button:hover,
+        .buttonPanel button:hover {
+          background: #B2D4FF;
+        }
+
+        .bulkAction-container button img {
+          height: 14px;
+          margin-right: 5px;
+          align-self: center;
+        }
+
+        .bulkAction-container button.columnChooser-btn {
+          margin-left: 10px;
+          padding-left: 12px;
+        }
+
+        .bulkAction-container button.columnChooser-btn img {
+          height: 5px;
+          padding-left: 12px;
+          width: 10px;
+          margin-right: 0;
+        }
+
+        .bulkAction-container button:disabled,
+        .buttonPanel button:disabled {
+          color: #A5ADBA;
+          background-color: #F4F5F7;
+          pointer-events: none;
+          cursor: auto;
+        }
+        .bulkAction-container button:disabled img{
+          opacity: 0.2;
+        }
+
+        .bulkAction-buttons {
+          display: flex;
+          justify-content: space-between;
+          padding: 5px 0px 10px;
+        }
+
+        .bulkAction-buttons .bulkAction-container:not(:only-child) {
+          margin: 0 10px 0 0;
+        }
+
+        .action-container {
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .hide {
+          display: none;
+        }
+
+        .column-chooser-wrap {
+          position: absolute;
+          right: 100%;
+          top: 12px;
+        }
+
+        .column-chooser-icon {
+          position: relative;
+        }
+
+        .column-chooser-cont {
+          position: absolute;
+          background-color: #fff;
+          border: 1px solid #dfe1e6;
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
+          z-index: 1;
+          width: 220px;
+        }
+
+        .isGrid .column-chooser-cont {
+          position: fixed;
+        }
+
+        .column-chooser-cont.close {
+          /* visibility: hidden; */
+          display: none;
+        }
+
+        .contextMenuIcon {
+          background: #4C9AFF;
+          border: 0;
+          border-radius: 50%;
+          width: 23px;
+          height: 23px;
+          display: flex;
+          position: absolute;
+          right: 0;
+          top: -2px;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .issueView .contextMenuIcon {
+          background: #deebff;
+          border: 1px solid #ecedf0;
+        }
+
+        .checkbox-wrapper {
+          display: flex;
+          flex-wrap: wrap;
+          width: calc(100% - 20px);
+          padding: 3px 10px 10px;
+          max-height: 150px;
+          overflow: auto;
+        }
+
+        .checkbox-container {
+          width: 80px;
+          padding: 3px 3px 3px 0;
+        }
+
+        .columnChooser-heading {
+          font-weight: 600;
+          color: #5E6C84;
+          font-size: 15px;
+          padding: 10px 10px 0;
+        }
+
+        .buttonPanel {
+          display: flex;
+          justify-content: flex-end;
+          padding: 10px;
+          border-top: 1px solid #A5ADBA;
+        }
+
+        .buttonPanel button {
+          min-width: auto;
+        }
+
+        .columnChooser-submit {
+          margin-right: 10px;
+        }
+
+        .warning {
+          color: rgb(204, 51, 0);
+        }
+
+        .table-columns.orderId {
+          width: 40px;
+          flex: none;
+        }
+
+        #draggableColumn .table-cell {
+          width: auto;
+        }
+
+        .table-columns.htmlComment,
+        .table-columns.htmlComment .table-cell {
+          width: 150px;
+        }
+
+        .testStepFocus-btn {
+          color: #0052CC;
+          cursor: pointer;
+        }
+
+        .testStepFocus-btn img {
+          margin-left: 5px;
+        }
+
+        .testStepFocus {
+          align-self: center;
+        }
+
+        .bulkAction-round {
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          padding: 6px;
+          background: #f7f8f9;
+          border: 1px solid #DEE1E6;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+
+        .bulkAction-round:focus {
+          outline: none;
+        }
+
+        .bulkAction-leftWrapper,
+        .bulkAction-rightWrapper {
+          display: flex;
+          justify-content: space-between;
+        }
+
+        .actions-wrapper.tick-button,
+        .actions-wrapper.cross-button {
+          background-color: #4C9AFF;
+        }
+
+        .sortIcon {
+          width: 20px;
+          height: 20px;
+          vertical-align: middle;
+          display: inline-block;
+          cursor: pointer;
+          border-radius: 0 4px 4px 0;
+          outline: none;
+          position: relative;
+        }
+
+        .sortIcon:before {
+          content: '';
+          position: absolute;
+          width: 6px;
+          height: 2px;
+          top: 9px;
+          left: 6px;
+          transform: rotate(45deg);
+          background: #DFE1E5;
+        }
+
+        .sortIcon:after {
+          content: '';
+          position: absolute;
+          width: 6px;
+          height: 2px;
+          top: 9px;
+          right: 5px;
+          transform: rotate(-45deg);
+          background: #DFE1E5;
+        }
+
+        .sortIcon.ASC:before {
+          top: 7px;
+          transform: rotate(-45deg);
+          background: #4c9aff;
+        }
+
+        .sortIcon.ASC:after {
+          top: 7px;
+          transform: rotate(45deg);
+          background: #4c9aff;
+        }
+
+        .cell-wrapper.DESC,
+        .cell-wrapper.ASC {
+          color: #4c9aff;
+        }
+
+        .exportListItems {
+          position: absolute;
+          display: flex;
+          flex-direction: column;
+          width: 100px;
+          z-index: 3000;
+          left: -125px;
+          padding: 10px;
+          border-radius: 5px;
+          background-color: #fff;
+          border: 1px solid #dfe1e6;
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
+        }
+
+        .exportWrapper {
+          display: flex;
+          padding: 2px;
+          color: #5E6C84;
+          cursor: pointer;
+        }
+
+        .exportWrapper:hover {
+          color: #4C9AFF;
+        }
+
+        .exportWrapper img {
+          height: 15px;
+          width: 19px;
+          border: 0;
+          margin-top: 3px;
+          margin-right: 5px;
+        }
+
+        .exportContainer {
+          position: relative;
+        }
+
+        .scrollWrapper {
+          max-height: 350px;
+          overflow: auto;
+        }
+        .scrollWrapper.issueView {
+          overflow-x: hidden;
+        }
+        .scrollWrapper.cycleSummaryGrid,
+        .scrollWrapper.testDetailExecution,
+        .scrollWrapper.moveExecutionGrid {
+          max-height: none;
+        }
+
+        grid-cell {
+          width: 100%;
+        }
+
+        .permissionDenied {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+        }
+
+        .outlineNone {
+          outline: none;
+        }
+
+        .table-columns.TEXT .table-cell,
+        .table-columns.LARGE_TEXT .table-cell {
+          max-height: 200px;
+          overflow: auto;
+          padding-top: 1px;
+          padding-bottom: 1px;
+        }
+
+        .table-columns.comment .table-cell {
+          width: 200px;
+        }
+
+        #loadingIndicator {
+          height: 45px;
+          display: none;
+          justify-content: center;
+          align-items: center;
+          background-color: #F4F5F7;
+          color: #5E6C84;
+        }
+      </style>
+    </custom-style>
+    <div class="action-container grid-component">
+      <div class="bulkAction-leftWrapper">
+        <template is="dom-if" if="{{testConfig.hasBulkActions}}">
+          <div class="bulkAction-buttons">
+            <template is="dom-repeat" items="{{testConfig.bulkActions}}" as="action">
+              <div class$="bulkAction-container {{action.customEvent}}" data-eventname="{{action.customEvent}}" on-click="_bulkAction">
+                <button type="button" disabled="{{action.disabled}}">
+                  <img src="{{action.imgSrc}}">{{action.actionName}}</button>
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+      <div class="bulkAction-rightWrapper">
+        <template is="dom-if" if="{{testConfig.exportTestSteps.isEnabled}}">
+          <div class="bulkAction-buttons exportContainer">
+            <div class="bulkAction-container bulkAction-round" data-customevent="{{testConfig.exportTestSteps.customEvent}}" data-eventname="{{testConfig.exportTestSteps.customEvent}}" on-click="_triggerExportDropdown" on-focusout="_closeInlineDialog" tabindex="-1">
+              <img src="{{testConfig.exportTestSteps.imgSrc}}">
+            </div>
+            <template is="dom-if" if="{{openExportDropDown}}">
+              <div class="exportListItems">
+                <template is="dom-repeat" items="{{testConfig.exportTestSteps.exportOptions}}" as="export">
+                  <div class="exportWrapper" data-exportid="{{export.exportId}}" data-customevent="{{testConfig.exportTestSteps.customEvent}}" data-eventname="{{testConfig.exportTestSteps.customEvent}}" on-mousedown="_triggerEvent">
+                    <img src="{{export.imgSrc}}">
+                    <span>{{export.exportName}}</span>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </template>
+        <template is="dom-if" if="{{testConfig.popupTestSteps.isEnabled}}">
+          <div class="bulkAction-buttons">
+            <div title="{{testConfig.popupTestSteps.actionName}}" class="bulkAction-container bulkAction-round" data-customevent="{{testConfig.popupTestSteps.customEvent}}" data-eventname="{{testConfig.popupTestSteps.customEvent}}" on-click="_triggerEvent">
+              <img src="{{testConfig.popupTestSteps.imgSrc}}">
+            </div>
+          </div>
+        </template>
+
+        <template is="dom-if" if="{{testConfig.testStepFocus.isEnabled}}">
+          <div class="bulkAction-buttons">
+            <div class="testStepFocus" data-customevent="{{testConfig.testStepFocus.customEvent}}" data-eventname="{{testConfig.testStepFocus.customEvent}}" on-click="_triggerEvent">
+              <div class="testStepFocus-btn">{{testConfig.testStepFocus.actionName}}
+                <img src="{{testConfig.testStepFocus.imgSrc}}">
+              </div>
+            </div>
+          </div>
+        </template>
+        <template is="dom-if" if="{{testConfig.columnchooser.isEnabled}}">
+          <div class$="bulkAction-buttons {{_checkIsGrid(isGrid)}}">
+            <div class="bulkAction-container outlineNone" data-customevent="{{testConfig.columnchooser.customEvent}}" data-eventname="{{testConfig.columnchooser.customEvent}}" on-click="_showColumnChooser" tabindex="-1" on-focusout="_checkColumnChooserblur">
+              <button type="button" class="columnChooser-btn" disabled="{{testConfig.columnchooser.disabled}}">{{testConfig.columnchooser.actionName}}
+                <span class="imgWrapper">
+                  <template is="dom-if" if="{{testConfig.columnchooser.imgSrc}}">
+                    <img src="{{testConfig.columnchooser.imgSrc}}">
+                  </template>
+                </span>
+              </button>
+            </div>
+            <div tabindex="-1" class$="content column-chooser-cont {{_openColumnChooserDialog(showColumnChooser)}}">
+              <div class="columnChooser-heading">{{testConfig.columnChooserHeading}}</div>
+              <div class="checkbox-wrapper content" tabindex="-1">
+                <template is="dom-repeat" items="{{columnChooserValues}}" as="column">
+                  <div class="checkbox-container">
+                    <custom-checkbox mode="edit" rowid="{{column.key}}" options="[{&quot;value&quot;:&quot;{{column.key}}&quot;,&quot;content&quot;:&quot;{{column.displayName}}&quot;,&quot;selected&quot;:{{column.isVisible}}}]" change="true" on-submitvalue="_columnChooser"></custom-checkbox>
+                  </div>
+                </template>
+                <template is="dom-if" if="{{submitDisabled}}">
+                  <div class="warning">{{testConfig.selectAtleaseoneOption}}</div>
+                </template>
+              </div>
+              <div class="buttonPanel">
+                <button tabindex="-1" type="button" class="content columnChooser-submit" disabled="{{submitDisabled}}" on-click="_submitColumnChooser">{{testConfig.submit}}</button>
+                <button tabindex="-1" type="button" class="content columnChooser-cancel" on-click="_closeColumnChooser">{{testConfig.cancel}}</button>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template is="dom-if" if="{{testConfig.addTests.isEnabled}}">
+          <div class="bulkAction-buttons">
+            <div class="bulkAction-container" data-customevent="{{testConfig.addTests.customEvent}}" data-eventname="{{testConfig.addTests.customEvent}}" on-click="_addTests">
+              <button type="button" class="addTest-btn">
+                <img src="{{testConfig.addTests.imgSrc}}">{{testConfig.addTests.actionName}}</button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+    <div class="table-container" on-mousemove="dragElements">
+      <div class$="scrollWrapper {{testConfig.gridComponentPage}}">
+        <div class$="table-wrapper {{testConfig.gridComponentPage}}">
+          <div id="draggableColumn" class="drag-cell table-columns-wrapper">
+            <template is="dom-if" if="{{testConfig.draggableRows}}">
+              <div class="table-row" data-rowid="0">
+                <div class="table-columns">
+                  <div class="table-cell">
+                  </div>
+                </div>
+              </div>
+              <template is="dom-repeat" items="{{testConfig.row}}" as="row" initial-count="{{initialCount}}">
+                <div class$="table-row {{row.mode}} {{selectedClass(row.id, selectedRowId)}}" data-rowid="{{row.id}}" on-drop="draggingStop" on-mouseenter="possibleTarget">
+                  <div class="table-columns">
+                    <div class="table-cell">
+                      <template is="dom-if" if="{{!row.editMode}}">
+                        <div class="dragItss" on-mousedown="draggingStart" on-mouseup="dragEnd" data-rowid="{{row.id}}">
+                          <img src="{{testConfig.dragImageUrl}}">
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
+          <div id="gridSelection" class="check-cell table-columns-wrapper">
+            <template is="dom-if" if="{{testConfig.rowSelection}}">
+              <div class="table-row table-headerRow" data-rowid="0">
+                <div class="table-columns">
+                  <div class="table-cell"></div>
+                </div>
+              </div>
+              <template is="dom-repeat" items="{{rowsSelection}}" index-as="indexRow" as="row" initial-count="{{initialCount}}">
+                <div class$="table-row {{row.mode}} {{selectedClass(row.rowId, selectedRowId)}}" data-rowid="{{row.rowId}}">
+                  <template is="dom-if" if="{{!row.permission}}">
+                    <div class="table-columns">
+                      <div class="table-cell">
+                        <custom-checkbox loader={{loader}} rowindex="{{indexRow}}" on-adjustrowheight="_adjustRowHeight" mode="edit" rowid="{{row.rowId}}" options="[{&quot;value&quot;:&quot;{{row.rowId}}&quot;,&quot;content&quot;:&quot;&quot;,&quot;selected&quot;:{{row.selected}}}]" change="true" on-submitvalue="_submit"></custom-checkbox>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </template>
+            </template>
+          </div>
+          <div id="freezeColumns" class="freezed-cells table-columns-wrapper">
+            <div class="table-row table-headerRow" data-rowid="0">
+              <template is="dom-repeat" items="{{freezedColumns}}" as="column">
+                <div class$="table-columns {{conditionalClass(column.isVisible)}} {{column.key}} {{column.type}}">
+                  <div class="table-cell">
+                    <div class$="cell-wrapper {{column.sortOrder}}" data-columnid="{{column.key}}">
+                      <template is="dom-if" if="{{testConfig.freezeToggle}}">
+                        <span class="toggle-freezer-image-container">
+                          <span class="selected freeze-toggle" on-click="_toggleFreeze" title="{{testConfig.unfreezeTooltip}}">
+                            <img src="{{testConfig.unfreezedImageUrl}}">
+                          </span>
+                        </span>
+                      </template>
+                      <span class="column-header" title="{{column.displayName}}">{{column.displayName}}</span>
+                      <template is="dom-if" if="{{column.isSortable}}">
+                        <span class="" on-click="_sortGrid" data-sortorder="{{column.sortOrder}}" data-columnkey="{{column.key}}">
+                          <span class$="sortIcon {{column.sortOrder}}" tabindex="-1"></span>
+                        </span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <template is="dom-repeat" items="{{testConfig.row}}" as="row" index-as="indexRow" initial-count="{{initialCount}}">
+              <div class$="table-row {{row.mode}} {{selectedClass(row.id, selectedRowId)}}" data-rowid="{{row.id}}" on-dblclick="_rowSelectDbl" on-click="_rowSelect" on-drop="draggingStop" on-mouseenter="possibleTarget">
+                <template is="dom-if" if="{{!row.permission}}">
+                  <template is="dom-repeat" items="{{freezedColumns}}" as="column" index-as="indexColumn">
+                    <div class$="table-columns {{conditionalClass(column.isVisible)}} {{column.key}} {{column.type}}  {{_isWorkflowExecutionStatusCompleted(column.key,row)}}">
+                      <div class="table-cell">
+                        <grid-cell loader={{loader}} ispopup="{{isPopup}}" rowindex="{{indexRow}}" datarow="{{row}}" datacolumn="{{column}}" setfocus="{{setFocus}}" mode="{{row.editMode}}" on-adjustrowheight="_adjustRowHeight" on-submitcell="_submitCell" on-savecellvalue="_saveCellValue" on-datepicker="_datePicker" on-defecthover="_defectHover" on-attachmentpreview="_attachemntPreview" on-fetchdefect="_fetchdefect" on-fetchattachment="_fetchattachment" updaterowheight="{{updateRowHeight(indexColumn, 'freezedColumns')}}"></grid-cell>
+                      </div>
+                    </div>
+                  </template>
+                </template>
+              </div>
+            </template>
+          </div>
+          <div id="unfreezeColumns" class="unfreezed-cells table-columns-wrapper">
+            <div class="table-row table-headerRow" data-rowid="0">
+              <template is="dom-repeat" items="{{unfreezedColumns}}" as="column">
+                <div class$="table-columns {{conditionalClass(column.isVisible)}} {{column.key}} {{column.type}}">
+                  <div class="table-cell">
+                    <div class$="cell-wrapper {{column.sortOrder}}" data-columnid="{{column.key}}">
+                      <template is="dom-if" if="{{testConfig.freezeToggle}}">
+                        <template is="dom-if" if="{{canFreeze}}">
+                          <span class="freeze-toggle" on-click="_toggleFreeze" title="{{testConfig.freezeTooltip}}">
+                            <img src="{{testConfig.freezeImageUrl}}">
+                          </span>
+                        </template>
+                      </template>
+                      <span class="column-header" title="{{column.displayName}}">{{column.displayName}}</span>
+                      <template is="dom-if" if="{{column.isSortable}}">
+                        <span class="" on-click="_sortGrid" data-sortorder="{{column.sortOrder}}" data-columnkey="{{column.key}}">
+                          <span class$="sortIcon {{column.sortOrder}}" tabindex="-1"></span>
+                        </span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <template is="dom-repeat" items="{{testConfig.row}}" as="row" index-as="indexRow" initial-count="{{initialCount}}">
+              <div class$="table-row {{row.mode}} {{selectedClass(row.id, selectedRowId)}}" data-rowid="{{row.id}}" on-dblclick="_rowSelectDbl" on-click="_rowSelect" on-drop="draggingStop" on-mouseenter="possibleTarget">
+                <template is="dom-if" if="{{row.permission}}">
+                  <div class="permissionDenied">
+                    {{testConfig.noPermission}}
+                  </div>
+                </template>
+                <template is="dom-if" if="{{!row.permission}}">
+                  <template is="dom-repeat" items="{{unfreezedColumns}}" as="column" index-as="indexColumn">
+                    <div class$="table-columns {{conditionalClass(column.isVisible)}} {{column.key}} {{column.type}} {{_isWorkflowExecutionStatusCompleted(column.key,row)}}">
+                      <div class="table-cell">
+                        <grid-cell loader={{loader}} ispopup="{{isPopup}}" rowindex="{{indexRow}}" datarow="{{row}}" datacolumn="{{column}}" setfocus="{{setFocus}}" mode="{{row.editMode}}" on-adjustrowheight="_adjustRowHeight" on-submitcell="_submitCell" on-savecellvalue="_saveCellValue" on-datepicker="_datePicker" on-defecthover="_defectHover" on-attachmentpreview="_attachemntPreview" on-fetchdefect="_fetchdefect"  on-fetchattachment="_fetchattachment" updaterowheight="{{updateRowHeight(indexColumn, 'unfreezedColumns')}}"></grid-cell>
+                      </div>
+                    </div>
+                  </template>
+                </template>
+              </div>
+            </template>
+          </div>
+          <div id="gridActions" class$="action-cell table-columns-wrapper {{testConfig.gridComponentPage}}">
+            <div class="table-row action-row table-headerRow" data-rowid="0">
+              <div class="table-columns">
+                <div class="table-cell">
+                  <div class="cell-wrapper">
+                    <span>{{testConfig.action}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <template is="dom-repeat" items="{{testConfig.row}}" as="row" initial-count="{{initialCount}}">
+              <div class$="table-row action-row {{row.mode}} {{selectedClass(row.id, selectedRowId)}}" data-rowid="{{row.id}}">
+                <template is="dom-if" if="{{!row.permission}}">
+                  <div class="table-columns">
+                    <template is="dom-if" if="{{!row.editMode}}">
+                      <template is="dom-repeat" items="{{testConfig.actions}}" as="action">
+                        <div class="table-cell">
+                          <div class="cell-wrapper">
+                            <div class="actions-wrapper" data-customevent="{{action.customEvent}}" data-eventname="{{action.actionName}}" data-rowid="{{row.id}}" on-click="_triggerEvent" title="{{action.actionName}}">
+                              <img src="{{action.imgSrc}}">
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                    </template>
+                    <template is="dom-if" if="{{row.editMode}}">
+                      <div class="table-cell">
+                        <div class="cell-wrapper">
+                          <div tabindex="100" class="actions-wrapper tick-button" data-customevent="{{testConfig.addTestSteps.customEvent}}" data-eventname="{{testConfig.addTestSteps.actionName}}" data-rowid="{{row.id}}" on-click="_triggerEvent">
+                            <img src="{{testConfig.addTestSteps.imgSrc}}">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="table-cell">
+                        <div class="cell-wrapper">
+                          <div tabindex="100" class="actions-wrapper cross-button" data-customevent="{{testConfig.removeTestSteps.customEvent}}" data-eventname="{{testConfig.removeTestSteps.actionName}}" data-rowid="{{row.id}}" on-click="_triggerEvent">
+                            <img src="{{testConfig.removeTestSteps.imgSrc}}">
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div id="loadingIndicator">
+          <span>{{testConfig.loading}}</span>
+        </div>
+      </div>
+    </div>
+  </template>
+
+</dom-module>

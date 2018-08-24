@@ -1,0 +1,15 @@
+#set ($issueSelectCount = $req.getAttribute("issueCount"))
+#set ($projectSelectCount = $req.getAttribute("projectCount"))
+
+<div class="aui-page-panel-nav">
+<ol class="steps">
+	        <li>
+                <a id="bulkedit_chooseissues" href="BulkEdit1!default.jspa?currentStep=1&amp;tempMax=10">Choose Issues</a>
+	            <br>
+	            Selected <strong>$issueSelectCount</strong> Issues from <strong>$projectSelectCount</strong> project(s)
+	        </li>
+	        <li>Choose Operation</li>
+	        <li>Operation Details</li>
+	        <li class="current">Confirmation</li>
+</ol>
+</div>

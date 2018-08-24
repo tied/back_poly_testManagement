@@ -1,0 +1,502 @@
+{namespace ZEPHYR.Templates.ZephyrCustomField}
+
+/**
+ * Renders a table of selected Projects.
+ * @param customFields
+ * @param? configureEnableAction
+ * @param? projectId
+ */
+{template .listCustomFields autoescape="true"}
+<div class="tableOuterContainer">
+    {if $customFields.length != 0 }
+        <table class="aui aui-table-rowhover" id="zephyr-tb-executions-table">
+            <thead>
+                <tr>
+                    <th id="seq-id-sub-key" class="ghx-nowrap"></th>
+                    <th id="name-sub-key" class="ghx-nowrap">{getText('zephyr.admin.menu.globalsettings.config.projects.name')}</th>
+                    <th id="description-sub-key" class="ghx-nowrap">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.description')}</th>
+                    <th id="type-sub-key" class="ghx-nowrap">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.type')}</th>
+                    <th id="option-sub-key" class="ghx-nowrap">
+                    {if not $configureEnableAction}
+                    {else}
+                        <div style="float:right">Enable/Disable</div>
+                    {/if}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $customField in $customFields}
+                    <tr class="zephyr-tb-sprint-issue-execution" data-customfieldId={$customField.id}>
+                        <td class="custom-field-display-table-data" style="width: 5%;">
+                            {index($customField) + 1 }
+                        </td>
+                        <td class="custom-field-display-table-data" style="width: 25%;word-break: break-all;">
+                            {$customField.name}
+                        </td>
+                        <td class="custom-field-display-table-data" style="width: 35%;">
+                            <div class="custom-field-description">
+                                <span title="{$customField.description}">
+                                    {$customField.description}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="custom-field-display-table-data" style="width: 20%;">
+                            {$customField.displayFieldType or $customField.fieldType}
+                        </td>
+                        <td class="custom-field-display-table-data" style="width: 15%;">
+                            {if not $configureEnableAction}
+                                <div class="operationsContainer" style="float: right">
+                                    <a href="#customFieldDropdown-{$customField.id}" aria-owns="customFieldDropdown-{$customField.id}" aria-haspopup="true" class="aui-button aui-style-default aui-dropdown2-trigger">
+                                        <span class="aui-icon aui-icon-small aui-iconfont-configure"></span>
+                                    </a>
+
+                                    <!-- Dropdown -->
+                                    <div id="customFieldDropdown-{$customField.id}" class="aui-style-default aui-dropdown2">
+                                        <ul class="aui-list-truncate">
+                                            <li><a style="cursor: pointer;" onClick="editCustomField(this)" data-customFieldId="{$customField.id}">{getText('zephyr.je.edit.button.title')}</a></li>
+                                            {if $customField.customFieldOptionValues}
+                                                 <li><a style="cursor: pointer;" onClick="configureCustomField(this)" data-customFieldId="{$customField.id}">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.configure')}</a></li>
+                                            {/if}
+                                            <li><a style="cursor: pointer;" onClick="deleteCustomField(this)" data-customFieldId="{$customField.id}">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.delete')}</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            {else}
+                                <div class="operationsContainer actionEnableContainer" style="float: right">
+                                    <label for="switch-{$customField.id}" data-customFieldId={$customField.id}>
+                                        {if $customField.isActive}
+                                            <input type="checkbox" id="switch-{$customField.id}" checked switch="none" />
+                                        {else}
+                                            <input type="checkbox" id="switch-{$customField.id}" switch="none" />
+                                        {/if}
+                                        <span class="c-switch-label" data-on-label="On" data-off-label="Off"></span>
+                                    </label>
+                                </div>
+                            {/if}
+                        </td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+    {else}
+        {if not $configureEnableAction}
+            {if not $projectId}
+                <span>
+                     {getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.noCustomFieldGlobal')}
+                </span>
+            {else}
+                <span>
+                     {getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.noCustomFieldProject')}
+                </span>
+            {/if}
+        {else}
+            <span>
+                 {getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.noCustomFieldsToConfigure')}
+            </span>
+        {/if}
+    {/if}
+</div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ */
+{template .customFieldTypeModel autoescape="true"}
+    <div class="tableOuterContainer">
+        <section role="dialog" data-aui-modal="true" id="customFieldModel" class="zephyr-dialog2 aui-layer aui-dialog2 aui-dialog2-large" data-aui-remove-on-hide="true" aria-hidden="true">
+            <!-- Dialog header -->
+            <header class="aui-dialog2-header">
+                <!-- The dialogs title -->
+                <h2 class="aui-dialog2-header-main">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.selectAFieldType')}</h2>
+                <!-- Actions to render on the right of the header -->
+                <div class="aui-dialog2-header-secondary" id="customFieldSearchInput">
+
+                </div>
+                <!-- Close icon -->
+                <a class="aui-dialog2-header-close">
+                    <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.close')}</span>
+                </a>
+            </header>
+            <!-- Main dialog content -->
+            <div id="customFieldModelCardData" class="aui-dialog2-content customFieldDataCountainer">
+
+            </div>
+            <!-- Dialog footer -->
+            <footer class="aui-dialog2-footer">
+                <!-- Actions to render on the right of the footer -->
+                <div class="aui-dialog2-footer-actions" id="custom-field-data-model-footer">
+                </div>
+            </footer>
+        </section>
+    </div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ * @param searchValue
+ */
+{template .customFieldSearchTemplate autoescape="true"}
+    <form class="aui" action="#">
+        <input id="customFieldFilterSearch" class="text customFieldSearch" value="{$searchValue}" type="text" name="search" placeholder="{getText('zql.search.label')}" onkeyup="searchCustomFieldType(event)">
+    </form>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ */
+{template .customFieldSelectionFooter autoescape="true"}
+    <div class="customFieldsSelectionFooter">
+        <button id="custom-field-dialog-next-button" onclick="customFieldDialogNextButton();" class="aui-button aui-button-secondary">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.next')}</button>
+        <button id="custom-field-dialog-close-button" onclick="customFieldDialogCloseButton();" class="aui-button aui-button-link">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.cancel')}</button>
+    </div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ */
+{template .customFieldDetailsFooter autoescape="true"}
+    <div class="customFieldsDetailsFooter">
+        <button id="custom-field-dialog-next-button1" onclick="customFieldDialogPreviousButton();" class="aui-button aui-button-secondary">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.back')}</button>
+        <button id="custom-field-dialog-create-button1" onclick="createCustomField();" class="aui-button aui-button-primary">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.create')}</button>
+        <button id="custom-field-dialog-close-button1" onclick="customFieldDialogCloseButton();" class="aui-button aui-button-link">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.cancel')}</button>
+    </div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ * @param customFieldTypes
+ * @param selectedField
+ */
+{template .fieldTypes autoescape="true"}
+    <div id ="customFieldTypesList"class="fieldTypesOuterContainer">
+        {foreach $fieldType in $customFieldTypes}
+            {if $selectedField == $fieldType.type}
+                <div class="customFieldIndividualData selectedType" data-selectedField={$fieldType.type} data-displaySelectedField="{$fieldType.label}" ondblclick="doubleClickCustomFieldTypeSelection(this);" onclick="selectedType(this);">
+            {else}
+                <div class="customFieldIndividualData" data-selectedField={$fieldType.type} data-displaySelectedField="{$fieldType.label}" ondblclick="doubleClickCustomFieldTypeSelection(this);" onclick="selectedType(this);">
+            {/if}
+                <div class="leftImageSection {$fieldType.imageClass}">
+                </div>
+                <div class="rightDataSection">
+                    <div>
+                        {$fieldType.label}
+                    </div>
+                    <div>
+                        {$fieldType.description}
+                    </div>
+                </div>
+            </div>
+        {/foreach}
+    </div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ * @param projectList
+ * @param isProjectPage
+ */
+{template .selectedCustomFieldDetails autoescape="true"}
+    <p><strong>** We recommend that you perform a re-index, as configuration changes were made to 'Custom Fields'. <br/>
+        <span class="customFieldSuccessNote">
+             After successful creation of custom field, enable them at project level.
+        </span>
+    </strong>
+
+    <form id="customFieldDetailsOuterContainer" class="aui customFieldDetailsOuterContainer">
+      <fieldset>
+      {if $isProjectPage}
+        <div class="field-group">
+            <label for="selectedFieldProject">
+                 {getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.project')}
+                 <span class="aui-icon icon-required">
+                    (required)
+                </span>
+            </label>
+            <select id="selectedFieldProject" multiple="" class="fieldNameInput" onChange=''>
+            {foreach $project in $projectList}
+                <option value={$project.id}>{$project.name}</option>
+            {/foreach}
+            </select>
+        </div>
+      {/if}
+        <div class="field-group">
+            <label for="selectedFieldName">
+                 {getText('zephyr.admin.menu.globalsettings.config.projects.name')}
+                <span class="aui-icon icon-required">
+                    (required)
+                </span>
+            </label>
+            <span>
+                <div>
+                    <input id="selectedFieldName" class="text medium-field fieldNameInput" type="text" name="selectedFieldName" onkeyup="selectedFieldDetailsFilling(event)" />
+                </div>
+                <div class="nameFieldNote">
+                     {getText('zephyr.admin.menu.globalsettings.config.projects.nameNote')}
+                </div>
+            </span>
+        </div>
+        <div class="field-group">
+            <label for="description-input">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.description')}</label>
+            <textarea maxlength="255" class="textarea fieldDescriptionInput" name="selectedFieldDescription" id="description-input" placeholder="{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.description.placeholder')}" onkeyup="selectedFieldDetailsFilling(event)" />
+        </div>
+        <div id="optionsOuterContainer">
+
+        </div>
+      </fieldset>
+    </form>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ * @param optionsEntered
+ */
+{template .optionsTemplate autoescape="true"}
+    <div id="optionsContainer" class="field-group">
+        <label for="addingNewOptions">
+            {getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.options')}
+            <span class="aui-icon icon-required">
+                (required)
+            </span>
+        </label>
+        <div>
+            <input id="addingNewOptions" class="text" type="text" name="customFieldOptions" placeholder="Add options" onkeyup="selectedFieldDetailsFilling(event)" />
+            <button type="button" class="aui-button aui-button-secondary addOptionButtons" onclick="addNewOption()">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.add')}</button>
+            <div id="errorOptionExist">This value already exists in the list.</div>
+            <div id="errorEmptyOption">Option cannot be empty.</div>
+            <div id="errorOptionLengthExceeding">Option cannot be more than 255 characters.</div>
+            <div id="options-container" class="options-container">
+                {foreach $option in $optionsEntered}
+                    <div class="optionsAdded">
+                    // <div id={$option} class="optionsAdded" draggable="true" ondragstart="dragStart(event)" ondrop="drop(event)" ondragover="dragDrop(event)">
+                        <div class="optionAddedData">
+                            {$option}
+                        </div>
+                        <a class="aui-icon aui-icon-small aui-iconfont-remove-label custom-field-options-delete deleteOption" onClick="updateOptionValues(this)"></a>
+                    </div>
+                {/foreach}
+            </div>
+        </div>
+    </div>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+* @param customFieldModifyHeading
+* @param mode
+* @param customField
+*/
+{template .modifyCustomFieldTypeModel autoescape="true"}
+<div class="tableOuterContainer">
+    <section role="dialog" data-aui-modal="true" id="customFieldModel" class="zephyr-dialog2 aui-layer aui-dialog2 aui-dialog2-medium" data-aui-remove-on-hide="true" aria-hidden="true">
+        <!-- Dialog header -->
+        <header class="aui-dialog2-header">
+            <!-- The dialogs title -->
+            <h2 class="aui-dialog2-header-main">{$customFieldModifyHeading}</h2>
+            <!-- Actions to render on the right of the header -->
+            <div class="aui-dialog2-header-secondary" id="customFieldSearchInput">
+
+            </div>
+            <!-- Close icon -->
+            <a class="aui-dialog2-header-close">
+                <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.close')}</span>
+            </a>
+        </header>
+        <!-- Main dialog content -->
+        <div id="modifyCustomFieldModelCardData" class="aui-dialog2-content deletingDialog ">
+            {if $mode == 'edit'}
+                {call .editCustomFieldDetails}
+                    {param customFieldEditing: $customField /}
+                {/call}
+            {elseif $mode == 'delete'}
+                {call .deletingCustomFieldDetails}
+                    {param deletingCustomFieldDetails: $customField /}
+                {/call}
+            {elseif $mode == 'configure'}
+                 {call .configureCustomFieldDetails}
+                    {param customFieldEditing: $customField /}
+                {/call}
+            {/if}
+        </div>
+        <!-- Dialog footer -->
+        <footer class="aui-dialog2-footer">
+            <!-- Actions to render on the right of the footer -->
+            <div class="aui-dialog2-footer-actions" id="modifyCustomFieldFooter">
+                {if $mode == 'edit'}
+                    {call .editCustomFieldFooter}
+                    {/call}
+                {elseif $mode == 'delete'}
+                    {call .deletingCustomFieldFooter}
+                         {param deletingCustomFieldId: $customField.id /}
+                    {/call}
+                {elseif $mode == 'configure'}
+                    {call .customizeCustomField}
+                    {/call}
+                {/if}
+            </div>
+        </footer>
+    </section>
+</div>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+* @param deletingCustomFieldDetails
+*/
+{template .deletingCustomFieldDetails autoescape="true"}
+    <div>
+         {getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.deleteConfirmation')} {$deletingCustomFieldDetails.name}
+         <div class="aui-message warning">
+            {getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.deleteConfirmationWarning')}
+         </div>
+    </div>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+* @param deletingCustomFieldId
+*/
+{template .deletingCustomFieldFooter autoescape="true"}
+    <div>
+        <button id="delete-custom-field" data-deletingCustomFieldId={$deletingCustomFieldId} onclick="customFieldDialogDeleteButton(this);" class="aui-button aui-button-primary">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.delete')}</button>
+        <button id="delete-custom-field-close-button" onclick="customFieldModifyClose();" class="aui-button aui-button-link">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.cancel')}</button>
+    </div>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+* @param customFieldEditing
+*/
+{template .editCustomFieldDetails autoescape="true"}
+    <form class="aui" action="#">
+        <div class="field-group">
+            <label for="updatingCustomFieldName">
+                {getText('zephyr.admin.menu.globalsettings.config.projects.name')}
+                <span class="aui-icon icon-required">(required)</span>
+            </label>
+            <span>
+                <div>
+                    <input id="updatingCustomFieldName" value="{$customFieldEditing.name}" class="text medium-field fieldNameInput" type="text" name="updatingCustomFieldName" onkeyup="updatingCustomField(event)" />
+                </div>
+                <div class="nameFieldNote">
+                    {getText('zephyr.admin.menu.globalsettings.config.projects.nameNote')}
+                </div>
+            </span>
+        </div>
+        <div class="field-group">
+            <label for="updatingCustomFieldDescription">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.description')}</label>
+            <textarea id="updatingCustomFieldDescription" class="textarea fieldDescriptionInput" name="updatingCustomFieldDescription" placeholder="Enter updated description here..." onkeyup="updatingCustomField(event)">
+                {$customFieldEditing.description}
+            </textarea>
+        </div>
+    </form>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+* @param customFieldEditing
+*/
+{template .configureCustomFieldDetails autoescape="true"}
+    <form class="aui configureCustomField" action="#">
+        <div class="field-group">
+            <label for="updatingCustomFieldName">
+                 {getText('zephyr.admin.menu.globalsettings.config.projects.name')} :
+            </label>
+             <span>{$customFieldEditing.name}</span>
+        </div>
+        <div class="field-group">
+            <label for="updatingCustomFieldDescription">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.description')} : </label>
+            <span>{$customFieldEditing.description}</span>
+        </div>
+        {if $customFieldEditing.customFieldOptionValues}
+            {if $customFieldEditing.customFieldOptionValues.length != 0}
+            <div class="field-group">
+                    <label for="editModeCustomField">Options</label>
+                    <div id="editModeCustomField" name="editModeCustomField">
+                        <input id="addingNewOptionsEditMode" class="text" type="text" name="customFieldOptions" />
+                        <button type="button" class="aui-button aui-button-secondary addOptionButtons" data-customFieldId="{$customFieldEditing.id}" onClick="addNewOptionInEditFlow(this)">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.add')}</button>
+                        <div id="errorOptionExist">This value already exists in the list.</div>
+                        <div id="errorEmptyOption">Option cannot be empty.</div>
+                        <div id="optionsOuterContainer">
+
+                        </div>
+                        <div id="errorOptionLengthExceeding">Option cannot be more than 255 characters.</div>
+                        <div id="errorCustomField">Atleast one option is required</div>
+                    </div>
+                </div>
+            {/if}
+        {/if}
+    </form>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+* @param customFieldEditingOptions
+*/
+{template .editCustomFieldOptions autoescape="true"}
+    <div class="options-container aui">
+        <fieldset>
+            {foreach $option in $customFieldEditingOptions}
+                <div id="custom-field-outer-id-{$option.id}" data-optionId={$option.id} class="optionsAdded">
+
+                    <div class="execution_status_wrapper zfj-editable-field custom-fields-option-read-mode-outer-container">
+                        <dd id="custom-field-readmode-{$option.id}" class="new-session-status custom-field-option-value" title="{$option.value}">{$option.value}</dd>
+                        <div class="edit-option-inner-container" data-optionId="{$option.id}" >
+                            <a id="custom-field-readmode-edit-option-{$option.id}" href="#" class="icon icon-edit-sml zfj-overlay-icon custom-field-edit-option">
+                                <span rel="{$option.id}">{$option.value}</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="custom-field-writemode-outer-container">
+                        <input value="{$option.value}" id="custom-field-option-update-{$option.id}" class="custom-field-editmode-option-value" />
+                        <div class="save-options" tabindex="1">
+                            <button id="save-custom-field-option" data-optionId="{$option.id}" class="aui-button submit" type='button'>
+                                <span class="aui-icon aui-icon-small aui-iconfont-success">Save</span>
+                            </button>
+                            <button id="cancel-custom-field-edit" class="aui-button cancel" type='button'>
+                                <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Cancel</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <a class="aui-icon aui-icon-small aui-iconfont-remove-label custom-field-options-delete deleteOption" title="This will delete the option" data-id="{$option.id}" onClick="deleteOptionInEditMode(this)"></a>
+                    <div class='errorOptionName'>Option must have atleast one character</div>
+                </div>
+            {/foreach}
+        </fieldset>
+    </div>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+*/
+{template .editCustomFieldFooter autoescape="true"}
+    <div>
+            <button id="edit-custom-field" onclick="customFieldDialogUpdateButton();" class="aui-button aui-button-primary disabled">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.update')}</button>
+            <button id="edit-custom-field-close-button" onclick="customFieldModifyClose();" class="aui-button aui-button-link">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.cancel')}</button>
+    </div>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+*/
+{template .customizeCustomField autoescape="true"}
+    <div>
+            <button id="edit-custom-field-close-button" onclick="customFieldModifyClose();" class="aui-button aui-button-link">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.cancel')}</button>
+    </div>
+{/template}
+
+
+/**
+* Renders message for custom field.
+* @param responseMessage
+*/
+{template .createCustomFieldMessage autoescape="true"}
+    <div>
+        <ul>
+            {foreach $key in keys($responseMessage)}
+                <li>{$key} : <b>{$responseMessage[$key]}</b></li>
+            {/foreach}
+        </ul>
+    </div>
+{/template}

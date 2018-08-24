@@ -1,0 +1,7 @@
+<div class="aui-dialog-content">
+    <div class="form-body">
+        <div class="aui-message error" style="top:10px;"><span class="aui-icon icon-error"></span>
+			<p>$i18n.getText($errors)</p>
+        </div>
+	</div>
+</div>

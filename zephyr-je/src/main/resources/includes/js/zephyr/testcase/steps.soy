@@ -1,0 +1,595 @@
+{namespace ZEPHYR.Templates.Steps}
+
+/**
+ * Render a step row
+ * @param teststep
+ * @param baseUrl
+ * @param stepId
+ */
+{template .stepRow autoescape="false"}
+<td class="project-config-version-name zteststep-order">
+    <span data-field-name="orderId" class="zfj-nowrap">
+    {$teststep.orderId}
+    </span>
+</td>
+<td class="stepColumn-teststep project-config-version-description zteststep-step {if not $teststep.step} jira-restfultable-editable-no-value{/if}">
+    <span class="jira-restfultable-editable zfj-editable-field" data-field-name="step">
+    <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+     {if $teststep.htmlStep}
+        {$teststep.htmlStep}
+    {else}
+        <em>{getText('view.issue.steps.table.column.add.step')}<em>
+    {/if}
+    </span>
+</td>
+<td class="stepColumn-testdata project-config-version-description zteststep-data {if not $teststep.data} jira-restfultable-editable-no-value{/if}">
+    <span class="jira-restfultable-editable zfj-editable-field" data-field-name="data">
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+        {if $teststep.htmlData}
+            {$teststep.htmlData}
+        {else}
+            <em>{getText('view.issue.steps.table.column.add.data')}<em>
+        {/if}
+    </div>
+</td>
+<td class="stepColumn-testresult project-config-version-description zteststep-result {if not $teststep.result} jira-restfultable-editable-no-value{/if}">
+    <span class="jira-restfultable-editable zfj-editable-field" data-field-name="result">
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+        {if $teststep.htmlResult}
+            {$teststep.htmlResult}
+        {else}
+            <em>{getText('view.issue.steps.table.column.add.result')}<em>
+        {/if}
+    </span>
+</td>
+{foreach $customField in $teststep.customFieldsOrder}
+  <td class="stepColumn-{$customField.customfieldId} project-config-version-custom">
+    <span class="jira-restfultable-editable zfj-editable-field" data-field-type={$customField.customFieldType} data-field-name={$customField.customFieldName}>
+      {if $customField.customFieldType == 'CHECKBOX'}
+        {if $teststep.customFields[$customField.customfieldId]}
+          <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+        {else}
+          <span>{$customField.customDefaultValue}</span>
+        {/if}
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {elseif $customField.customFieldType == 'RADIO_BUTTON'}
+        {if $teststep.customFields[$customField.customfieldId]}
+          <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+        {else}
+          <span>{$customField.customDefaultValue}</span>
+        {/if}
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {elseif $customField.customFieldType == 'MULTI_SELECT'}
+        {if $teststep.customFields[$customField.customfieldId]}
+          <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+        {else}
+          <span>{$customField.customDefaultValue}</span>
+        {/if}
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {elseif $customField.customFieldType == 'SINGLE_SELECT'}
+        {if $teststep.customFields[$customField.customfieldId]}
+          <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+        {else}
+          <span>{$customField.customDefaultValue}</span>
+        {/if}
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {elseif $customField.customFieldType == 'NUMBER'}
+        {if $teststep.customFields[$customField.customfieldId]}
+          <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+        {else}
+          <span>{$customField.customDefaultValue}</span>
+        {/if}
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {elseif $customField.customFieldType == 'LARGE_TEXT'}
+        {if $teststep.customFields[$customField.customfieldId]}
+          <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+        {else}
+          <span>{$customField.customDefaultValue}</span>
+        {/if}
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {elseif $customField.customFieldType == 'TEXT'}
+        {if $teststep.customFields[$customField.customfieldId]}
+          <span>{$teststep.customFields[$customField.customfieldId].value}</span>
+        {else}
+          <span>{$customField.customDefaultValue}</span>
+        {/if}
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {elseif $customField.customFieldType == 'DATE_TIME'}
+        <span>{call convertDate}
+                {param value: $teststep.customFields[$customField.customfieldId] ? $teststep.customFields[$customField.customfieldId].value : $customField.customDefaultValue /}
+                {param isDateTime : true /}
+              {/call}
+        </span>
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {elseif $customField.customFieldType == 'DATE'}
+        <span>{call convertDate}
+                {param value: $teststep.customFields[$customField.customfieldId] ? $teststep.customFields[$customField.customfieldId].value : $customField.customDefaultValue  /}
+                {param isDateTime : false /}
+              {/call}</span>
+        <span class="icon icon-edit-sml zfj-overlay-icon"></span>
+      {/if}
+      </span>
+  </td>
+{/foreach}
+<td class="stepColumn-attachment project-config-version-attachment">
+  <div class="mod-content">
+    <div class="item-attachments" id="file_attachments">
+      {if $teststep.attachmentsMap}
+      {if $teststep.attachmentsMap.length}
+      <a id="attachment-inlineDialog-{$stepId}" class="attachment-inline-dialog-trigger" onclick='triggerInlineDialog({$stepId})'>{getText('attachment.operation.view.message')}</a>
+      <div id="attachment-content-container-{$stepId}" class="attachment-container" style="display: none;">
+        <div class="attachment-content-wrapper" data-id="{$stepId}">
+          <ol>
+        {foreach $attachment in $teststep.attachmentsMap}
+           <li class="attachment-content attachment-content{$attachment.fileId}" id="attachment-content{$attachment.fileId}"  data-fileid={$attachment.fileId} data-fileName={$attachment.fileName} data-dateCreated={$attachment.dateCreated} data-fileSize={$attachment.fileSize} data-fileIcon={$attachment.fileIcon} data-author={$attachment.author} data-fileIconAltText={$attachment.fileIconAltText} data-comment="{$attachment.comment}">
+                <div class="zephyr-attachment-thumb">
+                     <a href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">
+                          <img width="16" height="16" border="0" alt="{$attachment.fileIconAltText}" src="{$baseUrl}/images/icons/attach/{$attachment.fileIcon}">
+                     </a>
+                 </div>
+              <dl>
+              <dt class="zephyr-attachment-title">
+                <a title="{$attachment.fileName}" href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">{$attachment.fileName}</a>
+              </dt>
+              <dd class="zephyr-attachment-delete">
+                <a href="javascript:void(0);" id="entity-operations-delete" class="icon icon-delete entity-operations-delete" title="Delete this attachment" val="{$attachment.fileId}:{$attachment.fileName}"></a>
+              </dd>
+            </dl>
+          </li>
+        {/foreach}
+        <ol>
+        </div>
+      </div>
+      {/if}
+      {/if}
+    </div>
+  </div>
+</td>
+<!--<td class="project-config-operations" style="width:50px;">
+</td>-->
+<td class="nav test-step-actions">
+	{if $teststep.dropdown2Support == true}
+		<a href="teststep-dd-{$teststep.id}" aria-owns="teststep-dd-{$teststep.id}" aria-haspopup="true" class="aui-steps-dropdown aui-dropdown2-trigger aui-style-default aui-dd-link icon-tools-small">
+	  		<span class="aui-icon aui-icon-small"></span>
+	  	</a>
+		<div id="teststep-dd-{$teststep.id}" class="aui-dropdown2 aui-style-default">
+		    <ul class="aui-list-truncate">
+		        <li><a href="#" id="step-{$teststep.id}-action-clone" class="test-step-action-clone">{getText('zephyr.je.clone.button.label')}</a></li>
+		        <li><a id="step-{$teststep.id}-operations-trigger" class="project-config-operations-trigger" href="#">{getText('zephyr.je.delete.button.title')}</a></li>
+            <li><a class="zephyr-file-dialog add-attachments-link" id="add-attachments-link"  href="{contextPath}/jira/secure/AttachFileAction!default.jspa?entityId={$teststep.id}&amp;entityType=TESTSTEP&amp;projectId=&amp;id=">{getText('zephyr.common.addAttachment.tooltip.label')}</a></li>
+        </ul>
+		</div><!-- .aui-dropdown2 -->
+	{else}
+		<a id="teststep-dd-{$teststep.id}" aria-owns="teststep-dd-{$teststep.id}" aria-haspopup="true" class="aui-steps-dropdown drop-arrow js-default-dropdown aui-dd-link icon-tools-small">
+	  		<span class="icon drop-menu"></span>
+	  	</a>
+		<div class="aui-list hidden">
+			<ul class="aui-list-section aui-first aui-last">
+				<li class="aui-list-item layout-switcher-item"><a href="#" class="aui-list-item-link test-step-action-clone" id="step-{$teststep.id}-action-clone">{getText('zephyr.je.clone.button.label')}</a></li>
+        		<li class="aui-list-item layout-switcher-item"><a href="#" class="aui-list-item-link project-config-operations-trigger" id="step-{$teststep.id}-operations-trigger">{getText('zephyr.je.delete.button.title')}</a></li>
+            <li class="aui-list-item layout-switcher-item"><a class="aui-list-item-link zephyr-file-dialog add-attachments-link" id="add-attachments-link" href="{contextPath}/jira/secure/AttachFileAction!default.jspa?entityId={$teststep.id}&amp;entityType=TESTSTEP&amp;projectId=&amp;id=">{getText('zephyr.common.addAttachment.tooltip.label')}</a></li>
+      </ul>
+		</div>
+	{/if}
+</td>
+<!--<td class="project-config-throbber"></td>-->
+{/template}
+
+
+/**
+ * @param project
+ * @param values
+ * @param update
+ * @param released
+ * @param archived
+ * @param baseUrl
+ */
+{template .editStepRow}
+<td>{$values.orderId ? $values.orderId : ''}</td>
+<td class="teststep-editable teststep-editable-step stepColumn-teststep">
+	<textarea name="step" rows="4" class="textarea ztextarea noresize ztextarea-step">{$values.step ? $values.step : ''}</textarea>
+</td>
+<td class="teststep-editable teststep-editable-data stepColumn-testdata">
+	<textarea name="data" rows="4" class="textarea ztextarea noresize ztextarea-data">{$values.data ? $values.data : ''}</textarea>
+</td>
+<td class="teststep-editable teststep-editable-result stepColumn-testresult">
+	<textarea name="result" rows="4" class="textarea ztextarea noresize ztextarea-result">{$values.result ? $values.result : ''}</textarea>
+</td>
+{foreach $customField in $values.customFieldsOrder}
+  <td class="stepColumn-{$customField.customfieldId} teststep-editable teststep-editable-customFields" data-id={$customField.customfieldId} data-type={$customField.customFieldType} data-valueid={$values.customFields and $values.customFields[$customField.customfieldId] ? $values.customFields[$customField.customfieldId].customFieldValueId : '' }>
+    {if $customField.customFieldType == 'CHECKBOX'}
+      <div class="type-multicheckboxes">
+        {foreach $checkbox in $values.customFieldsValue[$customField.customfieldId]}
+          <div>
+            <input {$values.orderId and $checkbox.value and $values.customFields[$customField.customfieldId] ? 'checked' : ''} class="checkbox" type="checkbox" data-value={$checkbox.name}>
+            <label>{$checkbox.name}</label>
+          </div>
+        {/foreach}
+      </div>
+    {elseif $customField.customFieldType == 'RADIO_BUTTON'}
+      <div class="type-radiobuttons">
+        {foreach $radioButton in $values.customFieldsValue[$customField.customfieldId]}
+          <div>
+            <input {$values.orderId  and $radioButton.value and $values.customFields[$customField.customfieldId] ? 'checked' : ''} name="radio" class="radio" type="radio" data-value={$radioButton.name}>
+            <label>{$radioButton.name}</label>
+          </div>
+        {/foreach}
+      </div>
+    {elseif $customField.customFieldType == 'MULTI_SELECT'}
+      <div class="type-multiselect">
+        <select class="multi-select" multiple="multiple" name="multi-select">
+          {foreach $options in $values.customFieldsValue[$customField.customfieldId]}
+            <option {$values.orderId  and $options.value and $values.customFields[$customField.customfieldId] ? 'selected' : ''} value={$options.name}>{$options.name}</option>
+          {/foreach}
+        </select>
+      </div>
+    {elseif $customField.customFieldType == 'SINGLE_SELECT'}
+      <div class="type-select">
+        <select class="select">
+          {foreach $options in $values.customFieldsValue[$customField.customfieldId]}
+            <option {$values.orderId  and $options.value and $values.customFields[$customField.customfieldId] ? 'selected' : ''} value={$options.name}>{$options.name}</option>
+          {/foreach}
+        </select>
+      </div>
+    {elseif $customField.customFieldType == 'NUMBER'}
+      <div class="type-number">
+        <input class="text" type="number" title="Text input" value={$values.orderId and $values.customFields[$customField.customfieldId] ? $values.customFields[$customField.customfieldId].value : ''}>
+      </div>
+    {elseif $customField.customFieldType == 'LARGE_TEXT'}
+      <div class="type-largeText">
+          <textarea rows="4" class="textarea ztextarea ztextarea-customField noresize">{$values.orderId and $values.customFields[$customField.customfieldId] ? $values.customFields[$customField.customfieldId].value : ''}</textarea>
+      </div>
+    {elseif $customField.customFieldType == 'TEXT'}
+      <div class="type-text">
+        <input class="text" type="text" title="Text input" value={$values.orderId  and $values.customFields[$customField.customfieldId] ? $values.customFields[$customField.customfieldId].value : ''}>
+      </div>
+    {elseif $customField.customFieldType == 'DATE_TIME'}
+      <div class="type-dateTime">
+        <input class="text" type="text" id="dateTime-{$values.id ? $customField.customfieldId : 'default-' + $customField.customfieldId}" title="Text input" value="{call convertDate}
+                {param value: $values.id and $values.customFields[$customField.customfieldId] ? $values.customFields[$customField.customfieldId].value : null /}
+                {param isDateTime : true /}
+              {/call}">
+      </div>
+    {elseif $customField.customFieldType == 'DATE'}
+      <div class="type-date">
+        <input class="text" type="text" id="date-{$values.id ? $customField.customfieldId : 'default-' + $customField.customfieldId}" title="Text input" value="{call convertDate}
+                {param value: $values.id and $values.customFields[$customField.customfieldId] ? $values.customFields[$customField.customfieldId].value : null /}
+                {param isDateTime : false /}
+              {/call}">
+      </div>
+    {/if}
+  </td>
+{/foreach}
+<td class="teststep-editable-attachment stepColumn-attachment">
+  {if $values.attachmentsMap}
+    {if $values.attachmentsMap.length}
+      <a id="attachment-inlineDialog-edit-{$values.id}" class="attachment-inline-dialog-trigger" onclick='triggerInlineDialogEditSteps({$values.id})'>{getText('attachment.operation.view.message')}</a>
+      <div id="attachment-content-container-{$values.id}" class="attachment-container" style="display: none;">
+        <div class="attachment-content-wrapper" data-id="{$values.id}">
+          <ol>
+            {foreach $attachment in $values.attachmentsMap}
+             <li class="attachment-content attachment-content{$attachment.fileId}" id="attachment-content{$attachment.fileId}"  data-fileid={$attachment.fileId} data-fileName={$attachment.fileName} data-dateCreated={$attachment.dateCreated} data-fileSize={$attachment.fileSize} data-fileIcon={$attachment.fileIcon} data-author={$attachment.author} data-fileIconAltText={$attachment.fileIconAltText} data-comment="{$attachment.comment}">
+                  <div class="zephyr-attachment-thumb">
+                       <a href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">
+                          <img width="16" height="16" border="0" alt="{$attachment.fileIconAltText}" src="{$baseUrl}/images/icons/attach/{$attachment.fileIcon}">
+                       </a>
+                   </div>
+                <dl>
+                <dt class="zephyr-attachment-title">
+                  <a title="{$attachment.fileName}" href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">{$attachment.fileName}</a>
+                </dt>
+                <dd class="zephyr-attachment-delete">
+                  <a href="javascript:void(0);" id="entity-operations-delete" class="icon icon-delete entity-operations-delete" title="Delete this attachment" val="{$attachment.fileId}:{$attachment.fileName}"></a>
+                </dd>
+              </dl>
+            </li>
+          {/foreach}
+        <ol>
+        </div>
+      </div>
+    {/if}
+  {/if}
+</td>
+<!-- Original code -->
+<!--
+<td class="jira-restfultable-icon project-config-release-status">
+    {if $archived and $released}
+        <span class="project-config-icon project-config-icon-version-released project-config-icon-version-archived"></span>
+    {elseif $archived}
+        <span class="project-config-icon project-config-icon-version-archived"></span>
+    {elseif $released}
+        <span class="project-config-icon project-config-icon-version-released"></span>
+    {else}
+        <span class="project-config-icon project-config-icon-version"></span>
+    {/if}
+</td>
+<td class="project-config-version-name">
+    <input name="name" type="text" class="text" value="{$values.name ? $values.name : ''}"  />
+     {if not $update}
+        <input name="project" type="hidden" value="{$project}">
+    {/if}
+</td>
+<td class="project-config-version-description">
+    <input name="description" type="text" class="text" value="{$values.description ? $values.description : ''}"  />
+</td>
+<td class="project-config-version-release-date">
+    <div class="project-config-date-field">
+        <input id="project-config-version-release-date-field" name="userReleaseDate" type="text" class="text short-field" value="{$values.userReleaseDate ? $values.userReleaseDate : ''}" />
+        <a href="#" id="project-config-versions-release-date-trigger" title="{getText('date.picker.select.date')}">
+            <span class="aui-icon icon-date">{getText('date.picker.select.date')}</span>
+        </a>
+    </div>
+</td>
+-->
+{/template}
+
+/**
+ * Render the dialog for confirming teststep delete
+ * @param teststep
+ */
+{template .deleteStepsConfirmationDialog}
+	<h2 class="dialog-title">{getText('teststep.operation.delete.label')} {$teststep.orderId}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="#" method="delete">
+		<div class="form-body">
+			<div id="teststep-aui-message-bar">
+				<div class="aui-message warning">
+        	        <span class="aui-icon icon-warning"></span>
+            	    {getText('teststep.operation.delete.warning')}
+	            </div>
+	        </div>
+            <label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="cycle-delete-form-submit" value="{getText('common.words.delete')}" />
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+
+/**
+ * Render the dialog as Create Cycle
+ * @param image
+ * @param altImage
+ * @param changeFlag
+ */
+{template .caroselView}
+<div class="image-corosel-overlay" id="image-corosel-overlay">
+	<div class="image-container">
+		<div class="corosel-inner-container">
+			{if $changeFlag.previousFlag}
+				<div class="previous-image-options" onClick="previousImageCorosel(this)" data-currentId="{$altImage.fileId}">
+
+				</div>
+			{else}
+				<div class="previous-image-options hide-visibility" onClick="previousImageCorosel(this)" data-currentId="{$altImage.fileId}">
+
+				</div>
+			{/if}
+			<div class="image-outer-container" id="image-outer-container">
+        <div class="close-image-corosel" onClick="closeCorosel(this)">
+          <span class="aui-icon aui-icon-small aui-iconfont-remove-label close-icon"></span>
+        </div>
+				<img class="image-inner-container" src="{$image}" alt="{$altImage.fileName}"/>
+				<div class="image-name-details">
+					{$altImage.fileName}
+				</div>
+        <div class="image-details">
+          <div style="cursor:pointer" data-href="{$image}" onclick="downloadImage(this)">
+            <span class="file-download-container">
+              {getText('zephyr.execution.download')}
+              <span class="file-size-container">
+                ({$altImage.imageSizeInMb} MB)
+              </span>
+              <span class="download-icon"></span>
+            </span>
+          </div>
+        </div>
+			</div>
+			{if $changeFlag.nextFlag}
+				<div class="next-image-options" onClick="nextImageCorosel(this)" data-currentId="{$altImage.fileId}">
+				</div>
+			{else}
+				<div class="next-image-options hide-visibility" onClick="nextImageCorosel(this)" data-currentId="{$altImage.fileId}">
+				</div>
+			{/if}
+		</div>
+	</div>
+</div>
+{/template}
+
+
+/**
+ * Render the dialog for cloning the test step
+ * @param teststep
+ */
+{template .cloneStepConfirmationDialog}
+	<h2 class="dialog-title">{getText('teststep.operation.clone.label', $teststep.orderId)}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui teststep-clone-dialog-form" action="#" method="create">
+		<div class="form-body">
+			<fieldset>
+	    		<div class="field-group">
+					<label for="clone-test-step">{getText('view.issue.steps.table.column.step')}</label>
+                	<span id="clone-test-step" class="clone-test-step" title="{getText('teststep.operation.clone.step.prefix')} - {if $teststep.step} {$teststep.step}{/if}">{getText('teststep.operation.clone.step.prefix')} - {if $teststep.step} {$teststep.step|truncate:40}{/if}</span>
+                </div>
+			</fieldset>
+			<fieldset>
+				<div class="field-group">
+				    <label for="clone-append-above">{getText('teststep.operation.clone.step.insert.before')} {$teststep.orderId}</label>
+    				<input type="radio" value="0" name="clone-append" id="clone-append-above" class="radio">
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="field-group">
+				    <label for="clone-append-below"> {getText('teststep.operation.clone.step.insert.after')} {$teststep.orderId}</label>
+    				<input type="radio" value="-1" name="clone-append" id="clone-append-below" class="radio" checked>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="field-group">
+				    <label for="clone-append-below">{getText('teststep.operation.clone.step.insert.at')}</label>
+    				<input type="text" name="clone-append" id="clone-insert-at" class="text">
+    				<div class="error" id="teststep-clone-insertat-error"></div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="field-group">
+				    <label for="clone-append-end">{getText('teststep.operation.clone.step.append.last')}</label>
+    				<input type="radio" value="-2" name="clone-append" id="clone-append-end" class="radio">
+				</div>
+			</fieldset>
+    </div>
+    <!-- <div class="clone-note">
+       {getText('teststep.operation.clone.note')}
+       * Cloned test step will be added on the current page
+    </div> -->
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input id="assign-issue-submit" class="aui-button" type="submit" value="{getText('zephyr.je.clone.button.label')}" /*title="Press Alt+Shift+s to submit this form"*/ name="{getText('zephyr.je.clone.button.label')}" accesskey="s">
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+      </div>
+	</form>
+{/template}
+
+/**
+ * Renders column customisation view
+ * @param columns
+ * @param submitButtonId
+ * @param closeButtonId
+ */
+{template .columnCustomisation}
+<div class="execution-column-picker-dialog-wrapper">
+  <h3>{getText('cycle.ChooseColumnAttribute.label')}</h3>
+  <div class="aui-list-wrapper aui-list">
+      <div class="aui-list-scroll">
+          <ul class="aui-list">
+            {foreach $key in keys($columns)}
+              <li class="check-list-item">
+                  <label class="item-label">
+                    <input type="checkbox" name="{$columns[$key].displayName}" id={$key} class="step-column-input" {($columns[$key].isVisible == 'true') ? 'checked' : ''}><span>{$columns[$key].displayName}</span>
+                  </label>
+              </li>
+            {/foreach}
+          </ul>
+      </div>
+  </div>
+  <div id="errorColumnSelector">{getText('zephyr.gridData.selectAtleastOneOption')}</div>
+  <div class="button-panel">
+      <input class="aui-button" type="button" value="Done" id="{$submitButtonId}" href="javascript:void(0)">
+      <a href="javascript:void(0)" class="aui-button aui-button-link close-dialog" id="{$closeButtonId}">{getText('zephyr-je.close.link.title')}</a>
+  </div>
+</div>
+{/template}
+
+/**
+ * Render Steps Table
+ */
+{template .stepsGridComponent}
+    <div class="grid-wrapper">
+    <!-- <grid-component id="testDetailGrid"></grid-component>-->
+     <div class="grid-component" id="testDetailGrid"></div> 
+
+    </div>
+{/template}
+
+/**
+ * Render Steps Table
+ */
+{template .stepsGridPagination}
+    <div id="pagination-outer-container" class="pagination-outer-container">
+
+    </div>
+{/template}
+
+/** * creates an equivalent of execute test vm 
+* @param limit 
+* @param offset 
+* @param maxRecords 
+* @param lastPageLowerLimit
+*/
+{template .paginationComponent autoescape="true"}
+<div class="pagination-wrapper">
+  <div class="pagination-page-number-container">
+    
+    {if $offset == 0}
+    <div class="first-page-number disabled">
+      <span id="first-page-pagination">
+        1 - {if $limit > $maxRecords} {$maxRecords} {else} {$limit} {/if}
+      </span>      
+      <span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-arrow disabled"></span>
+      <span class="ellipsis">...</span>      
+    </div>
+    {else}
+    <div class="first-page-number">
+      <span id="first-page-pagination" onclick='firstPagePagination()'>
+        1 - {if $limit > $maxRecords} {$maxRecords} {else} {$limit} {/if}
+      </span>
+      
+      <span id="pagination-go-to-next-page" onclick='paginationGoToNextPage()'>
+        <span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-arrow"></span>
+        <span class="ellipsis">...</span>
+      </span>
+    </div>
+    {/if}
+    <div class="current-page-number">
+      {$offset + 1} - {if $offset + $limit > $maxRecords} {$maxRecords} {else} {$offset + $limit} {/if}
+    </div>
+    {if $offset == $lastPageLowerLimit}
+    <div class="last-page-number disabled">      
+      <span id="pagination-go-to-previous-page">
+        <span class="ellipsis">...</span>
+        <span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow"></span>
+      </span>      
+      <span id="last-page-pagination">
+        {$lastPageLowerLimit + 1} - {$maxRecords}
+      </span>
+    </div>
+    {else}
+    <div class="last-page-number">
+      
+      <span id="pagination-go-to-previous-page" onclick='paginationGoToPreviousPage()'>
+        <span class="ellipsis">...</span>
+        <span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow"></span>
+      </span>
+      
+      <span id="last-page-pagination" onclick='lastPagePagination()'>
+        {$lastPageLowerLimit + 1} - {$maxRecords}
+      </span>
+    </div>
+    {/if}
+  </div>
+</div>
+{/template}
+
+/**
+ * Render Steps Table Scroll
+ * @param? freezeColumnWidth
+ * @param? unfreezeColumnWidth
+ */
+{template .stepsGridComponentScroll}
+    <div id='external-scroll' class='external-scroll'>
+      <div class='frozen' style="width: {$freezeColumnWidth}"></div>
+      <div class='unfrozen'>
+        <div class='scroll-item' style="width: {$unfreezeColumnWidth}"></div>
+      </div>
+      <div class='frozen action'></div>
+    </div>
+{/template}
+
+
+
+
+/**
+ * Render Steps Table
+ */
+{template .issuePopoverGridComponent}
+    <div class="popupHeading">
+        <h2 class="toggle-title">{getText('view.issue.steps.section.heading')}</h2>
+    </div>
+    <div class="grid-component" id="testDetailGridPopover"></div>
+{/template}

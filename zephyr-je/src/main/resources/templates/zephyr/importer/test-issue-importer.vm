@@ -1,0 +1,432 @@
+$webResourceManager.requireResource("com.atlassian.auiplugin:ajs") $webResourceManager.requireResource("jira.webresources:jira-global")
+$webResourceManager.requireResourcesForContext("com.thed.zephyr.je:zephyr-project-dashboard-resources") $webResourceManager.requireResourcesForContext("com.thed.zephyr.je:zephyr-je-tests-importer")
+$webResourceManager.requireResourcesForContext("com.thed.zephyr.je:zephyr-je-traceability") #set ($ctxPath = $req.getContextPath())
+
+
+<html>
+
+<head>
+    <title>Zephyr for JIRA - Importer</title>
+    <content tag="section">zephyr_je.topnav.tests</content>
+    <meta name="decorator" content="jira.message">
+</head>
+
+<body>
+    #if ($req.getAttribute("errors")) #set ($errors = $req.getAttribute("errors")) #else #set ($errors = "") #end
+
+    <div class="aui-page-panel" id="stepped-process">
+        <div class="aui-page-panel-inner">
+
+            <section class="aui-page-panel-content">
+                <header class="aui-page-header importer-header">
+                    <div class="aui-page-header-inner">
+                        <div class="aui-page-header-main">
+                            <h2 style="display : inline; font-size: 30px;">$i18n.getText('com.thed.zephyr.je.topnav.tests.test.importer.import.label')</h2>
+                            <div class="icon-help help-item" onclick="Zephyr.Importer.Config.HandleHelpButtonClick();"></div>
+                        </div>
+                        <!-- .aui-page-header-main -->
+                    </div>
+                    <!-- .aui-page-header-inner -->
+                </header>
+                <!-- .aui-page-header -->
+                <form class="aui" id="testissueimportform" method="post">
+                    <div class="form-body">
+                        <input type="hidden" id="zerrors" value="$textutils.htmlEncode($!errors)" /> #if($!errors && $!errors.length() > 0)
+                        <div style="opacity:0.9;">
+                            #parse("/templates/zephyr/common/licenseerror.vm")
+                        </div>
+                        #else
+                        <fieldset id="dropdownsFieldSet">
+
+                            <div class="main-container">
+                                <div class="container-wrapper">
+                                    <div class="main-container-child1" style="padding-bottom: 20px;">
+                                        <div class="">
+                                            <div class="divison-container">
+
+                                                <div class="name-identifier">
+                                                    <b class="required">
+                                                        <label for="project-selection">$action.getText( 'zephyr.je.admin.plugin.test.section.item.zephyr.custom.project')
+                                                        </label>
+                                                    </b>
+                                                </div>
+                                                <div class="value-container">
+                                                    <select id="zephyr-importer-project" name="projectSelection" type="single" class="select"></select>
+                                                    <br>
+                                                    <p style="display : inline;color : red;" id="errorForDropDown"></p>
+                                                    <span id="selectedProjectSpan"></span>
+                                                </div>
+                                            </div>
+                                            <div class="divison-container">
+                                                <div class="name-identifier">
+                                                    <b class="required">
+                                                        <label for="issue-type-selection">$action.getText( 'zephyr-je.pdb.traceability.requirement.issuetype.title')
+                                                        </label>
+                                                    </b>
+                                                </div>
+                                                <!-- <span class="icon aui-ss-icon noloading drop-menu"><span>More</span></span> -->
+
+
+                                                <div id="zephyr-importer-issuetypes" class="value-container">
+                                                    <select id="zephyr-importer-issueTypesSelect" style="width : 195px; -webkit-appearance: none;" name="issueTypeSelection"
+                                                        type="single" class="select">
+                                                    </select>
+                                                </div>
+                                                <!-- <div></div> -->
+                                                #*
+                                                <div>
+                                                    <label for="issue-type-selection">
+                                                        <img class="icon jira-icon-image" src="$ctxPath/download/resources/com.thed.zephyr.je/images/icons/ico_zephyr_issuetype.png"
+                                                            alt> Test
+                                                    </label>
+                                                    </b>
+                                                </div>*#
+                                            </div>
+
+
+                                            <div class="divison-container-children">
+                                                <div class="name-identifier">
+                                                    <b>
+                                                        <label for="file-type-selection">$action.getText( 'zephyr-je.pdb.importer.filetype.label')
+                                                        </label>
+                                                    </b>
+                                                </div>
+                                                <div class="value-container">
+                                                    <div style="position: relative;">
+                                                        <select id="zephyr-importer-filetype" name="fileTypeSelection" type="single" class="select" style="width : 196px; -webkit-appearance: none;"></select>
+                                                        <span class="icon aui-ss-icon noloading drop-menu custom-drop" id="customDrop" style="position : absolute; ">
+                                                            <span>More</span>
+                                                        </span>
+                                                    </div>
+                                                    <br/>
+                                                    <span id="selectedFileTypeSpan"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div style="width: auto;">
+
+
+
+                                            <div class="divison-container">
+                                                <div class="name-identifier">
+                                                    <b>
+                                                        <label for="link-type-selection">$action.getText( 'zephyr-je.pdb.importer.linktype.label')
+                                                        </label>
+                                                    </b>
+                                                </div>
+                                                <div class="value-container">
+                                                    <div style="position: relative;">
+                                                        <select id="zephyr-importer-linkType" name="linkTypeSelection" type="single" class="select" style="width : 196px; -webkit-appearance: none;"></select>
+                                                        <span class="icon aui-ss-icon noloading drop-menu custom-drop" id="customDrop" style="position : absolute; ">
+                                                            <span>More</span>
+                                                        </span>
+                                                    </div>
+                                                    <span id="selectedIssueTypeSpan"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="divison-container">
+                                                <div class="name-identifier">
+                                                    <b>
+                                                        <label for="links-selection">$action.getText( 'zephyr-je.pdb.importer.links.label')
+                                                        </label>
+                                                    </b>
+                                                </div>
+                                                <div id="linkscolumn" class="value-container">
+                                                    <div style="position: relative;">
+                                                        <select id="zephyr-importer-links" name="linksSelection" type="single" class="select" style="width : 197px; -webkit-appearance: none;"></select>
+                                                        <span class="icon aui-ss-icon noloading drop-menu custom-drop" id="customDrop" style="position : absolute; ">
+                                                            <span>More</span>
+                                                        </span>
+                                                    </div>
+                                                    <span id="selectedLinksSpan"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="divison-container">
+                                                <div class="name-identifier">
+                                                    <b>
+                                                        <label for="file-pref-selection">$action.getText( 'zephyr-je.pdb.importer.filepref.label')
+                                                        </label>
+                                                    </b>
+                                                </div>
+                                                <div class="value-container" style="display: flex; position: relative;">
+
+                                                    <input type="text" name="txtFile" id="txtFile" readonly="true">
+                                                    <input class="aui-button aui-button-primary" type="button" onclick="HandleFileButtonClick();" value="$i18n.getText('zephyr-je.pdb.importer.browse.label')" style="margin: 0px 0px 0px 12px; position: absolute; left: 100%;">
+                                                    <input type="file" class="ignore-inline-attach" id="zephyr-importer-filepref" style="display: none;">
+                                                    <span id="filePrefSpan"></span>
+                                                </div>
+                                            </div>
+                                            <div style="margin-left: 175px; ">
+                                                    <input class="aui-button" type="button" id="zephyr-importer-filefieldsmapping-retrieve" value="Retrieve Mapping" style="display:none; margin-left: 0px;">
+                                                    <input class="aui-button" type="button" id="zephyr-importer-filefieldsmapping-save" value="Save Mapping" style="display:none">
+                                            </div>
+                                            <p style="color: red;" id="error-file-select"></p>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="filetypeprefrow">
+                                    <div class="main-container-child1">
+                                        <div>
+                                            <div style="padding-top : 10px;">
+                                                <b>
+                                                    <label for="file-settings-selection" class="label-text">$action.getText( 'zephyr-je.pdb.importer.filesettings.label')
+                                                    </label>
+                                                </b>
+                                            </div>
+                                            <div class="main-container-child1">
+
+                                                <div id="excelPropDiv" style="padding-bottom : 5px;">
+                                                    <div class="divison-container-children">
+                                                        <div class="name-identifier">
+                                                            <label for="excel-file-discriminator-selection" style="font-weight: bold;">$action.getText( 'zephyr-je.pdb.importer.excelfilediscriminator.label')
+                                                            </label>
+                                                        </div>
+                                                        <div class="value-container">
+                                                            <div style="position: relative;">
+                                                                <select id="zephyr-importer-discriminator" name="excelFileDiscriminatorSelection" type="single" class="select" style="-webkit-appearance: none;"></select>
+                                                                <span class="icon aui-ss-icon noloading drop-menu custom-drop" id="customDrop" style="position : absolute; ">
+                                                                    <span>More</span>
+                                                                </span>
+                                                            </div>
+                                                            <span id="excelFileDiscriminatorSpan"></span>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="divison-container-big">
+                                                        <div class="name-identifier required" style="width: 173px;">
+                                                            <label for="excel-file-start-row-selection">$action.getText( 'zephyr-je.pdb.importer.excelfilestartrow.label')
+                                                            </label>
+                                                        </div>
+                                                        <div class="value-container" style="flex-grow: 1;">
+
+                                                            <div>
+                                                                <input type="text" id="txtfile2" onblur="Zephyr.Importer.Config.checkTextFieldRow(this);" value="2">
+                                                                <!-- <a data-aui-trigger aria-controls="more-details-help" href="#more-details-help" id="inlineDi">
+                                                            Inline dialog trigger
+                                                        </a> -->
+                                                                <span class="aui-icon aui-icon-small aui-iconfont-help" id="inlineDi" href="#more-details-help" style="color: #7c7c7c;">Insert meaningful text here for accessibility</span>
+                                                                <a id="more-details-help" style="display: none;">
+                                                                    <p>$i18n.getText("zephyr-je.pdb.excel.row.start.hint")</p>
+                                                                </a>
+                                                                <span id="excelFileStartingRowSpan"></span>
+                                                            </div>
+                                                            <p style="display: inline; color: red; margin-top: 0px; float: left; width: 143px;" id="errorForStatingRow"></p>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div style="position: relative;">
+                                                    <div class="divison-container">
+                                                        <div class="name-identifier">
+                                                            <label for="import-all-sheets-selection" style="font-weight: bold;">$action.getText( 'zephyr-je.pdb.importer.importallsheets.label')
+                                                            </label>
+                                                        </div>
+                                                        <div class="value-container">
+                                                            <input type="checkbox" id="zephyr-importer-importallsheets" onclick="Zephyr.Importer.Config.calc();">
+                                                            <span id="importAllSheetsSpan"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="divison-container">
+                                                        <div class="name-identifier">
+                                                            <label for="excel-file-sheetfilter-row-selection" style="font-weight: bold;">$action.getText( 'zephyr-je.pdb.importer.sheetfilter.label')
+                                                            </label>
+                                                        </div>
+                                                        <div class="value-container">
+                                                            <input type="text" id="fieldSheetId"/>
+                                                            <span id="excelSheetFilterRowSpan"></span>
+
+                                                            <!-- <input class="aui-button" type="button" id="zephyr-importer-filefieldsmapping-retrieve" value="Retrieve Mapping" style="display:none; margin-left: 0px;">
+                                                            <input class="aui-button" type="button" id="zephyr-importer-filefieldsmapping-save" value="Save Mapping" style="display:none"> -->
+
+                                                        </div>
+
+                                                    </div>
+                                                    <!-- <div style="margin-left: 135px; position: absolute; bottom: -15px; right: -48px;">
+                                                        <input class="aui-button" type="button" id="zephyr-importer-filefieldsmapping-retrieve" value="Retrieve Mapping" style="display:none; margin-left: 0px;">
+                                                        <input class="aui-button" type="button" id="zephyr-importer-filefieldsmapping-save" value="Save Mapping" style="display:none">
+                                                    </div> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div id="savedMappingContainer" style="border-bottom: 1.7px solid #d0d0d0; margin-top: 10px;">
+                                    <div class="main-container-child1">
+                                        <div class="divison-container">
+                                            <div class="name-identifier">
+                                                <b>
+                                                    <label for="file-fields-mapping-type-selection">$action.getText( 'zephyr-je.pdb.importer.filefieldssmappingtype.label')
+                                                    </label>
+                                                </b>
+                                            </div>
+                                            <div class="value-container">
+                                                <div style="position: relative; width: 250px; ">
+                                                    <select id="zephyr-importer-filefieldssmappingtype" name="fileFieldsMappingTypeSelection" type="single" class="select" style="-webkit-appearance: none; width: 200px;"></select>
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-help" id="helpMsgForExcel" href="#more-details-help-2" style="color: #7c7c7c;">Insert meaningful text here for accessibility</span>
+                                                    <a id="more-details-help-2" style="display: none;">
+                                                        <p>$i18n.getText("zephyr-je.pdb.instruction.row.required.label")</p>
+                                                    </a>
+                                                    <span class="icon aui-ss-icon noloading drop-menu custom-drop" id="customDrop" style="position : absolute; margin-right: 48px;">
+                                                        <span>More</span>
+                                                    </span>
+                                                </div>
+                                                <!-- <p id="helpMsgForExcel" style="color: grey; background-color: #a29c9c1a; width : 300px; margin-top: 4px; ">Excel File Should Contain First row with heading </p> -->
+                                                <br/>
+                                                <span id="fileFieldsMappingTypeSpan"></span>
+                                            </div>
+
+                                        </div>
+                                        <div id="savedPrefRow" class="divison-container">
+                                            <div class="name-identifier">
+                                                <b>
+                                                    <label for="saved-prefs-selection">$action.getText( 'zephyr-je.pdb.importer.savedprefs.label')
+                                                    </label>
+                                                </b>
+                                            </div>
+                                            <div class="value-container">
+                                                <div style="position: relative;">
+                                                    <select id="zephyr-importer-savedprefs" name="savedPrefsSelection" type="single" class="select" style="-webkit-appearance: none;"></select>
+                                                    <span class="icon aui-ss-icon noloading drop-menu custom-drop" id="customDrop" style="position : absolute;">
+                                                        <span>More</span>
+                                                    </span>
+                                                </div>
+                                                <div style="margin-top: 10px;">
+                                                    <input class="aui-button aui-button-primary" type="button" id="zephyr-importer-savedprefs-update" value="Update" style="display:none">
+                                                    <input class="aui-button" type="button" id="zephyr-importer-savedprefs-delete" value="Delete" style="display:none">
+                                                </div>
+                                                <span id="savedPrefsSpan"></span>
+                                            </div>
+                                        </div>
+                                        <!-- <div style="margin-left: 155px; position: absolute; bottom: -15px; right: -56px;">
+                                                <input class="aui-button" type="button" id="zephyr-importer-filefieldsmapping-retrieve" value="Retrieve Mapping" style="margin-left: 0px;">
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <!-- <div>
+                            <div >
+
+                            </div>
+                            <div id="helpMsg"  style="display : table-row;">
+                                 <div  style="color: grey; background-color: #a29c9c1a;">Excel File Should Contain First row with heading </div>
+                            </div>
+                        </div> -->
+
+
+                                #*
+                                <div id="folderPrefRow">
+                                    <div>
+                                        <b>
+                                            <label for="folder-pref-selection">$action.getText( 'zephyr-je.pdb.importer.folderpref.label')
+                                            </label>
+                                        </b>
+                                    </div>
+                                    <div>
+                                        <input type="text" name="txtFolder" id="txtFolder" readonly="true">
+                                        <input type="button" onclick="HandleFolderButtonClick();" value="Upload Folder" style="background: lightblue;">
+                                        <input type="file" class="ignore-inline-attach" id="zephyr-importer-folderpref" webkitdirectory directory multiple style="display:none">
+                                        <input type="button" id="zephyr-importer-folderfieldsmapping-retrieve" value="Retrieve Mapping" style="display:none">
+                                        <input type="button" id="zephyr-importer-folderfieldsmapping-save" value="Save Mapping" style="display:none">
+                                        <br/>
+                                        <span id="folderPrefSpan"></span>
+                                    </div>
+                                </div>
+                                *# #*
+                                <div>
+                                    <div>
+                                        <b>
+                                            <label for="issuekey-selection">$action.getText( 'zephyr-je.pdb.importer.issuekey.label')
+                                            </label>
+                                        </b>
+                                    </div>
+                                    <div>
+                                        <select id="zephyr-importer-test-issues" name="testIssueSelection" type="single" class="select"></select>
+                                        <br/>
+                                        <span id="testIssueKeySpan"></span>
+                                    </div>
+                                </div>
+                                *#
+                                <div class="main-container-child1">
+                                    <div id="mappingContainersRow" style="display: none; margin-top: 7px; width: 100%">
+                                        <div>
+                                            <b>
+                                                <label for="file-pref-selection" style="font-size: 18px;">$action.getText( 'zephyr-je.pdb.importer.dndmapping.label')
+                                                </label>
+                                            </b>
+                                        </div>
+                                        <div class="draggable-fields-container addheight">
+                                            <!-- <div id="optionsContainer" class="sb-drag-wrap "> -->
+                                            <div class="ab-field-container">
+                                                <h4>$i18n.getText('zephyr-je.pdb.importer.header.issueFields')</h4>
+                                                <div class="ab=items">
+                                                    <div id="zephyr-importer-issuefields" width="320px" cellspacing="10">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="ab-drag-container" style="width: 50%;">
+                                                <h4>$i18n.getText('zephyr-je.pdb.importer.header.mappedFields')</h4>
+                                                <div class="ab=items">
+                                                    ##
+                                                    <!-- <a class="ab-all" href="#" id="selectedOptionsRemoveAll">Remove all</a>** -->
+                                                    <div id="dndTbl" cellspacing="10">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="right" class="ab-drag-container" style="width: 40%;">
+                                                <h4 id="fileTypeId">$i18n.getText('zephyr-je.pdb.importer.header.excelFields')</h4>
+                                                <div id="abItems">
+                                                    ##
+                                                    <!-- <a class="ab-all" href="#" id="selectedOptionsRemoveAll">Add all</a>** -->
+                                                    <div id="fieldsDiv" class="importer-fields-container"></div>
+                                                </div>
+                                            </div>
+
+                                            <!-- </div> -->
+                                        </div>
+                                        <br>
+                                        <p id="error" style="color : red; clear: both;">
+
+                                        </p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div>
+
+                                    </div>
+                                    <div class="main-container-child1 btn-wrapper">
+                                        <input class="aui-button" type="submit" name="Import" value="$i18n.getText('zephyr-je.pdb.importer.mappingOption.import')" id="zephyr-importer-importjob" disabled="true" />
+                                        <input class="aui-button" type="submit" name="Reset" value="$i18n.getText('zephyr-je.pdb.importer.mappingOption.reset')" id="zephyr-importer-reset" />
+                                        <br/>
+                                        <span id="savedPrefsSpan"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="second-container">
+
+                            </div>
+                        </fieldset>
+                        #end
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+    <input type="hidden" id="attach-max-size" value="2048">
+    <script type="text/javascript">
+        function HandleFileButtonClick() {
+            document.getElementById('zephyr-importer-filepref').click();
+        }
+        function HandleFolderButtonClick() {
+            document.getElementById('zephyr-importer-folderpref').click();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+/*#config {
+    overflow-y: auto;
+    height: 100%;
+}*/
+#config form.aui .buttons-container {
+    padding-bottom: 10px;
+}
+.legend-wrapper {
+	width: 100%;
+	margin-top: -30px;
+}
+.legend-wrapper #legendType {
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 6px;
+    text-align: center;
+}
+.pie-legend {
+    max-width: 350px;
+    margin: 0 auto;
+}
+.pie-legend .pie-legend-item {
+	text-align: center;
+	list-style-type: none;
+}
+.pie-legend .pie-legend-item:last-child .pie-legend-item-wrapper {
+    border-bottom: 1px solid #ccc;
+}
+.pie-legend .pie-legend-item .pie-legend-item-wrapper {
+	/*width: 40%;*/
+    display: block;
+    margin: 0 auto;
+    border-top: 1px solid #ccc;
+    padding: 8px;
+    height: 14px;
+}
+.pie-legend .pie-legend-item .pie-legend-item-wrapper > div {
+	display: inline-block;
+}
+.pie-legend .pie-legend-item .pie-legend-item-wrapper .pie-legend-item-value {
+	float: right;
+}
+.pie-legend .pie-legend-item .pie-legend-item-wrapper .pie-legend-item-label-wrapper {
+	float: left;
+    width: 80%;
+}
+.pie-legend .pie-legend-item .pie-legend-item-wrapper .pie-legend-item-label-wrapper > div {
+    vertical-align: top;
+}
+.pie-legend .pie-legend-item .pie-legend-item-wrapper .pie-legend-item-label-wrapper .pie-legend-item-label {
+	margin-left: 8px;
+    width: 80%;
+    display: inline-block;
+    text-overflow: ellipsis;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.inlineDialogEllipses {
+    width: 80%;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#inline-dialog-legendDialog .aui-inline-dialog-contents {
+    overflow-y: auto;
+}
+
+.donut-chart-wrapper {
+    min-height: 400px;
+    position: relative;
+}
+.donut-chart-wrapper .donut-chart {
+    -webkit-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+    left: 50%;
+    position: absolute;
+}
+.totalLine { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}

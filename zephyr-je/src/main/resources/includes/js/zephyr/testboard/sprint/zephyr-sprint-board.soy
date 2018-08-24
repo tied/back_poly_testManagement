@@ -1,0 +1,419 @@
+{namespace ZEPHYR.Templates.TestBoard.Sprint}
+
+/**
+ * Sprints View
+ * @param sprints
+ */
+{template .sprintsHTML}
+<div id="zephyr-tb-sprints-wrapper" class="zephyr-tb-sprints-wrapper zephyr-tb-border-left">
+	{foreach $sprint in $sprints}
+	<div id="zephyr-tb-sprints-module-{$sprint.id}" data-sprint-id="{$sprint.id}" class="module toggle-wrap expanded zephyr-je-sprint-group zephyr-tb-sprints-module">
+		<div id="sprint-module-heading" class="mod-header sprint-module-heading">
+			<h3 class="toggle-title">
+				<span class="pseudo">&</span>
+			</h3>
+			<div class="zephyr-tb-name">{$sprint.name}</div>
+			<div class="zephyr-tb-issue-count" id="zephyr-tb-cycle-count"></div>
+			<div class="zephyr-tb-controls aui-group">
+				<div class="aui-item">
+					<a href="#sprint-module-dropdown-{$sprint.id}" aria-owns="sprint-module-dropdown-{$sprint.id}" class="aui-button aui-style-default aui-dropdown2-trigger zephyr-je-dropdown-trigger" data-sprint-id="{$sprint.id}" tabindex="0">
+						<span class="aui-icon zephyr-tb-iconfont aui-icon-small aui-iconfont-more"></span>
+					</a>
+					<div id="sprint-module-dropdown-{$sprint.id}" class="aui-style-default aui-dropdown2">
+					    <ul class="aui-list-truncate">
+					        <li id="zephyr-tb-link-test-cycles_{$sprint.id}" class="zephyr-tb-link-test-cycles"><a href="#">{getText('zephyr-je.testboard.link.test.cycles.label')}</a></li>
+					    </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mod-content" id="sprint-content-container-{$sprint.id}" data-sprint-id="{$sprint.id}">
+			<div id="sprint-cycle-container-{$sprint.id}" data-sprint-id="{$sprint.id}" class="sprint-cycle-container zephyr-tb-cycles js-cycle-list zephyr-tb-has-cycles">
+			</div>
+		</div>
+	</div>
+	{/foreach}
+</div>
+{/template}
+
+/**
+ * Sprint View
+ * @param cycles
+ * @param sprintId
+ */
+{template .cyclesHTML}
+{foreach $cycleId in keys($cycles)}
+	<div class="zephyr-tb-cycle-compact{if isFirst($cycleId)} zephyr-tb-cycle-compact-first{/if}{if isLast($cycleId)} zephyr-tb-cycle-compact-last{/if}" data-cycle-id="{$cycleId}">
+		{if $cycles[$cycleId].sprintId == $sprintId}
+			<div class="zephyr-tb-cycle-content aui-group" data-cycle-id="{$cycles[$cycleId].id}" data-sprint-id="{$cycles[$cycleId].sprintId}" data-cycle-name="{$cycles[$cycleId].name}" data-version-name="{$cycles[$cycleId].versionName}" data-project-key="{$cycles[$cycleId].projectKey}">
+				<div class="zephyr-tb-row aui-item">
+					<span class="zephyr-tb-type zephyr-cycle-type" title="{getText('enav.cycle.searcher.name', $cycles[$cycleId].versionId)}">
+						C
+					</span>
+					<div class="zephyr-tb-key">
+						<a href={contextPath}/secure/enav/#?query={call ZEPHYR.Agile.TestBoard.getCycleZQLQuery data="[$cycles[$cycleId].versionName, $cycles[$cycleId].name, $cycles[$cycleId].projectKey]" /} title="{$cycles[$cycleId].name}" class="zephyr-tb-cycle-link js-key-link">{$cycles[$cycleId].name}</a>
+					</div>
+				</div>
+				<div class="zephyr-tb-end zephyr-tb-row aui-item">
+					<div class="zephyr-tb-version" title="{$cycles[$cycleId].versionName}">
+						<span class="zephyr-tb-inner">
+							<span class="aui-lozenge aui-lozenge-subtle zephyr-tb-version-lozenge">{$cycles[$cycleId].versionName}</span>
+						</span>
+					</div>
+					<span class="zephyr-tb-versions-table zephyr-tb-end">
+						{if $cycles[$cycleId].totalExecutions == 0}
+							<!--<span>{getText('cycle.header.no.schedule')}</span>-->
+						{else}
+							{call ZEPHYR.Templates.TestBoard.versionProgressHTML}
+								{param summaryList: $cycles[$cycleId].executionSummaries /}
+								{param totalExecutions: $cycles[$cycleId].totalExecutions/}
+							{/call}
+							{if $cycles[$cycleId].totalExecutions > 0 }
+								<span class="zephyr-tb-version-progress-percentage">{round($cycles[$cycleId].totalExecuted*100/$cycles[$cycleId].totalExecutions, 2)}%</span>
+							{/if}
+						{/if}
+					</span>
+					<span data-id="{$cycles[$cycleId].id}" title="{getText('zephyr-je.testboard.cycle.button.remove.title')}" data-version-id="{$cycles[$cycleId].versionId}" class="aui-icon aui-icon-small aui-iconfont-remove zephyr-tb-cycle-remove"></span>
+				</div>
+			</div>
+		{/if}
+		{if $cycles[$cycleId].folders}
+			{foreach $folder in $cycles[$cycleId].folders}
+				<div class="zephyr-tb-cycle-content aui-group" data-cycle-id="{$cycles[$cycleId].id}" data-sprint-id="{$cycles[$cycleId].sprintId}" data-folder-id="{$folder.folderId}" data-folder-name="{$folder.folderName}" data-cycle-name="{$cycles[$cycleId].name}" data-version-name="{$cycles[$cycleId].versionName}" data-project-key="{$cycles[$cycleId].projectKey}">
+					<div class="zephyr-tb-row aui-item">
+						<span class="zephyr-tb-type zephyr-folder-type" title="{getText('enav.search.execution.folder', $cycles[$cycleId].versionId)}">
+							F
+						</span>
+						<div class="zephyr-tb-key">
+							<a href={contextPath}/secure/enav/#?query={call ZEPHYR.Agile.TestBoard.getFolderZQLQuery data="[$cycles[$cycleId].versionName, $cycles[$cycleId].name, $cycles[$cycleId].projectKey , $folder.folderName]" /} title="{$folder.folderName}" class="zephyr-tb-cycle-link js-key-link">{$folder.folderName}</a>
+						</div>
+					</div>
+					<div class="zephyr-tb-end zephyr-tb-row aui-item">
+						<div class="zephyr-tb-version" title="{$cycles[$cycleId].versionName}">
+							<span class="zephyr-tb-inner">
+								<span class="aui-lozenge aui-lozenge-subtle zephyr-tb-version-lozenge">{$cycles[$cycleId].versionName}</span>
+							</span>
+						</div>
+						<div class="zephyr-tb-version" title="{$cycles[$cycleId].name}">
+							<span class="zephyr-tb-inner">
+								<span class="aui-lozenge aui-lozenge-subtle zephyr-tb-version-lozenge">{$cycles[$cycleId].name}</span>
+							</span>
+						</div>
+						<span class="zephyr-tb-versions-table zephyr-tb-end">
+							{if $folder.totalExecutions == 0}
+								<!--<span>{getText('cycle.header.no.schedule')}</span>-->
+							{else}
+								{call ZEPHYR.Templates.TestBoard.versionProgressHTML}
+									{param summaryList: $folder.executionSummaries /}
+									{param totalExecutions: $folder.totalExecutions/}
+								{/call}
+								{if $folder.totalExecutions > 0 }
+									<span class="zephyr-tb-version-progress-percentage">{round($folder.totalExecuted*100/$folder.totalExecutions, 2)}%</span>
+								{/if}
+							{/if}
+						</span>
+						<span data-id="{$cycles[$cycleId].id}" title="{getText('zephyr-je.testboard.folder.button.remove.title')}" data-folder-id="{$folder.folderId}" data-folder-name="{$folder.folderName}" data-version-id="{$cycles[$cycleId].versionId}" class="aui-icon aui-icon-small aui-iconfont-remove zephyr-tb-cycle-remove"></span>
+					</div>
+				</div>
+			{/foreach}
+		{/if}
+	</div>
+{/foreach}
+{/template}
+
+/**
+ * Render Cycle detail page
+ * @param cycleName
+ * @param versionName
+ * @param projectKey
+ * @param executionStatus
+ * @param folderId
+ * @param folderName
+ */
+{template .cycleDetailsHTML}
+<div id="zephyr-tb-detail-contents" class="zephyr-tb-detail-contents">
+	<div id="zephyr-tb-detail-issue" class="zephyr-tb-detail-issue" data-cycle-id="">
+		<div id="zephyr-tb-detail-head" class="zephyr-tb-detail-head js-issue-fields">
+			<div class="zephyr-tb-controls">
+				<div class="zephyr-tb-detail-close js-detailclose" title="{getText('zephyr-je.testboard.details.close.title')}">
+					<span class="zephyr-tb--iconfont aui-icon aui-icon-small aui-iconfont-close-dialog">{getText('zephyr-je.testboard.details.close.title')}</span>
+				</div>
+			</div>
+			<div class="zephyr-tb-group">
+				<span class="zephyr-tb-project-avatar">
+					<img src="{contextPath}/download/resources/com.thed.zephyr.je/images/icons/repository_24x24.png">
+				</span>
+				<span id="zephyr-tb-js-sizer" class="zephyr-tb-sizer ui-resizable-handle ui-resizable-w" title="{getText('zephyr-je.testboard.details.resize.title')}">
+					<span class="zephyr-tb-icon zephyr-tb-icon-sizer"></span>
+				</span>
+				<div class="zephyr-tb-key-group">
+					<div class="zephyr-tb-key js-view-in-jira">
+						{if $folderId}
+							<span>
+								<a href={contextPath}/secure/enav/#?query={call ZEPHYR.Agile.TestBoard.getFolderZQLQuery data="[$versionName, $cycleName, $projectKey , $folderName]" /} title="{$folderName}" >{$folderName}</a>
+							</span>
+						{else}
+							<span>
+								<a href={contextPath}/secure/enav/#?query={call ZEPHYR.Agile.TestBoard.getCycleZQLQuery data="[$versionName, $cycleName, $projectKey]" /} title="{$cycleName}" >{$cycleName}</a>
+							</span>
+						{/if}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="zephyr-tb-statistic-group">
+			<div class="zephyr-tb-detail-statistic zephyr-tb-estimate js-estimate zephyr-tb-empty">
+				<dl class="zephyr-tb-detail-list">
+					<dt class="zephyr-tb-detail-term zephyr-tb-detail-filter">{getText('zephyr-je.testboard.details.filter.by.label')}:</dt>
+					<dd class="zephyr-tb-detail-description">
+						<form class="aui">
+							{call .executionStatusSelectHTML}
+								{param executionStatus: $executionStatus /}
+							{/call}
+						</form>
+					</dd>
+				</dl>
+			</div>
+		</div>
+		<div class="zephyr-tb-detail-nav-content" id="zephyr-tb-detail-execution-section">
+			<div id="zephyr-tb-detail-section" class="zephyr-tb-detail-section" />
+			<div id="execution-pagination-container" />
+			<div id="zephyr-tb-executions-clear-height" style="clear: both; height: 10px;"></div>
+		</div>
+		<div class="zephyr-tb-detail-nav-menu" id="zephyr-tb-detail-execution-nav-menu">
+		</div>
+	</div>
+</div>
+{/template}
+
+/**
+ * Render execution status HTML
+ * @param executionStatus
+ */
+{template .executionStatusSelectHTML}
+	<select class="aui select aui-ss-select"  multiple="multiple" id="zephyr-tb-status-dd" style="max-width: 80%">
+		{foreach $status in $executionStatus}
+			<option value="{$status.id}" data-id="{$status.id}" data-name="{$status.id}" rel="{$status.name}" title="{$status.description}">{$status.name}</option>
+		{/foreach}
+	</select>
+{/template}
+
+/**
+ * Render execution detail nav menu
+ * @param executionCount
+ */
+{template .executionDetailNavHTML}
+<ul>
+	<li class="zephyr-tb-detail-nav-item zephyr-tb-selected">
+		<a>
+			<span class="zephyr-tb-iconfont">
+				<img src="{contextPath}/download/resources/com.thed.zephyr.je/images/project/zephyr_feather_20x20.png">
+			</span>
+			<b>{$executionCount}</b>
+		</a>
+	</li>
+</ul>
+{/template}
+
+/**
+ * Render Execution detail
+ * @param executions
+ * @param executionStatusList
+ */
+{template .executionsHTML}
+<div class="zephyr-tb-container">
+<table class="aui" id="zephyr-tb-executions-table">
+  	<thead>
+		<tr>
+			<th id="sub-key" class="ghx-nowrap">{getText('project.cycle.schedule.table.column.id')}</th>
+			<th id="folder-name">{getText('enav.newfolder.name.label')}</th>
+			<th id="sub-status" class="">{getText('project.cycle.schedule.table.column.status')}</th>
+			<th id="sub-summary">{getText('project.cycle.schedule.table.column.summary')}</th>
+			<th id="sub-actions">{getText('project.cycle.schedule.table.column.defect')}</th>
+			<th></th>
+		</tr>
+	</thead>
+  	<tbody>
+    	{if $executions.length}
+		{foreach $execution in $executions}
+            <tr>
+          	    {if $execution.canViewIssue}
+                    <td>
+                        {if $execution.issueKey == 'XXXXX'}
+                            <span>{$execution.issueKey}</span>
+                        {else}
+                            <a href="{contextPath}/browse/{$execution.issueKey}">{$execution.issueKey}</a>
+                        {/if}
+                    </td>
+                    <td>
+                        {if $execution.folderName}
+                            <a href="{contextPath}/DisplayCycle.jspa?cycleId={$execution.cycleId}&versionId={$execution.versionId}&issueKey={$execution.issueKey}&folderId={$execution.folderId}"> {$execution.folderName}</a>
+                        {/if}
+                    </td>
+                    <td class="zephyr-break-word execution-status-td">
+                        <div class="field-group execution-status-container {$execution.executionWorkflowStatus == 'COMPLETED' ? 'executionWorkflowStatusCompletedWhole' : '' }">
+                            <div id="execution-status-value-schedule-{$execution.id}" class="labels exec-status-container">
+                                <dl class="zfj-editable-field">
+	        					<dd id="current-execution-status-dd-schedule-{$execution.id}" class="new-session-status" style="background-color:{$execution.status.color};" title="{$execution.status.name}{$execution.status.description ? (': ' + $execution.status.description) : ''}">{$execution.status.name}</dd>
+	        					<a id="executionStatus-labels-schedule-{$execution.id}" href="#" class="zfj-overlay-icon icon icon-edit-sml"><span rel="{$execution.status.id}">{$execution.status.name}</span></a>
+                                </dl>
+                            </div>
+                            <div id="execution-field-select-schedule-{$execution.id}" style="display: none; ">
+                                <select id="exec_status-schedule-{$execution.id}" class="select" style="height:auto; max-height: 200px; width:150px; z-index:10;" size="4">
+                                    {foreach $exec in $executionStatusList}
+				    				{if $exec.id == $execution.status.id}
+										<option value="{$exec.id}" selected="selected" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+									{else}
+										<option value="{$exec.id}" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+									{/if}
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="zephyr-break-word">
+                        <a href="{contextPath}/browse/{$execution.issueKey}" title="{$execution.issueKey} - {$execution.issueSummary}">{$execution.issueSummary}</a>
+                    </td>
+                    <td class="zephyr-break-word">
+                        {if $execution.totalDefectCount >0}<div class="zfj-defect-hover" data-issueKey="{$execution.issueKey}" data-executionId="{$execution.id}" data-color="{$execution.status.color}"><span class="aui-lozenge aui-lozenge-defects">{$execution.executionDefectCount} | {$execution.stepDefectCount}</span>{/if}
+                            {call ZEPHYR.Templates.TestBoard.defectColumnValue}
+                                {param defects: $execution.executionDefects /}
+                            {/call}
+                        {if $execution.defects}</div>{/if}
+                    </td>
+                    <td>
+                        <button id="zephyr-td-detail-execute-test" class="aui-button zephyr-td-detail-execute-test" title="{getText('zephyr-je.testboard.details.execute.title')}" data-index="{index($execution)}" data-href="{contextPath}/secure/enav/#{$execution.id}?query=">E</a>
+                        </button>
+                    </td>
+                {else}
+                     <td colspan='15' style="text-align:center;vertical-align:middle" class="new-session-status">No Permission on Test/Issue ({$execution.issueKey})</td>
+                {/if}
+            </tr>
+		{/foreach}
+	{else}
+		<tr>
+			<td colspan="4">{getText('enav.results.none.found')}</td>
+		</tr>
+	{/if}
+  	</tbody>
+</table>
+</div>
+{/template}
+
+/**
+ * Render the link to test cycles dialog
+ * @param projects
+ * @param selectedProjectId
+ */
+{template .linkToTestCyclesHTML}
+<div class="zephyr-tb-eval-lic"/>
+<form class="aui">
+	<div id="zephyr-tb-module">
+		<div class="field-group">
+         	<label for="zephyr-tb-link-tests-project-select">{getText('zephyr-je.testboard.select.project.label')}</label>
+		  	<select id="zephyr-tb-link-tests-project-select" class="select">
+		  	{if $projects and $projects.length != 0}
+				{foreach $project in $projects}
+					<option value="{$project.id}"{if $selectedProjectId == $project.id} selected=selected{/if}>{$project.name}</option>
+				{/foreach}
+			{/if}
+		  	</select>
+		</div>
+		<br/>
+	    <div class="field-group">
+         	<label for="zephyr-tb-link-tests-version-select">{getText('zephyr-je.testboard.select.version.label')}</label>
+		  	<select id="zephyr-tb-link-tests-version-select" class="select" />
+		</div>
+		<br/>
+		<div class="field-group">
+	          <label for="zephyr-tb-link-tests-cycle-select">{getText('zephyr-je.testboard.select.test.cycles.label')}</label>
+			  <select id="zephyr-tb-link-tests-cycle-select" class="select"/>
+		</div>
+		<br/>
+		<div class="field-group">
+	          <label for="zephyr-tb-link-tests-cycle-select">{getText('zephyr-je.testboard.select.test.cycles.folder.label')}</label>
+			  <select id="zephyr-tb-link-tests-folder-select" class="select"/>
+		</div>
+    </div>
+</div>
+</form>
+{/template}
+
+/**
+ * Render the link to test cycles checkbox
+ * @param isLinked
+ */
+{template .linkToTestCyclesCheckboxHTML}
+	<span>
+		<input type="checkbox" id="zephyr-tb-add-more-cycle" class="zephyr-tb-add-more-cycle" {if $isLinked}checked="checked"{/if}>
+		<label title="{getText('zephyr-je.testboard.link.test.cycles.more.label')}" for="zephyr-tb-add-more-cycle">
+			&nbsp;&nbsp;{getText('zephyr-je.testboard.link.test.cycles.more.label')}&nbsp;&nbsp;
+		</label>
+	</span>
+{/template}
+
+/**
+ * Render the link to test cycles dialog
+ * @param name
+ * @param sprintName
+ * @param selectedSprintName
+ * @param? folderId
+ */
+{template .linkToTestCyclesConfirmationHTML}
+<div class="zephyr-tb-eval-lic-confirm"/>
+<form class="aui">
+	<div class="form-body">
+		<div id="cycle-aui-message-bar">
+			<div class="aui-message warning" id="">
+				<span class="aui-icon icon-warning"></span>
+        {if $folderId}
+				    {getText('zephyr-je.testboard.link.test.folders.another.sprint.label', $name, $sprintName, $selectedSprintName)}
+        {else}
+            {getText('zephyr-je.testboard.link.test.cycles.another.sprint.label', $name, $sprintName, $selectedSprintName)}
+        {/if}
+      </div>
+		</div>
+		<label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+	</div>
+</form>
+{/template}
+
+/**
+ * Render the link to test cycles dialog
+ * @param cycleName
+ * @param sprintName
+ */
+{template .removeCycleFromSprintHTML}
+<div class="zephyr-tb-eval-lic"/>
+<form class="aui">
+	<div class="form-body">
+		<div id="cycle-aui-message-bar">
+			<div class="aui-message warning" id="">
+				<span class="aui-icon icon-warning"></span>
+				{getText('zephyr-je.testboard.cycle.remove.label', $cycleName, $sprintName)}
+			</div>
+		</div>
+		<label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+	</div>
+</form>
+{/template}
+
+/**
+ * Render the link to test cycles dialog
+ * @param folderName
+ * @param sprintName
+ */
+{template .removeFolderFromSprintHTML}
+<div class="zephyr-tb-eval-lic"/>
+<form class="aui">
+	<div class="form-body">
+		<div id="cycle-aui-message-bar">
+			<div class="aui-message warning" id="">
+				<span class="aui-icon icon-warning"></span>
+				{getText('zephyr-je.testboard.folder.remove.label', $folderName, $sprintName)}
+			</div>
+		</div>
+		<label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+	</div>
+</form>
+{/template}

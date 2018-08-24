@@ -1,0 +1,18 @@
+<div class="dialog-title hidden">Error</div>
+<div class="aui-dialog-content">
+    
+    <div class="issue-body-content issue-error-content">
+        <header>
+            <h1>$i18n.getText("common.words.error")</h1>
+        </header>
+        <div class="aui-message error"><span class="aui-icon icon-error"></span>
+            #if ($action.hasAnyErrors())
+                <ul>
+                    #foreach ($error in $action.getErrorMessages())
+                        <p>$error</p>
+                    #end
+                </ul>
+            #end
+        </div>
+	</div>
+</div>

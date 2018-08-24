@@ -1,0 +1,680 @@
+tr.project-config-no-entires {
+    font-style: italic;
+}
+
+.jira-restfultable-allowhover tr:hover, .project-config-version.jira-restfultable-active {
+    .project-config-operations {
+        .project-config-operations-trigger {
+            display: block;
+            .icon-drop {
+                background-image: url(../../../images/menu_indicator_for_dark_backgrounds.gif);
+            }
+        }
+    }
+}
+
+#inline-dialog-step-column-picker {
+  h3 {
+    font-size: 15px;
+    font-weight: bold;
+    padding: 0 10px;
+  }
+  .aui-list-wrapper {
+    padding: 10px;
+    .check-list-item {
+      padding: 6px 10px 6px 25px;
+      label input[type="checkbox"] {
+        left: 0;
+      }
+    }
+  }
+  .button-panel {
+    border-top: 1px solid #cccccc;
+    padding: 10px;
+    text-align: right;
+  }
+}
+
+#project-config-versions-add {
+  height: 100%;
+  max-height: 550px;
+  margin: 0;
+}
+
+#project-config-steps-table {
+    table-layout: fixed;
+    word-wrap : break-word;
+    overflow:scroll;
+    width: 98.5%;
+    &.removeTestStep {
+      > thead > tr > th:nth-child(3), > tbody > tr > td:nth-child(3) {
+        display: none;
+      }
+    }
+    &.removeTestStepData {
+      > thead > tr > th:nth-child(4), > tbody > tr > td:nth-child(4) {
+        display: none;
+      }
+    }
+    &.removeTestStepExpectedResult {
+      > thead > tr > th:nth-child(5), > tbody > tr > td:nth-child(5) {
+        display: none;
+      }
+    }
+    &.removeTestStepAttachment {
+      > thead > tr > th:nth-child(6), > tbody > tr > td:nth-child(6) {
+        display: none;
+      }
+    }
+    thead th {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100px;
+    }
+    .project-config-steps-table-header {
+      th:first-child {
+      	width: 1em;
+      }
+      th:nth-child(2) {
+      	width:2.25em;
+      }
+      // th:nth-child(3), th:nth-child(4), th:nth-child(5) {
+      // 	width:25%;
+      // }
+      // th:nth-child(6) {
+      //   width: 20%;
+      // }
+
+      th:last-child {
+      	width: 94px;
+        padding-top: 2px;
+      }
+
+      th .step-column-picker-trigger {
+        position: relative;
+        padding: 4px 15px;
+      }
+
+      th .step-column-picker-trigger:after {
+        border: 4px solid transparent;
+        border-top-color: #111;
+        content: "";
+        height: 0;
+        position: absolute;
+        right: 3px;
+        top: 13px;
+        width: 0;
+      }
+    }
+
+    th.confluenceTh {
+      width: auto !important;
+    }
+
+    tbody td {
+      span p {
+        margin:0;
+      }
+    	.ztextarea {
+    		height: 45px;
+        min-height: 45px;
+			  resize: none;
+			  overflow: hidden;
+    	}
+
+      &.teststep-editable-attachment {
+        .mod-header {
+          .ops {
+            float:none;
+            li {
+              float:none;
+              text-align: center;
+              a {
+                float:none;
+              }
+            }
+          }
+        }
+      }
+        /*cursor: move;*/
+        &.project-config-version-description input,
+        &.project-config-version-name input {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            -o-box-sizing: border-box;
+            box-sizing: border-box;
+            margin: 0;
+            width: 100%;
+        }
+
+        &.project-config-version-name {
+            width: 130px;
+            input {
+                width: 130px;
+             }
+             .zfj-nowrap {
+             	white-space: nowrap;
+             }
+        }
+        &.project-config-version-release-date {
+
+            width: 150px;
+
+            .project-config-date-field {
+                white-space:nowrap;
+            }
+
+            input {
+                width: 130px;
+                margin-right:5px;
+            }
+        }
+
+        &.project-config-release-status {width:16px;padding-right:0;}
+
+        &.project-config-release-status .project-config-icon {margin-top:2px;}
+
+    }
+
+    tbody.ui-sortable {
+      .teststep-editable {
+        overflow: hidden;
+      }
+    	.ztextarea-step {
+			position: static;
+			left: 11%;
+			height: 45px;
+		}
+
+		.ztextarea-data {
+			position: static;
+			left: 36.3%;
+			height: 45px;
+		}
+
+		.ztextarea-result {
+			position: static;
+			left: 61.6%;
+			height: 45px;
+		}
+
+    .ztextarea-customField {
+			height: 45px;
+    }
+
+		.jira-restfultable-editrow  {
+			td {
+				height: 70px;
+			}
+
+			td:nth-child(2) {
+				width: 2em;
+			}
+
+
+		.restfultable-operations-wrapper {
+				width: 100%;
+				height: 76px;
+				border-top: none;
+				clear: both;
+				padding: 0px 4px 4px 0px;
+        .aui-button {
+          padding: 4px 9px;
+        }
+				.aui-button-cancel {
+					cursor: pointer;
+				}
+        input, a {
+  				float: none;
+          display: block;
+  			}
+			}
+			input, a {
+				float: left;
+			}
+		}
+
+		.ztextarea,
+		.wiki-preview-content {
+			// width: 24.2% !important;
+      width: 100%;
+		}
+
+		.test-step-actions a {
+			visibility: hidden;
+		}
+
+		.test-step-actions a span.aui-icon-small:after {
+		    border-color: #333333 rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
+		    border-image: none;
+		    border-style: solid;
+		    border-width: 4px;
+		    content: "";
+		    height: 0;
+		    left: 0px;
+		    margin-top: -1px;
+		    position: absolute;
+		    top: 50%;
+		    width: 0;
+		}
+
+		tr:hover a {
+			visibility: visible;
+		}
+
+		.wiki-field-tools,
+		.wiki-preview-content {
+  		position: static;
+		}
+
+		.teststep-editable-step .wiki-field-tools,
+		.teststep-editable-step .wiki-preview-content {
+			left: 11%;
+		}
+
+		.teststep-editable-data .wiki-field-tools,
+		.teststep-editable-data .wiki-preview-content {
+			left: 36.3%;
+		}
+
+		.teststep-editable-result .wiki-field-tools,
+		.teststep-editable-result .wiki-preview-content {
+			left: 61.6%;
+		}
+
+    ul, ol{
+      padding-left: 20px;
+      margin: 0;
+    }
+	}
+
+	img {
+		max-width: 100%;
+		max-height: 100%;
+	}
+	table.confluenceTable {
+    	word-break: break-all;
+      white-space: normal;
+	}
+}
+
+/* Entry */
+.project-config-version {
+    &.project-config-version-archived .jira-restfultable-editable {
+        opacity: 0.5;
+    }
+    &.project-config-version-overdue .project-config-version-release-date {
+        color: #CC0000;
+    }
+    .project-config-version-name {
+        .project-config-icon {
+            float: left;
+            margin: 0 8px 0 -24px;
+        }
+        width: 2em;
+    }
+    td:hover .jira-restfultable-editable {
+        opacity: 1;
+    }
+
+    /* Operations */
+    .project-config-operations {
+        .project-config-operations-list { display: none; }
+        .project-config-operations-trigger {
+            display: none;
+            float: right;
+            padding: 2px;
+        }
+        .project-config-operations-trigger:hover,
+        .project-config-operations-trigger:active,
+        .project-config-operations-trigger:focus {
+            background-color: #3c78b5;
+            color: #fff;
+            display: block;
+        }
+    }
+}
+
+/* Teststep clone dialog */
+.teststep-clone-dialog-form {
+	.form-body {
+		fieldset {
+			div.field-group {
+				input[type=radio], span.clone-test-step {
+					position: relative;
+					top: 5px;
+				}
+			}
+		}
+	}
+}
+
+.msie-7 #project-config-versions-add .project-config-release-status {width:25px;}
+.msie-7 #project-config-versions-add .project-config-version-description input,
+.msie-7 #project-config-versions-add .project-config-version-name input { width: 92%; }
+.msie-7 #project-config-versions-add .project-config-operations {width:140px;}
+
+.msie .project-config-version.project-config-version-archived .jira-restfultable-editable {
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=50);
+}
+
+.msie .project-config-version-name .zfj-nowrap {
+	float: left;
+}
+
+// CSS hack for safari browser
+::i-block-chrome, #project-config-steps-table {
+	width: 97%;
+	th:nth-child(2)  {width: 3.2em;}
+}
+
+/*
+ * CSS fix for issue: Reorder the teststeps jumps top/right
+ */
+#project-config-panel-versions {
+	min-width: 420px;
+	// overflow: auto;
+  position: relative;
+  max-height: 550px;
+
+	.ui-sortable .ui-sortable-helper {
+		left: 14px;
+	}
+}
+
+
+td.project-config-version-description object,
+td.teststep-editable object {
+	width: 100% !important;
+}
+
+.zephyr-wiki-preview_link {
+	margin-right: 5px;
+}
+
+.issue-main-column {
+  min-width: 450px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 20px;
+}
+
+#view_issue_execution_section {
+  min-width: 420px;
+  overflow-x: auto;
+  #ztestSchedulesTable {
+    min-width: 750px;
+  }
+
+  .showinzql {
+    display: flex;
+    justify-content: space-between;
+    background: #DEEBFE;
+    padding: 5px 10px;
+    margin-top: 0px;
+    border-radius: 0 0 3px 3px;
+    font-size: 12px;
+    a {
+      color: #4c9aff;
+      text-decoration: none;
+      padding-right: 15px;
+      background: url('images/icons/new-window_button.svg') no-repeat right;
+
+      &:hover {
+        color: #5e6c84;
+        background: url('images/icons/new-window_hover_button.svg') no-repeat right;
+      }
+
+    }
+  }
+}
+#file_attachments a {
+  cursor: pointer;
+}
+.jira-restfultable .jira-restfultable-readonly .jira-restfultable-editable {
+  white-space: normal;
+}
+
+#date-picker {
+  position: relative;
+  visibility:  hidden;
+  height: 1px;
+}
+
+.gridComponentTesting {
+  height: 1px;
+}
+
+.testExecutionGridWrapper {
+  padding-top: 5px;
+}
+
+.issueViewPopover {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  // color: white;
+}
+
+.issueViewPopover.showPopup {
+  display: flex;
+}
+
+.issueViewPopover .issueViewPopoverWrapper{
+  border-radius: 5px;
+  background-color: white;
+  z-index: 999;
+  max-height: 70vh;
+  overflow: auto;
+  padding: 15px 18px 35px;
+}
+.msie .issueViewPopover .gridComponent {
+  // overflow-x: auto;
+  // overflow-y: scroll;
+}
+.issueViewPopover .popupHeading .toggle-title:hover {
+  background-image: none;
+}
+
+.issueViewPopover .popupHeading {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.issueViewPopover .popupHeading .border{
+  width: 100%;
+  height: 0px;
+  border: 1px solid #DEE1E6;
+}
+
+.popupHeading h2{
+    font-size: 16px;
+    width: 150px;
+    font-weight: bold;
+    color: #42526E;
+}
+
+.closePopup {
+    color: #c1c1c1;
+    font-size: 20px;
+    position: relative;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.closePopup .close-icon {
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  right: 0;
+  top: 0px;
+  color: #fff;
+}
+
+.close-icon:hover {
+  color: white;
+}
+
+.closePopup .close-icon:before{
+  font-size: 20px;
+}
+
+.gridComponent-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.ui-sidebar.ui-draggable {
+  z-index: 1;
+}
+.msie-11 textarea#advanced-search {
+  max-width: none;
+  width: 100%;
+}
+.msie-11 .zephyr-je-add-tests-execution-button {
+  width: auto;
+}
+
+.external-scroll {
+  width: 100%;
+  display: flex;
+  height: 20px;
+  //background: #000;
+
+  .frozen {
+    height: 100%;
+    width: 266px;
+    //background: yellow;
+
+    &.action {
+      width: 90px;
+    }
+  }
+
+  .unfrozen {
+    flex-grow: 1;
+    overflow: auto;
+    width: calc(100% - 326px);
+
+    .scroll-item {
+      height: 100%;
+      width: 1200px;
+    }
+  }
+}
+
+#stepsGridComponentContainer #testDetailGrid {
+  width: 100%;
+}
+
+.table-container-wrapper {
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.pagination-wrapper{
+	clear: both;
+	background-color: #F4F5F7;
+	margin-top: 10px;
+	height: 40px;
+}
+
+.pagination-page-number-container{
+	display: inline-block;
+	min-width: 300px;
+	margin-left: 10px;
+  margin-top: 5px;
+
+}
+
+.pagination-page-width-container{
+	float: right;
+	padding: 0 10px;
+	min-width: 110px;
+	position: relative;
+}
+
+.first-page-number, .current-page-number, .last-page-number{
+	float: left;
+	margin: 0 5px;
+	line-height: 30px;
+}
+
+.current-page-number{
+	background-color: #42526e;
+    padding: 0px 10px;
+    border-radius: 4px;
+    color: white;
+}
+
+.hide{
+	display: none;
+	margin: 0 10px;
+}
+
+.current-pagination{
+	display: inline-block;
+	text-align: center;
+	height: 30px;
+    line-height: 30px;
+    width: calc(100% - 30px);
+	padding: 0;
+	color: black;
+	background-color: #DFE1E5;
+	border-radius: 4px 0 0 4px;
+	vertical-align: top;
+}
+
+.pagination-dropdown-button{
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	background-color: #deebff;
+	border-radius: 0 4px 4px 0;
+	vertical-align: unset !important;
+}
+
+.drop-down-arrow-pagination-options{
+	vertical-align: unset !important;
+}
+
+.pagination-options-container{
+	position: absolute;
+    width: calc(100% - 20px);
+    background-color: white;
+    top: 35px;
+    box-shadow: 0 3px 6px rgba(0,0,0,.2);
+}
+
+.change-pagination-width-function{
+	padding: 5px;
+	cursor: pointer;
+}
+
+.change-pagination-width-function:hover {
+	background-color: #F4F5F7;
+}
+
+#last-page-pagination,#first-page-pagination{
+	cursor: pointer;
+}
+
+#first-page-pagination{
+	margin-right: 10px;
+}
+
+#last-page-pagination{
+	margin-left: 10px;
+}

@@ -1,0 +1,97 @@
+##$webResourceManager.requireResource('com.thed.zephyr.je:zephyr-project-dashboard-resources')
+#set($projectUrlPrefix = "${requestContext.baseUrl}/browse/$textutils.htmlEncode(${projectKey})?selectedTab=com.atlassian.jira.plugin.system.project:zephyr_tc-panel")
+#if ($req.getAttribute("lastvisitedVersion"))
+	#set ($lastvisitedVersion = $req.getAttribute("lastvisitedVersion"))
+#else
+	#set ($lastvisitedVersion = "")
+#end
+#if ($req.getAttribute("errors"))
+	#set ($errors =  $req.getAttribute("errors"))
+#else
+	#set ($errors =  "")
+#end
+###macro (esc $text)$xmlutils.escape($text)#end
+
+<input type="hidden" id="zdateformat" value="$datePickerFormat"/>
+<input type="hidden" id="zephyr-proj-tab" value="test-cycles-tab"/>
+<div class="aui-item">
+		<input type="hidden" id="zerrors" value="$textutils.htmlEncode($!errors)"/>
+		 #if($!errors && $!errors.length() > 0)
+			<div style="opacity:0.9;">
+				#parse("/templates/zephyr/common/licenseerror.vm")
+			</div>
+		 #else
+            <ul class="versionBannerList styled-parent" id="dropDown-standard">
+            	<div class="module" id="cyclesummarymodule">
+            		<div id="cyclemodule_heading" class="mod-header">
+            			<h3 class="toggle-title">$i18n.getText('project.cycle.summary.section.label') </h3>
+            		</div>
+            		<div class="mod-content">
+            			<nav class="aui-toolbar">
+                            <div class="toolbar-split toolbar-split-right">
+                                <ul class="toolbar-group">
+                                    <li class="toolbar-item">
+                                        <a href="#" class="toolbar-trigger zfj-trigger-dialog" id="pdb-create-cycle-dialog" title="$i18n.getText('zephyr-je.pdb.cycle.add.title')" style="float:right">
+                                            <span class="icon icon-add16"></span>
+                                            $i18n.getText('zephyr-je.pdb.cycle.add.label')
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+            				<ul class="aui-dropdowns">
+            				## Removing li - coz versionBannerList li adds a hover on background
+            	            ##<li class="dropdown-item">
+            					<input type="hidden" id="zprojectId" value="$project.getId()"/>
+            					$i18n.getText('project.cycle.version.selection.label'): &nbsp;&nbsp;
+            						<select id="select-version2" class="aui select" >
+           								<optgroup label="$i18n.getText('common.filters.unreleasedversions')">
+           								<option value="$unscheduledVersionId" title="$i18n.getText("zephyr.je.version.unscheduled")">$i18n.getText("zephyr.je.version.unscheduled")</option>
+            							#if ($unreleasedVersions && $unreleasedVersions.size() > 0)
+                							#foreach($unreleasedVersion in $unreleasedVersions)
+													#if($unreleasedVersion.getName().length() > 50)
+														#set($separator = '...')
+														#set($name = $unreleasedVersion.getName().substring(0, 50))
+													#else
+														#set($separator = '')
+														#set($name = $unreleasedVersion.getName())
+													#end
+												#set($title = $unreleasedVersion.getName())
+                					    		<option value="$unreleasedVersion.getId()" title="$textutils.htmlEncode($title)" #if($unreleasedVersion.getId().toString() == $!lastvisitedVersion)class="active-version" selected="selected"#end>$name$separator</option>
+            								#end
+            							#end
+            							#if ($releasedVersions && $releasedVersions.size() > 0)
+            								<optgroup label="$i18n.getText('common.filters.releasedversions')">
+                							#foreach($releasedVersion in $releasedVersions)
+													#if($releasedVersion.getName().length() > 50)
+														#set($separator = '...')
+														#set($name = $releasedVersion.getName().substring(0, 50))
+													#else
+														#set($separator = '')
+														#set($name = $releasedVersion.getName())
+													#end
+													#set($title = $releasedVersion.getName())
+                					    		<option value="$releasedVersion.getId()" title="$textutils.htmlEncode($title)" #if($releasedVersion.getId().toString() == $!lastvisitedVersion)class="active-version" selected="selected"#end>$name$separator</option>
+            								#end
+            							#end
+            						</select>
+            						<span class="icon"></span>
+            	            <li class="dropdown-item">
+                    			<div id="project-panel-cycle-summary"/>
+            				</li>
+            			</ul>
+                        </nav>
+            			<ul id="project-panel-cycle-list-summary" class="versionBannerList page-type-issuenav">
+            			</ul>
+            		</div>
+            	</div>
+            </ul>
+		 #end
+</div>
+<iframe id="csvDownloadFrame" style="visibility:hidden;height:0px;width:0px;"></iframe>
+<!--
+<div id="foo" class="disable" style="top:40px;height:400px;width:85%">
+	 #if($errors)
+			#parse("/templates/zephyr/common/licenseerror.vm")
+	 #end
+</div>
+-->

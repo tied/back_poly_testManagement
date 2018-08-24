@@ -1,0 +1,31 @@
+#set ($ctxPath =  $req.getContextPath())
+
+<head>
+	$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-product-config")
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_product_configuration"/>
+    <meta name="decorator" content="admin"/>
+    <title>$i18n.getText("zephyr.je.admin.plugin.test.section.item.zephyr.info.label")</title>
+</head>
+<body>	
+<div class="module">
+	<div>
+        <h2><strong>ZAPI - Zephyr for JIRA RESTful APIs</strong></h2>
+        <a href="$ctxPath/plugins/servlet/upm/marketplace/search?q=zapi" target="_parent">
+            <img id="zapi_not_installed_img" src="$ctxPath/download/resources/com.thed.zephyr.je:zephyr-product-config/images/Zephyr_ZAPI.png"/>
+        </a>
+        <br/>
+        <h2><strong>Capture for JIRA</strong></h2>
+        <a href="$ctxPath/plugins/servlet/upm/marketplace/search?q=Capture%20for%20Jira%20zephyr" target="_parent">
+            <img id="zapi_not_installed_img" src="$ctxPath/download/resources/com.thed.zephyr.je:zephyr-product-config/images/Zephyr_Capture-for-JIRA.png"/>
+        </a>
+        <br/>
+        <h2><strong>Zephyr Enterprise Platform</strong></h2>
+        <a href="https://marketplace.atlassian.com/plugins/com.thed.jira.ext.rpc/cloud/overview" target="_blank">
+            <img id="zapi_not_installed_img" src="$ctxPath/download/resources/com.thed.zephyr.je:zephyr-product-config/images/Zephyr_ZE-Platform.png"/>
+        </a>
+    </div>
+</div>
+</body>

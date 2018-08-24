@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="7px" viewBox="0 0 15 7" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>list-view_icon-white</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="S-A-04" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-1606.000000, -267.000000)">
+        <g id="Group-15" transform="translate(1572.000000, 235.000000)" fill="#FFFFFF">
+            <g id="list-view_icon-white" transform="translate(34.000000, 32.000000)">
+                <g id="list-view_icon">
+                    <rect id="Rectangle-6" x="0" y="0" width="15" height="1"></rect>
+                    <rect id="Rectangle-6" x="0" y="3" width="15" height="1"></rect>
+                    <rect id="Rectangle-6" x="0" y="6" width="15" height="1"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

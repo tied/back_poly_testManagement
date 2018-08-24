@@ -1,0 +1,54 @@
+#set ($uri = $req.getRequestURI())
+#disable_html_escaping()
+#if ($value)
+    #if($uri.endsWith(".doc") || $uri.endsWith(".xls") || $uri.endsWith(
+        ".html") || $uri.endsWith(".xml"))
+    <div>
+        <table id="project-config-steps-table" class="aui" style="table-layout: fixed; width: 100%">
+            <thead>
+            <tr>
+                <th style="max-height: 25px; max-width: 25px;"></th>
+                <th style="max-height: 25px; max-width: 25px;">$i18n.getText('view.issue.steps.table.column.step')</th>
+                <th style="max-height: 25px; max-width: 25px;">$i18n.getText('view.issue.steps.table.column.data')</th>
+                <th style="max-height: 25px; max-width: 25px;">$i18n.getText('view.issue.steps.table.column.result')</th>
+                <th style="max-height: 25px; max-width: 25px;">Attachment Details</th>
+                <th style="max-height: 25px; max-width: 25px;">Test Step Custom Fields</th>
+            </tr>
+            </thead>
+            <tbody>
+                #foreach ($singleStep in $value)
+                    #set($testStepCustomFieldDataString = '')
+                    #set($attachmentFileDataString = '')
+
+                    #if($singleStep.customFieldValuesMap && $singleStep.customFieldValuesMap.size() > 0)
+                        #foreach ($entry in $singleStep.customFieldValuesMap.entrySet())
+                            #set($testStepCustomFieldDataString = $testStepCustomFieldDataString + $entry.key + ':' + $entry.value)
+                            #if($velocityCount != $singleStep.customFieldValuesMap.size())
+                                #set($testStepCustomFieldDataString = $testStepCustomFieldDataString + '<br> ')
+                            #end
+                        #end
+                    #end
+
+                    #if($singleStep.attachmentsMap && $singleStep.attachmentsMap.size() > 0)
+                        #foreach($attachment in $singleStep.attachmentsMap)
+                            #set($attachmentFileDataString = $attachmentFileDataString + $!attachment.fileName)
+                            #if($velocityCount != $singleStep.attachmentsMap.size())
+                                #set($attachmentFileDataString = $attachmentFileDataString + '<br> ')
+                            #end
+                        #end
+                    #end
+
+                    <tr style="word-wrap: break-word;">
+                        <td style="max-height: 25px; max-width: 25px;">$!singleStep.orderId</td>
+                        <td style="max-height: 25px; max-width: 25px;">$!singleStep.htmlStep</td>
+                        <td style="max-height: 25px; max-width: 25px;">$!singleStep.htmlData</td>
+                        <td style="max-height: 25px; max-width: 25px;">$!singleStep.htmlResult</td>
+                        <td style="max-height: 25px; max-width: 25px;">$!attachmentFileDataString</td>
+                        <td style="max-height: 25px; max-width: 25px;">$!testStepCustomFieldDataString</td>
+                    </tr>
+                #end
+            </tbody>
+        </table>
+    </div>
+    #end
+#end

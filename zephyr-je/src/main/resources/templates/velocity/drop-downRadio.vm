@@ -1,0 +1,188 @@
+<dom-module id="drop-downradio">
+  <template>
+    <custom-style>
+      <style>
+        .drop-downradio .dropDown-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          min-width: 1px;
+        }
+  
+        .drop-downradio.isStandAlone .dropDown-wrapper.select-status span:nth-child(1),
+        .drop-downradio .dropDown-wrapper.select-status span:nth-child(1) {
+          color: #FFF;
+          border: 0;
+        }
+  
+        .drop-downradio .dropDown-wrapper span:nth-child(1) {
+          display: flex;
+          align-items: center;
+          height: 20px;
+          margin-right: 2px;
+          padding-right: 10px;
+          justify-content: center;
+          text-align: center;
+          flex-grow: 1;
+          color: #333;
+          background-color: #F7F8F9;
+          font-size: 12px;
+          overflow: hidden;
+          border-radius: 4px 0 0 4px;
+          border: 1px solid #DEE1E6;
+          box-sizing: border-box;
+        }
+  
+        .drop-downradio .dropDown-wrapper>span:nth-child(1)>div {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          width: 100%;
+        }
+  
+        .drop-downradio .dropDown-wrapper>span:nth-child(1)>div:empty:after {
+          content: 'Choose Value...';
+        }
+  
+        .drop-downradio .dropDown-wrapper .trigger-dropDown {
+          min-width: 20px;
+          height: 20px;
+          vertical-align: baseline;
+          background-color: #deebff;
+          display: inline-block;
+          cursor: pointer;
+          border-radius: 0 3px 3px 0;
+          outline: none;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+  
+        .drop-downradio .dropDown-wrapper .trigger-dropDown:hover {
+          background: #B2D4FF;
+        }
+  
+        .drop-downradio .dropDown-container {
+          position: absolute;
+          z-index: 300;
+          top: 21px;
+          left: 0;
+          background-color: #fff;
+          border: 1px solid #dfe1e6;
+          border-bottom-left-radius: 3px;
+          border-bottom-right-radius: 3px;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
+          width: calc(100% - 25px);
+        }
+  
+        .drop-downradio .dropDown-container ul {
+          list-style: none;
+          margin: 2px 0;
+          padding-left: 0;
+          max-height: 100px;
+          overflow: auto;
+        }
+  
+        .drop-downradio .dropDown-container ul li {
+          width: 100%;
+          padding: 3px 10px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 12px;
+          box-sizing: border-box;
+        }
+  
+        .drop-downradio .dropDown-container ul li:hover {
+          background-color: #ebecf0;
+        }
+  
+        .drop-downradio.cell-wrapper.drop-Down {
+          width: 125px;
+        }
+  
+        .drop-downradio.cell-wrapper.drop-Down.isStandAlone {
+          width: auto;
+          min-width: 125px;
+        }
+  
+        .drop-downradio.isStandAlone .dropDown-wrapper>span:nth-child(1) {
+          height: 30px;
+          color: #333;
+          padding-right: 15px;
+        }
+  
+        .drop-downradio.isStandAlone .dropDown-wrapper .trigger-dropDown {
+          min-width: 30px;
+          height: 30px;
+        }
+  
+        .drop-downradio.isStandAlone .dropDown-container {
+          width: 100%;
+          top: 30px;
+        }
+  
+        .drop-downradio .dropDown-container.open {
+          display: block;
+        }
+  
+        .drop-downradio.isGrid .dropDown-container.open {
+          width: 120px;
+        }
+  
+        .drop-downradio.isGrid .dropDown-container {
+          position: fixed;
+          /* visibility: visible; */
+          /* display: block; */
+        }
+  
+        .drop-downradio .dropDown-container.close {
+          /* visibility: hidden; */
+          display: none;
+        }
+  
+        .drop-downradio.isStandAlone .remove-data {
+          right: 40px;
+          font-weight: bold;
+        }
+  
+        .drop-downradio .remove-data {
+          position: absolute;
+          right: 26px;
+          font-weight: 500;
+          cursor: pointer;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      </style>
+    </custom-style>
+    <div class$="cell-wrapper drop-Down drop-downradio {{_checkIsGrid(isgrid)}}" data-columnid="status">
+      <div class="dropDown-wrapper">
+        <span id="dropDown" title="{{value}}">
+          <div>{{value}}</div>
+        </span>
+        <template is="dom-if" if="{{value}}">
+          <span class="remove-data" on-click="_emptyData">x</span>
+        </template>
+        <span class="trigger-dropDown" on-click="_triggerDropDown" tabindex="-1" on-focusout="_checkblur">
+          <template is="dom-if" if="{{imgurl}}">
+            <img src="{{imgurl}}">
+          </template>
+        </span>
+        <div tabindex="-1" class$="content dropDown-container {{_dropDownOpen(openDropDown)}}">
+          <template is="dom-if" if="{{openDropDown}}">
+            <ul>
+              <template is="dom-repeat" items="{{cloneOptions}}" index-as="indexRow">
+                <li data-value="{{item.value}}">
+                  <input type="radio" name="radio" content="{{item.content}}" value="{{item.value}}" checked="{{item.selected}}" on-change="_handleChange" id="radio-{{cellkey}}-{{rowid}}-{{indexRow}}">
+                  <label class="content" for$="radio-{{cellkey}}-{{rowid}}-{{indexRow}}" tabindex="-1" title="{{item.content}}">{{item.content}}</label>
+                </li>
+              </template>
+            </ul>
+          </template>
+        </div>
+      </div>
+    </div>
+  </template>
+</dom-module>

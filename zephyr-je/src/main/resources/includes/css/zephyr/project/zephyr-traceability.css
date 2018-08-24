@@ -1,0 +1,384 @@
+#requirement-section .navigator-search {
+	background-color: #ffffff; 
+	padding: 10px 20px 10px 12px;
+	border-bottom: 0;
+}
+#requirement-section .saved-search-selector {
+	background-color: #ffffff;
+	padding: 10px 20px 10px 20px;
+}
+#requirement-section .aui-group {
+	padding: 0
+}
+#requirement-section .traceability-aui-group li {
+	display: inline-block;
+}
+#requirement-section .version > ul {
+	padding : 10px 5px 10px 10px;
+}
+#requirement-section .select-img-icon {
+	vertical-align: middle;
+}
+#requirement-section .aui-button.search-button {
+	margin-left: 20px;
+}
+#requirement-section .issue-table-info-bar, .count-pagination {
+	padding: 15px;
+}
+
+/*
+ * Report page
+ */
+#report-pagination-container {
+	padding: 10px 0;
+}
+#report-pagination-container #reqPageId {
+	float: right;
+}
+
+#report-export-wrapper {
+	padding: 10px 0;
+	position: relative;
+	height: 100px;
+}
+
+#report-export-wrapper #export-dropdown2-link {
+	float: right;
+}
+
+#report-table-container {
+	margin: 10px 0;
+}
+
+#report-table-container table.aui > thead > tr > th, 
+#report-table-container table.aui > tbody > tr > th, 
+#report-table-container table.aui > thead > tr > td, 
+#report-table-container table.aui > tbody > tr > td, 
+#report-table-container table.aui > tfoot > tr > td {
+	border-right: 1px solid #cccccc;
+}
+
+#report-table-container table.aui > tbody tr:first-child > td {
+	border-top: none;
+}
+
+#report-table-container table.aui > tbody > tr > td#execution-row,
+#report-table-container table.aui > tbody > tr > td#defect-row {
+	padding: 0px !important;
+	position: relative;
+}
+
+#report-table-container table.aui > tbody > tr > td#execution-row div.execution-stats,
+#report-table-container table.aui > tbody > tr > td#defect-row div.defect-stats {
+	padding: 7px 10px !important;
+}
+
+/**
+ * Report tables using divs
+ */
+.report-table {   	
+	display: block;   	
+	width: 100%;
+	border-radius: 3px;
+}
+
+.report-table:after {   	
+	visibility: hidden;   	
+	display: block;   	
+	font-size: 0;   	
+	content: " ";   	
+	clear: both;   	
+	height: 0; 
+	width: 100%;
+}
+
+.report-thead, 
+.report-tbody,
+.report-tfoot, 
+.report-tr {   	
+	clear: both;
+	width: 100%;
+}
+
+.report-thead,
+.report-tfoot {
+	font-weight: bold;
+}
+
+.report-tr, 
+.report-th,
+.report-td {	
+	float: left;   	 	
+	overflow: hidden;   	
+}
+
+.report-th,
+.report-td {
+	width: 25%;
+}
+.report-th div.report-cell,
+.report-td div.report-cell {
+	padding: 7px 10px;	
+	word-wrap: break-word;
+    word-break: break-all;
+}
+
+.report-cell-req {
+	word-wrap: break-word;
+    word-break: break-all;
+}
+
+.report-th div.report-cell {
+	border-top: 1px solid #cccccc;
+}
+
+.report-thead .report-th:first-child div.report-cell, 
+.report-tbody .report-tr > .report-td:first-child div.report-cell {
+	border-left: 1px solid #cccccc;
+}
+
+.report-th div.report-cell,
+.report-td div.report-cell {
+	border-bottom: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+}
+
+.report-requirement-cell div.report-last-cell {
+	padding: 7px 10px;
+	border-left: 1px solid #cccccc;
+	border-bottom: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+}
+
+.report-requirement-cell div.report-cell {
+	border-bottom: none;
+}
+
+#tests-executions-wrapper.tests-executions-wrapper {
+	width: 66.67%;
+	float: left;
+	word-wrap: break-word;
+  	word-break: break-all;
+}
+
+#defects-executions-wrapper.defects-executions-wrapper {
+	width: 75%;
+	float: right;
+	word-wrap: break-word;
+  	word-break: break-all;
+}
+
+#tests-executions-wrapper #execution-row-table td {
+	width: 49.9%;
+	word-wrap: break-word;
+  	word-break: break-all;
+}
+
+#defects-executions-wrapper #execution-row-table td {
+	width: 33.33%;
+	word-wrap: break-word;
+  	word-break: break-all;
+}
+
+.report-tr-left {
+  float: left;
+  width: 25%;
+  height: auto;
+}
+
+.report-tr-right {
+  float: right;
+  width: 75%;
+}
+
+.rtod-report-tr-container {
+	float: left;
+	width: 100%;
+}
+.rtod-report-tr-container .report-td {
+  width: 33.33% !important;
+}
+
+.report-td-req {
+	width: 100%;
+	height: 100%;
+}
+
+.report-cell-req {
+	height: 100%;
+	padding: 7px 10px;
+	border-left: 1px solid #cccccc;
+	border-bottom: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+}
+
+.report-aui-badge {
+	font-size: 9px;
+	margin-left: 5px;
+}
+
+a {
+	cursor: pointer;
+}
+
+#show-more-wrapper {
+	width: 100%;
+}
+
+.exec-show-more-container {
+	position: relative;
+}
+.previous, .refresh-table{
+	padding-left: 5px;
+}
+.next{
+	padding-right: 5px;
+}
+.show{
+	display: block;
+}
+.hide{
+	display: none;
+}
+.reportButton{
+	text-align: center;
+  	padding-top: 25px;
+}
+#navigateToReport{
+	float: right;
+	position: relative;
+	top: 20px;
+	margin-bottom: 10px;
+}
+.navigateToReportOptions li{
+	display: inline-block;
+	padding-right: 15px;
+}
+.no-results.no-results-message {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFUAAABuCAYAAABWSF80AAACP0lEQVR42u3dzbGCMBSGYZxxw46texuwg5RADzZhF7RBH7TBgk64OHNwrtxo4JrAOfguvp2jmWckP4Qcsr7vszFt2x6GuCHNkF5R7m3KtGd0nILWyjDHdENyU6jKQc3ATlGdclATsFPUxtP485DjBo3L5fdfwTZyZelFFbhpw08bN7AK/GNrjbC/UQtPowvlqCph94CqDnYvqKpgraHeAoOXClhrqG7GrGBzWIuomcxK1HYFVlEzmT+rhLWMqhbWOqpK2D2gqoO1hlq++awaWGuoobtTKmC1o15f4FRv0m0Nqx313Ka5H3v7ZtQs0U5E9e2oBxmgOlDT5ChtWpILqOvMIkAFFVRQQQUVVFBBBRVUUEEFFVRQQQUVVFBBBRVUUEEFFVRQQQUVVFBBBRVUc6hd4BnXpSlBjZ+nY/KgxsvjCW1QE8B+K2ojx4f+k3IuLKP/slzmwIK6LMWcrgDU+Kg9qKCqQ+1AjY9a+Q7Sgfo56p8TiqDGQX2CBTUe6gMW1GVx775P6iaeQY2MyjL1c9Qa1DRr/xzU+CuqTgaoxwluUJcfkWeZmmDjrwI1PmqwKDqonxXPKX27rKP8qlVxVsrBcxfJrbLvL6uA+gWsMxzfWzVOa6KmqgOlKXXqq8P3mo/bjkFDZe2Sod77oCugEVEFdpwNXFv971IJQVayrFy/1KcHVfOUyGmecYAKKqigggoqqKCCCiqooIIKKqigggoqqKCCCiqooIIKKqigggoqqKCCCiqooIIKKqjWUH8Avm1Svml3YkkAAAAASUVORK5CYII=");
+}
+.no-results {
+  background-color: #fff;
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  margin: 100px auto 0;
+  padding: 40px 110px 40px 20px;
+  width: 520px;
+  border-radius: 3px 5px 5px 5px;
+  border: 1px solid #ccc;
+}
+.navigator-content {
+  box-sizing: border-box;
+  clear: both;
+}
+#traceability-message-bar{
+	padding: 0;
+}
+body{
+	min-height: 400px;
+}
+
+#export-job-progress-id .aui-dialog2-content {
+	height: 120px;
+	min-height: 120px !important;
+}
+
+.icon-required,
+.aui-icon-required {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAXklEQVR42u3MsQ2AIBSEYZnHAVjACZzkNUxA6yCOY2HhNnoXn6EggVxjRfHnQh75pmOJX/e7JTPrxo8JRQK+SQUyugj4ZhUIaCPgG1RgRida0c63ClQpQOs4gAH8Bzy5KFqGk8PBaQAAAABJRU5ErkJggg==);
+}
+
+.status-right {
+	float: right;
+}
+
+.issue-status-img {
+	position: relative;
+    top: 3px;
+    left: 3px;
+}
+
+.zfj-aui-lozenge-status {
+	position: relative;
+    left: 5px;	
+}
+
+.font-size-16 {
+	font-size: 16px !important;
+}
+
+.aui-lozenge.jira-issue-status-lozenge-green{background-color:#14892c;border-color:#14892c;color:#fff}
+.aui-lozenge.aui-lozenge-subtle.jira-issue-status-lozenge-green{background-color:#fff;border-color:#b2d8b9;color:#14892c}
+.aui-lozenge.jira-issue-status-lozenge-yellow{background-color:#ffd351;border-color:#ffd351;color:#594300}
+.aui-lozenge.aui-lozenge-subtle.jira-issue-status-lozenge-yellow{background-color:#fff;border-color:#ffe28c;color:#594300}
+.aui-lozenge.jira-issue-status-lozenge-brown{background-color:#815b3a;border-color:#815b3a;color:#fff}
+.aui-lozenge.aui-lozenge-subtle.jira-issue-status-lozenge-brown{background-color:#fff;border-color:#ece7e2;color:#815b3a}
+.aui-lozenge.jira-issue-status-lozenge-warm-red{background-color:#d04437;border-color:#d04437;color:#fff}
+.aui-lozenge.aui-lozenge-subtle.jira-issue-status-lozenge-warm-red{background-color:#fff;border-color:#f8d3d1;color:#d04437}
+.aui-lozenge.jira-issue-status-lozenge-blue-gray{background-color:#4a6785;border-color:#4a6785;color:#fff}
+.aui-lozenge.aui-lozenge-subtle.jira-issue-status-lozenge-blue-gray{background-color:#fff;border-color:#e4e8ed;color:#4a6785}
+.aui-lozenge.jira-issue-status-lozenge-medium-gray{background-color:#ccc;border-color:#ccc;color:#333}
+.aui-lozenge.aui-lozenge-subtle.jira-issue-status-lozenge-medium-gray{background-color:#fff;border-color:#ccc;color:#333}
+.aui-lozenge.jira-issue-status-lozenge-compact{width:4px;text-align:left;text-indent:-9999px}
+
+.aui-iconfont-list-expand {	
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAJFBMVEX///9wcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHDRPAkXAAAADHRSTlMAESIziJmqu8zd7v+91kxoAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADIxLzEyLzEymvNa/wAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAAySURBVAiZY2AgCbA0MDCkgBgcWxlYd4AYjN0B0YvAclrbdxmAGcyrF0OVWxqQZjwDAwA8XgfBciyedgAAAABJRU5ErkJggg==);
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.aui-iconfont-list-collapse {	
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAA3NCSVQICAjb4U/gAAAAJFBMVEX///9wcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHDRPAkXAAAADHRSTlMAESIziJmqu8zd7v+91kxoAAAACXBIWXMAAAsSAAALEgHS3X78AAAAFnRFWHRDcmVhdGlvbiBUaW1lADIxLzEyLzEymvNa/wAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNui8sowAAAArSURBVAiZY2DAB1iaoAy2XQZQVvRiKIMVLlQ9AU0EpoZjhwLUnEa81iABAFHzB8GYPzdNAAAAAElFTkSuQmCC");
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.total-defects-label{
+	font-size: 12px;
+}
+
+.requirement-description-help-icon {
+	float: right;
+	margin-right: 10px;
+}
+
+.navigateToReportOptions {
+	float: left;
+	margin-top: 5px !important;
+}
+
+#navigateToReport .reportButton {
+	margin-left: 0px !important;
+}
+
+#requirement-message ol li {
+	display: list-item;
+}
+
+#test-show-more-wrapper .test-show-more-container {
+	padding: 7px 10px;	
+	border-right: 1px solid #cccccc;
+	border-bottom: 1px solid #cccccc;	
+}
+
+#exec-show-more,
+#test-show-more {
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    display: block;
+    font-size: 12px;
+    margin: 0px 0.2em;
+    overflow: hidden;
+    padding: 0.35em;
+    text-align: center;
+}
+
+#exec-show-more span,
+#test-show-more span {
+    color: #666666;
+}
+
+.aui-iconfont-devtools-arrow-right.traceability-report-arrow-right.traceability-arrow-right::after {
+	content: "-->";
+	font-weight: bold;
+}

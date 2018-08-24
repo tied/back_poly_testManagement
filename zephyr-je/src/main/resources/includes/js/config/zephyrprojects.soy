@@ -1,0 +1,149 @@
+{namespace ZEPHYR.Templates.ZephyrProjects}
+
+/**
+ * Renders a table of selected Projects.
+ * @param disabledProjectList
+ */
+{template .listSelectedProjects autoescape="true"}
+	<div class="project-view-test-disable">
+    	<div>
+	    	<table class="aui" id="project-view-test-disable-detail" >
+			    <thead>
+			        <tr>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.name')}</th>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.key')}</th>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.projectType')}</th>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.delete')}</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			    	{foreach $tdProject in $disabledProjectList}
+			    		<tr data-projectid={$tdProject.properties.value} data-projectName={$tdProject.properties.label}>
+				    	<td width="60%"><a href="{contextPath}/browse/{$tdProject.properties.key}">{$tdProject.properties.label}</a></td>
+			    		<td width="15%">{$tdProject.properties.key}</td>
+				    	<td width="15%">{$tdProject.properties.title}</td>
+				    	<td class="delete-project" width="10%">
+							<input id="zephyr-project-delete" type="button" class="aui-button" style="vertical-align:baseline" 
+								value="{getText('zephyr.admin.menu.globalsettings.config.projects.delete')}">
+				    	</td>
+					    </tr>
+		    		{/foreach}
+			    <tbody>
+			</table>
+        </div>
+    </div>
+{/template}
+
+/**
+ * 
+ */
+{template .deleteTestDisableProjectConfirmationDialog}
+	<h2 class="dialog-title">{getText('zephyr.admin.menu.globalsettings.config.projects.delete.alert.label')}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message warning" id="">
+                	<span class="aui-icon icon-warning"></span>
+                	{getText('zephyr.admin.menu.globalsettings.config.projects.delete.alert.info')}
+            	</div>
+            </div>
+            <label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="cycle-delete-form-submit" value="{getText('zephyr.admin.menu.globalsettings.config.projects.delete')}" />
+	            <a href="#" class="cancel cycle-close">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+
+/**
+ * Renders a table of selected Projects.
+ * @param disabledEWProjectList
+ */
+{template .listSelectedEWProjects autoescape="true"}
+	<div class="project-view-test-disable">
+    	<div>
+	    	<table class="aui" id="project-view-ew-disable-detail" >
+			    <thead>
+			        <tr>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.name')}</th>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.key')}</th>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.projectType')}</th>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.ew.delete')}</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			    	{foreach $tdProject in $disabledEWProjectList}
+			    		<tr data-projectid={$tdProject.properties.value} data-projectName={$tdProject.properties.label}>
+				    	<td width="60%"><a href="{contextPath}/browse/{$tdProject.properties.key}">{$tdProject.properties.label}</a></td>
+			    		<td width="15%">{$tdProject.properties.key}</td>
+				    	<td width="15%">{$tdProject.properties.title}</td>
+				    	<td class="delete-project" width="10%">
+							<input id="zephyr-project-delete-ew" type="button" class="aui-button" style="vertical-align:baseline" 
+								value="{getText('zephyr.admin.menu.globalsettings.config.projects.ew.delete')}">
+				    	</td>
+					    </tr>
+		    		{/foreach}
+			    <tbody>
+			</table>
+        </div>
+    </div>
+{/template}
+
+/**
+ * Dialog for deleting the disable configuration of Execution Workflow
+ */
+{template .deleteExecWorkflowProjectConfirmationDialog}
+	<h2 class="dialog-title">{getText('zephyr.admin.menu.globalsettings.config.projects.delete.alert.label')}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message warning" id="">
+                	<span class="aui-icon icon-warning"></span>
+                	{getText('zephyr.admin.menu.globalsettings.config.projects.ew.disable.delete.alert.info')}
+            	</div>
+            </div>
+            <label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="cycle-delete-form-submit" value="{getText('zephyr.admin.menu.globalsettings.config.projects.ew.delete')}" />
+	            <a href="#" class="cancel cycle-close">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+
+/**
+ * @param reindexProjectList
+ */
+{template .listReindexSelectedProjects autoescape="true"}
+	<div class="project-view-test-disable">
+    	<div>
+	    	<table class="aui" id="project-view-reindex-detail" >
+			    <thead>
+			        <tr>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.name')}</th>
+			            <th>{getText('zephyr.admin.menu.globalsettings.config.projects.selected')}</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			    	{foreach $tdProject in $reindexProjectList}
+			    		<tr data-projectid={$tdProject.properties.value} data-projectName={$tdProject.properties.label}>
+				    	<td width="60%"><a href="{contextPath}/browse/{$tdProject.properties.key}">{$tdProject.properties.label}</a></td>
+				    	<td width="30%">
+							<input title="Please uncheck to not reindex this project." id={$tdProject.properties.value} type="checkbox" class="checkbox" style="vertical-align:baseline" checked="checked">
+				    	</td>
+					    </tr>
+		    		{/foreach}
+			    <tbody>
+			</table>
+        </div>
+    </div>
+{/template}

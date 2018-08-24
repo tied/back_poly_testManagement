@@ -1,0 +1,27 @@
+#if ($req.getAttribute("errors"))
+	#set ($errors =  $req.getAttribute("errors"))
+#else
+	#set ($errors =  "")
+#end
+<html>
+<head>
+	<title>$i18n.getText('zephyr.license.error.link.label')</title>
+    <meta name="decorator" content="message" />
+</head>
+<body>
+    <div class="form-body">
+        <header>
+            <h1>$i18n.getText('zephyr.license.error.link.label')</h1>
+        </header>
+        <div class="aui-message error">
+            <aui:param name="'messageHtml'">
+				<span class="aui-icon icon-error"></span>
+                <p>$i18n.getText($errors)</p>
+                <p>
+                    $i18n.getText('contact.admin.for.perm', "Contact <a href='http://support.getzephyr.com'>Zephyr Support</a>")
+                </p>
+            </aui:param>
+		</div>
+    </div>
+</body>
+</html>

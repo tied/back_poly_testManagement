@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="13px" viewBox="0 0 14 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>back_button</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="S-A-02" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-398.000000, -346.000000)">
+        <g id="back_button" transform="translate(398.000000, 346.000000)" fill="#5E6C84">
+            <rect id="Rectangle-23" x="0" y="5.5" width="14" height="2" rx="1"></rect>
+            <path d="M7.20710678,1.70710678 C7.59763107,1.31658249 7.59763107,0.683417511 7.20710678,0.292893219 C6.81658249,-0.0976310729 6.18341751,-0.0976310729 5.79289322,0.292893219 L0.292893219,5.79289322 C-0.0976310729,6.18341751 -0.0976310729,6.81658249 0.292893219,7.20710678 L5.79289322,12.7071068 C6.18341751,13.0976311 6.81658249,13.0976311 7.20710678,12.7071068 C7.59763107,12.3165825 7.59763107,11.6834175 7.20710678,11.2928932 L2.41421356,6.5 L7.20710678,1.70710678 Z" id="Path-6"></path>
+        </g>
+    </g>
+</svg>

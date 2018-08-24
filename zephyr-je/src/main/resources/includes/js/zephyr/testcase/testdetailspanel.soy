@@ -1,0 +1,129 @@
+{namespace ZEPHYR.TestDetails}
+
+/**
+ * Renders test details history with show more option
+ * @param	auditLogs
+ * @param! 	contextPath
+ */
+{template .addTestDetailsHistory}
+	{if $auditLogs.length == 0}
+		{getText('je-audit-tabpanel.testdetails.none')}
+	<div class="testdetails-header" style="position:absolute;right:0;">
+		<a href="#"><span id="testdetails-refresh" class="aui-icon aui-icon-small aui-iconfont-build">Refresh</span></a>
+	</div>
+	{else}
+	<div class="testdetails-header" style="position:absolute;right:0;">
+		<a id="testdetails-refresh" href="#"><span class="aui-icon aui-icon-small aui-iconfont-build"></span></a>
+	</div>
+	<div id="testdetails-wrapper">
+	 	{call .addAuditHistory}
+			{param auditLogs: $auditLogs/}
+			{param displayHeader: true/}
+			{param contextPath: contextPath/}
+		{/call}
+	</div>
+	<div class="audit-history-show-more-container">
+		<a id="audit-history-show-more" href="#" target="_parent"><span>Show more...</span></a>
+	</div>
+	{/if}
+{/template}
+ 
+/**
+ * Renders test details history
+ * @param auditLogs
+ * @param displayHeader
+ * @param contextPath
+ */
+{template .addAuditHistory autoescape="false"}
+{foreach $audit in $auditLogs}
+<div id="issue_actions_container" class="issuePanelContainer"> 
+	<div id="audithistory-{$audit.auditItems.id}" class="issue-data-block">
+		<div class="actionContainer">
+			<div id="audithistorydetails_{$audit.auditItems.id}" class="action-details">
+                {if $audit.creatorExists}
+                    <a href="{$contextPath}/secure/ViewProfile.jspa?name={$audit.creatorKey}" id="audithistoryauthor" rel="{$audit.creatorKey}" class="user-hover">
+                        {if $audit.avatarUrl}
+                            <span class="aui-avatar aui-avatar-xsmall">
+                                <span class="aui-avatar-inner">
+                                    <img src="{$audit.avatarUrl}">
+                                </span>
+                            </span>&nbsp;
+                        {/if}
+                        {$audit.creator}
+                        {if $audit.creatorActive == false}
+                        &nbsp;(Inactive)
+                        {/if}
+                    </a>
+                {else}
+                    <span class="user-hover user-avatar" rel="{$audit.creatorKey}">
+                        {if $audit.avatarUrl}
+                            <span class="aui-avatar aui-avatar-xsmall">
+                                <span class="aui-avatar-inner">
+                                    <img src="{$audit.avatarUrl}">
+                                </span>
+                            </span>&nbsp;
+                        {/if}
+                        {$audit.creator}
+                    </span>
+                {/if}
+				<span> made changes  - </span><span title="{$audit.creationDate}" class="date">
+			<time datetime="{$audit.creationDate}" class="livestamp">{$audit.creationDate}</time></span>
+			</div>
+			<div class="changehistory action-body">
+				<table width="100%" cellspacing="0" cellpadding="0" border="0" id="audithistory_{$audit.auditItems.id}">
+					{if $displayHeader and isFirst($audit)}
+					<thead>
+						<tr align="left">
+							<th width="20%">{getText('admin.common.words.type')}</th>
+							<th width="20%">{getText('admin.common.words.event')}</th>
+							<th width="20%">{getText('admin.issuefields.field.name')}</th>
+							<th width="20%">{getText('bulk.move.oldvalue')}</th>
+							<th width="20%">{getText('bulk.move.newvalue')}</th>
+						</tr>
+					</thead>
+					{/if}
+					<tbody>
+					<tr>
+						<td width="20%">
+						{if $audit.entityType}
+					      	{$audit.entityType}
+					   {/if}
+			    		</td>
+						<td width="20%">
+						{if $audit.entityEvent}
+					      	{$audit.entityEvent}					      	
+					    {/if}
+						</td>
+						<td width="20%">
+						{if $audit.auditItems.field}
+					      	{$audit.auditItems.field}
+					    {/if}
+						</td>
+						<td width="20%">
+						{if $audit.auditItems.oldValue}
+					      	{$audit.auditItems.oldValue}
+					    {/if}
+						</td>
+						<td width="20%">
+						{if $audit.auditItems.newValue}
+					      	{$audit.auditItems.newValue}
+					    {/if}
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{/foreach}
+{/template}
+
+/**
+ * Renders test details history container
+ */
+{template .addTestDetailsHistoryContainer}
+	<div id="je-audit-issuetab" class="mod-header">
+		<div id="je-audit-issuetab-child"></div>
+	</div>
+{/template}

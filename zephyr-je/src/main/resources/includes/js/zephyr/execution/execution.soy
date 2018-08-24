@@ -1,0 +1,957 @@
+{namespace ZEPHYR.Templates.Execution}
+
+
+/**
+ * creates an equivalent of execute test vm
+ * @param schedule
+ * @param executedBy
+ * @param executedByDisplay
+ * @param currentExecutionStatus
+ * @param executionStatuses
+ * @param contextPath
+ * @param projectKey
+ * @param projectName
+ * @param projectAvatarId
+ * @param issueDescAsHtml
+ * @param isCycleSummaryExecution
+ * @param queryString
+ * @param hideListView
+ * @param? stepColumns
+ * @param? customFieldsOrder
+ * @param? isExecutionPage
+ * @param? atLastPagination
+ * @param? atFirstPagination
+ * @param? previous
+ * @param? next
+ * @param? previousId
+ * @param? nextId
+ */
+{template .detailedExecutionView autoescape="true"}
+<div class="stl-exe-right" id="stl-exe-right-container">
+    {if not $isCycleSummaryExecution}
+        <div class="cycle-details-wrapper" id="stl-exe-right-cycle-details-wrapper-container">
+            <div class="breadcrumbs-wrapper">
+                <ul class="aui-nav aui-nav-breadcrumbs breadcrumbs">
+                    <li>
+                        {if $projectKey == 'XXXXX'}
+                            <span id="project-name-val">{$projectName}</span></li>
+                        {else}
+                            <a href="{$contextPath}/browse/{$projectKey}" id="project-name-val">{$projectName}</a></li>
+                        {/if}
+
+                    <li>
+                    {if $schedule.versionId == '-1'}
+                        {if $schedule.versionName == 'XXXXX'}
+                            <span rel="{$schedule.versionId}">{$schedule.versionName}</span>
+                        {else}
+                            <a href="{$contextPath}/browse/{$projectKey}" rel="{$schedule.versionId}">{$schedule.versionName}</a>
+                        {/if}
+                    {else}
+                        {if $schedule.versionName == 'XXXXX'}
+                            <span rel="{$schedule.versionId}">{$schedule.versionName}</span>
+                        {else}
+                            <a href="{$contextPath}/browse/{$projectKey}/fixforversion/{$schedule.versionId}" rel="{$schedule.versionId}">{$schedule.versionName}</a>
+                        {/if}
+
+                    {/if}
+                    </li>
+                    <li class="brkword"><a href="{$contextPath}/secure/PlanTestCycle.jspa?projectKey={$projectKey}" rel="">{$schedule.cycleName}</a></li>
+                    {if $schedule.folderName}
+                        <li>
+                            <a href="{$contextPath}/secure/PlanTestCycle.jspa?projectKey={$projectKey}" rel="">
+                                <span>{$schedule.folderName}</span>
+                            </a>
+                        </li>
+                    {/if}
+                    <li>
+                        <div></div>
+                       {if $schedule.issueKey=='XXXXX'}
+                            <span  rel="">{$schedule.issueKey}</a></li>
+                       {elseif $schedule.issueKey == $projectKey+'-XXXXX'}
+                            <span  rel="">{$schedule.issueKey}</a></li>
+                       {else}
+                            <a href="{$contextPath}/browse/{$schedule.issueKey}" rel="">{$schedule.issueKey}</a></li>
+                       {/if}
+                </ul>
+            </div>
+            <div class="cycle-details-wrapper-header">
+                <div class="cycle-details-left-wrapper">
+                    <div id='cycle-name'></div>
+                    <div class="search-link-wrapper">
+                        {if not $isCycleSummaryExecution}
+                            <a title="{getText('cycle.search.execution.label')}" href="#?{$queryString}" id="return-to-search">
+                                {getText('cycle.search.execution.label')}
+                            </a>
+                        {/if}
+                    </div>
+                </div>
+                <div id="view-btn-container" class="">
+                    <button id="listViewBtn" class="aui-button view-btn list-view {$hideListView ? '' : 'active-view'}">
+                      <div></div>
+                      {getText('cycle.list.view.label')}
+                    </button>
+                    <button id="detailViewBtn" class="aui-button view-btn detail-view {$hideListView ? 'active-view' : ''}">
+                      <div></div>
+                      {getText('cycle.detail.view.label')}
+                    </button>
+                </div>
+            </div>
+        </div>
+    {/if}
+   	<div class="detail-exec-view-wrapper" id="stl-exe-right-detail-exec-view-wrapper-container">
+   		<header class="stalker {not $isCycleSummaryExecution ? 'standAlone': ''}">
+        	<div class="stalker-content">
+        		<!--<div id="heading-avatar" class="aui-avatar aui-avatar-large aui-avatar-project">
+                    <img width="48" height="48" src="{$contextPath}/secure/projectavatar?pid={$schedule.projectId}&amp;avatarId={$projectAvatarId}&amp;size=large" class="project-avatar-48" alt="" id="project-avatar">
+                </div>-->
+        		<div class="execute-test-header-right" id="execute-test-header-right">
+
+
+                    <div class="execution-detail-pagination-wrapper">
+
+                        {if not $atFirstPagination or not ($previousId == 0)}
+                            <a data-id="{$previousId}" data-index={$previousId} id="previous-execution" class="previous-link">
+                                <span class="aui-icon aui-icon-small aui-iconfont-arrow-up arrow-left">Prev</span>
+                            </a>
+                        {else}
+                            <span class="aui-icon aui-icon-small aui-iconfont-arrow-up arrow-left">Prev</span>
+                        {/if}
+                        {if $previous}
+                            <span class="selectable-link" data-index={$previous} data-id="{$previous.id}">{$previous.issueKey}</span>
+                        {/if}
+
+                        <span class="current-issue">{$schedule.issueKey|escapeHtml}</span>
+
+                        {if $next}
+                            <span class="selectable-link" data-index={$next} data-id="{$next.id}">{$next.issueKey}</span>
+                        {/if}
+                        {if not $atLastPagination or not ($nextId == 0)}
+                            <a data-id="{$nextId}" data-index={$nextId} id="next-execution" class="next-link">
+                                <span class="aui-icon aui-icon-small aui-iconfont-arrow-down arrow-right">Next</span>
+                            </a>
+                        {else}
+                            <span class="aui-icon aui-icon-small aui-iconfont-arrow-down arrow-right">Next</span>
+                        {/if}
+                    </div>
+
+				</div>
+            	<h1 class="execute-test-header-left">
+            	        {if $schedule.issueKey == 'XXXXX'}
+            	            <span>{$schedule.summary|escapeHtml}</span>
+            	        {elseif $schedule.summary == 'XXXXX'}
+            	            <span>{$schedule.summary|escapeHtml}</span>
+            	        {else}
+                            {if $isCycleSummaryExecution}
+                            <span>
+                                <button id="backButton" class="aui-button">
+                                    <div></div>
+                                </button>
+                            </span>
+                            {/if}
+            	            <a href="{$contextPath}/browse/{$schedule.issueKey}">{$schedule.issueKey|escapeHtml}</a>
+                        {/if}
+                    </h1>
+
+            	<div class="command-bar">
+                    <div class="ops-cont">
+                        <div class="ops-menus">
+
+            			</div>
+            		</div>
+            	</div>
+            	<!-- <div id="detail-panel-wrapper" class="aui-item detail-panel navigator-issue-only active detail-panel-wrapper" style="padding:15px 0 0 15px;position: absolute;right: 55px;top: 105px;"> -->
+        	</div>
+        </header>
+        <div class="content-container content-container-execution">
+       	    {if $schedule.canViewIssue}
+        		<div class="content-body aui-panel {$schedule.executionWorkflowStatus == 'COMPLETED' ? 'executionWorkflowStatusCompleted' : '' }">
+                    <div id="executionWorkflowWrapper" class="clearfix">
+                    </div>
+                    <div class="aui-group">
+                		<div class="aui-item execute-outer">
+                			<div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" class="execute-message-bar"></div>
+                			<div class="notifications zfj-permission-message-bar" id="zfj-permission-message-bar-execution-detail"></div>
+                            <div id="custom-context"></div>
+                            <div class="aui aui-execution">
+    						    <div class="aui-execution-tr">
+                                    <div>
+                                        <div class="module" id="testexecutionmodule">
+                                            <div class="mod-content">
+                            					<form id="zexecute" class="aui" onsubmit="return false;">
+                                        	        <fieldset>
+
+
+                                                        <div class="module toggle-wrap">
+                                                            <div class="mod-header"><h3 class="toggle-title">{getText('zephyr.execution.details')}</h3></div>
+                                                            <div class="mod-content">
+                                                                <div class="flex sp-bw"  style="flex-wrap: wrap;">
+                                                                    <div class="executionDetailsElement width-half">
+                                                                      <div class="field-group execution-status-container">
+                                                                        <label for="executionStatus" title="{getText('execute.test.executionstatus.label')}">{getText('execute.test.executionstatus.label')} </label>
+
+                                                                        <div class="execution-field-value" id="execution-field-current-status-schedule-{$schedule.id}">
+                                                                            <div id="executionStatus-value-schedule-{$schedule.id}" class="labels exec-status-container">
+                                                                              <div class="execution_status_wrapper dropdown-Wrapper ">
+                                                                                  <span id="current-execution-status-dd-schedule-{$schedule.id}" class="status-readMode dropDown-select" style="background-color:{$currentExecutionStatus.color};" title="{$currentExecutionStatus.name}{$currentExecutionStatus.description ? (': ' + $currentExecutionStatus.description) : '' }">{$currentExecutionStatus.name}</span>
+                                                                                  <span tabindex="0" id="executionStatus-trigger-{$schedule.id}" data-scheduleId={$schedule.id} data-selectedStatus={$currentExecutionStatus.id} class="aui-icon aui-icon-small aui-iconfont-arrow-down dropDown-Trigger status-dropDown-Trigger"></span>
+                                                                                  <div id="execution-field-dropDown-schedule-{$schedule.id}" class="execution-field-dropDown-container dropDown-container">
+                                                                                    {if $executionStatuses}
+                                                                                        <div id="exec_status-schedule-{$schedule.id}" class="dropDown-options-wrapper" data-scheduleId={$schedule.id}>
+                                                                                          <ul>
+                                                                                            {foreach $exec in keys($executionStatuses)}
+                                                                                                {if $currentExecutionStatus.id == $executionStatuses[$exec].id}
+                                                                                                    <li data-index={index($exec)} class="updateStatus selected" data-str="{$executionStatuses[$exec].name}" data-content={$executionStatuses[$exec].name} data-color={$executionStatuses[$exec].color} data-value="{$executionStatuses[$exec].id}" rel="{$executionStatuses[$exec].color}" title="{$executionStatuses[$exec].description}">{$executionStatuses[$exec].name}</li>
+                                                                                                {else}
+                                                                                                    <li data-index={index($exec)} class="updateStatus" data-str="{$executionStatuses[$exec].name}" data-content="{$executionStatuses[$exec].name}" data-color={$executionStatuses[$exec].color} data-value="{$executionStatuses[$exec].id}" rel="{$executionStatuses[$exec].color}" title="{$executionStatuses[$exec].description}">{$executionStatuses[$exec].name}</li>
+                                                                                                {/if}
+                                                                                            {/foreach}
+                                                                                          </ul>
+                                                                                        </div>
+                                                                                    {/if}
+                                                                                  </div>
+                                                                              </div>
+                                                                            </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>
+                                                                    <div class="executionDetailsElement width-half">
+                                                                        <div class="field-group exec-wrapper-padding">
+                                                                            <label for="exec-assignee-wrapper">{getText('enav.assigned.to.searcher.name')}</label>
+                                                                            <div class="" id="exec-assignee-wrapper" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- <div class="executionDetailsElement">
+                                                                        <div class="field-group">
+                                                                            <label for="assignedBy">{getText('cycle.createdby.label')}</label>
+                                                                            <div class="display-inlineb assigned-by-value value-field">{$schedule.createdBy}</div>
+                                                                        </div>
+                                                                    </div> -->
+                                                                </div>
+                                                                <div class="flex width-full defects-sectoin">
+                                                                    <div class="executionDetailsElement width-full">
+                                                                        <div class="field-group">
+                                                                    <label for="defects">{getText('execute.test.defect.label')}</label>
+
+                                                                    <div class="flex defects-value">
+                                                                        <div id="editable-schedule-defects" class="width-full" tabindex='1'>
+                                                                            <select name="zephyrJEdefectskey-schedule-{$schedule.id}" id="zephyrJEdefectskey-schedule-{$schedule.id}" multiple="multiple"
+                                                                                class="aui-field-defectpickers  hidden" size="4"
+                                                                                data-remove-on-un-select="true"
+                                                                                data-ajax-options.query="true"
+                                                                                data-ajax-options.url="{$contextPath}/rest/api/1.0/issues/picker"
+                                                                                data-ajax-options.data.current-issue-key="{$schedule.issueKey}"
+                                                                                data-ajax-options.data.current-project-id="">
+                                                                            </select>
+                                                                            <div class="or-option-text">{getText('cycle.or.label')}</div>
+                                                                            <a title="{getText('execute.test.create.new.button.label')}" class="aui-button zephyr_je_create_issue_link-schedule create-issue" id="zephyr_je_create_issue_link-schedule-{$schedule.id}" title="{getText('execute.test.create.new.button.title')}"
+                                                                                hidefocus="hidefocus" accesskey="c" href="{$contextPath}/secure/CreateIssue!default.jspa" tabindex='1'>
+                                                                                {getText('execute.test.create.new.button.label')}
+                                                                            </a>
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="clearfix comment-section">
+                                                                    <div class="left width-full executionDetailsElement">
+                                                                        <div class="field-group">
+                                                                    <label for="comment">{getText('execute.test.comment.label')}</label>
+                                                                    <div id="readonly-comment-div" class="readonly-comment-div zfj-editable-field">
+
+                                                                            {call ZEPHYR.Templates.Execution.renderScheduleCommentLabel}
+                                                                                {param scheduleCommentAsHtml: $schedule.htmlComment /}
+                                                                            {/call}
+                                                                    </div>
+                                                                    <div id="editable-comment-div" class="editable-comment-div">
+                                                                        <span class="overlay-icon icon loading"></span>
+                                                                        <textarea placeholder='{getText('cycle.comment.startTyping.label')}' wrap='virtual' rows='10' name='schedule-comment-area' id='schedule-comment-area' cols='30' class='textarea long-field schedule-comment-area'>{$schedule.comment}</textarea>
+
+                                                                        <label id="comment-counter" class="comment-counter">750</label>
+                                                                    </div>
+                                                                </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- <div class="clearfix" id="executionWorkFlowProgressWrapper" style="display: none;">
+                                                        </div>
+                                                        <div class="clearfix">
+                                                            {if $schedule.createdOn}
+                                                                <div class="left width-one-third executionDetailsElement">
+                                                                    <div class="field-group">
+                                                                        <label for="createdOn">{getText('cycle.createdon.label')}:</label>
+                                                                        <div class="value-field">{$schedule.createdOn}</div>
+                                                                    </div>
+                                                                </div>
+                                                            {/if}
+                                                            {if $schedule.executedOn}
+                                                                <div class="left width-one-third executionDetailsElement">
+                                                                    <div class="field-group">
+                                                                        <label for="resolvedon">{getText('cycle.resolvedon.label')}:</label>
+                                                                        <div class="value-field">{$schedule.executedOn}</div>
+                                                                    </div>
+                                                                </div>
+                                                            {/if}
+                                                        </div> -->
+                    							        <div id="schedule.id" style="display: none">{$schedule.id}</div>
+                            	                    	<!--<div class="field-group"
+                            	                    		{if not $executedBy}
+                            	                    			style="display:none"
+                            	                    		{/if}>
+                            	                    		<label for="executedBy">{getText('execute.test.executedby.label')}: </label>
+                            	                    		<span id="executed-by-schedule-{$schedule.id}"><strong>
+                            	                    			{if $executedBy}
+                            	                    				<a href="{$contextPath}/secure/ViewProfile.jspa?name={$executedBy}" rel="{$executedBy}" class="user-hover"> {$executedByDisplay} </a>
+                            	                    			{else}
+                            	                    				{if $executedByDisplay}
+                            	                    					{$executedByDisplay}
+                            	                    				{/if}
+                            	                    			{/if}
+                            	                    		</strong></span>
+                            	                    	</div>
+                                                        <div class="field-group">
+                        									<label for="executedOn">{getText('execute.test.executedon.label')}: </label>
+                        									<span id="executed-on-schedule-{$schedule.id}" class="executed-on-schedule">
+                        										{if $schedule.executedOn}
+                        											<strong>{$schedule.executedOn}</strong>
+                        										{/if}
+                        									</span>
+                            	                    	</div>-->
+                                                        <div class="execution-customField-container" id="execution-customField-container"></div>
+                                                		<div id="attachmentexecutionmodule" class="module toggle-wrap">
+                            								<div class="mod-header" id="attachmentexecutionmodule_heading">
+                            									<h3 class="toggle-title">{getText('execute.test.attachment.subheader.label')}</h3>
+                            								</div>
+                            								<div class="mod-content">
+                            									<ol class="item-attachments" id="file_attachments">
+                            									</ol>
+                            								</div>
+                            							</div>
+                                                        <!--<div id="teststepDetails">
+                        <div class="module toggle-wrap">
+                            <div class="mod-header" id="teststepDetails_heading">
+                                <h3 class="toggle-title">{getText('view.issue.steps.section.heading')}</h3>
+                            </div>
+                            <div class="mod-content">
+                                <table class="aui mod-content-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="mod-content-th step1"></th>
+                                            <th class="mod-content-th step2 {$stepColumns and $stepColumns.testStep and ($stepColumns.testStep.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('view.issue.steps.table.column.step')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.testdata and ($stepColumns.testdata.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('view.issue.steps.table.column.data')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.expectedResult and ($stepColumns.expectedResult.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('view.issue.steps.table.column.result')}</th>
+                                            <th class="mod-content-th step5 {$stepColumns  and $stepColumns.stepAttachment and ($stepColumns.stepAttachment.isVisible == 'true') ? 'tableCell': 'hide'}">Step-attachment</th>
+                                            <th class="mod-content-th step3 {$stepColumns  and $stepColumns.status and ($stepColumns.status.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('zephyr.je.admin.plugin.step.execstatus.name')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.comment and ($stepColumns.comment.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('execute.test.comment.label')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.attachments and ($stepColumns.attachments.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('execute.test.attachment.label')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.defects and ($stepColumns.defects.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('execute.test.defect.label')}</th>
+                                            {foreach $customField in $customFieldsOrder}
+                                              <th class="mod-content-th step2 {$stepColumns and $stepColumns[$customField.customfieldId] and ($stepColumns[$customField.customfieldId].isVisible == 'true') ? 'tableCell': 'hide'}">{$customField.customFieldName}</th>
+                                            {/foreach}
+                                            <th class='mod-content-th step1 colHeaderLink columnCustomisation' name='columnCustomisation'>
+                                            <a class="cursor-pointer" id="step-columnCustomisation-inlineDialog{$isExecutionPage ? '-execution' : ''}" aria-controls="step-columnCustomisation-inlineDialog-1{$isExecutionPage ? '-execution' : ''}"><div class="contextMenuIcon aui-icon aui-icon-small aui-iconfont-handle-horizontal"></div></a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>-->
+                                                    </fieldset>
+                                                </form>
+                					        </div>
+                                        </div>
+                        			</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="aui-item execution-right-side-container">
+
+                            <div class="module toggle-wrap issueSummaryMod" id="issueDescModule">
+                                <div class="mod-header">
+                                    <h3 class="toggle-title" >{getText('project.cycle.schedule.table.column.summary')}</h3>
+                                </div>
+                                <div class="mod-content">
+                                    {call ZEPHYR.Templates.Execution.renderIssueSummLabel}
+                                        {param issueDescAsHtml: $schedule.summary /}
+                                    {/call}
+                                </div>
+                            </div>
+
+                            <div class="module toggle-wrap" id="issueDescModule">
+                                <div class="mod-header">
+                                    <h3 class="toggle-title" >{getText('common.concepts.description')}</h3>
+                                </div>
+                                <div class="mod-content">
+                                    {call ZEPHYR.Templates.Execution.renderIssueDescLabel}
+                                        {param issueDescAsHtml: $issueDescAsHtml /}
+                                    {/call}
+                                </div>
+                            </div>
+                            <div class="module toggle-wrap" id="issueDescModule">
+                                <div class="mod-header">
+                                    <h3 class="toggle-title" >{getText('zephyr.execution.dateTime')}</h3>
+                                </div>
+                                <div class="mod-content">
+                                    <div class="flex" style="flex-wrap: wrap;">
+                                        <div class="width-full field-group"
+                                            {if not $executedBy}
+                                                style="display:none"
+                                            {/if}>
+                                            <label for="executedBy">{getText('execute.test.executedby.label')}:</label>
+                                            <span id="executed-by-schedule-{$schedule.id}">
+                                                <strong>
+                                                    {if $executedBy}
+                                                        <a href="{$contextPath}/secure/ViewProfile.jspa?name={$executedBy}" rel="{$executedBy}" class="user-hover">{$executedByDisplay} </a>
+                                                    {else}
+                                                        {if $executedByDisplay}
+                                                            {$executedByDisplay}
+                                                        {/if}
+                                                    {/if}
+                                                </strong>
+                                            </span>
+                                        </div>
+                                        <div class="width-full field-group"
+                                            {if not $schedule.executedOn}
+                                                style="display:none"
+                                            {/if}>
+                                            <label for="executedOn">{getText('execute.test.executedon.label')}:</label>
+                                            <span id="executed-on-schedule-{$schedule.id}" class="executed-on-schedule" title="{$schedule.executedOnVal}">
+                                                {if $schedule.executedOn}
+                                                    <strong>{$schedule.executedOn}</strong>
+                                                {/if}
+                                            </span>
+                                        </div>
+                                        <div class="width-full executionDetailsElement">
+                                            <div class="field-group">
+                                                <label for="assignedBy">{getText('cycle.createdby.label')}:</label>
+                                                <span class="value-field">{$schedule.createdByDisplay}</span>
+                                            </div>
+                                        </div>
+                                        {if $schedule.createdOn}
+                                            <div class="width-full executionDetailsElement">
+                                                <div class="field-group">
+                                                    <label for="createdOn">{getText('cycle.createdon.label')}:</label>
+                                                    <span class="value-field" title="{$schedule.createdOnVal}">{$schedule.createdOn}</span>
+                                                </div>
+                                            </div>
+                                        {/if}
+                                        <div class="width-full" id="executionWorkFlowProgressWrapper" style="flex-wrap: wrap;display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                          <div class="execution-history-container" id="execution-history-container"></div>
+                          <!--<div class="execution-customField-container" id="execution-customField-container"></div>-->
+                        </div>
+                    </div>
+                    <div id="teststepDetails">
+                        <div class="module toggle-wrap">
+                            <div class="mod-header" id="teststepDetails_heading">
+                                <h3 class="toggle-title">{getText('view.issue.steps.section.heading')}</h3>
+                                <div class="test-step-filter-container">
+                                    <div class="test-step-filter-icon-wrp" title={getText('view.issue.steps.filter')}>
+                                        <div class="test-step-filter-icon"></div>
+                                    </div>
+                                    <div class="test-step-filter-overlay clearfix hide">
+                                        <div>{getText('cycle.filtertests.label')}</div>
+                                        <label>{getText('cycle.searchwithin.label')}</label>
+                                        <select id="teststepdropdown">
+                                            <option value="all">{getText('cycle.allfields.label')}</option>
+                                            <option value="step">{getText('view.issue.steps.table.column.step')}</option>
+                                            <option value="data">{getText('view.issue.steps.table.column.data')}</option>
+                                            <option value="result">{getText('view.issue.steps.table.column.result')}</option>
+                                            <option value="status">{getText('enav.status.label')}</option>
+                                            <option value="htmlComment">{getText('execute.test.comment.label')}</option>
+                                        </select>
+                                        <input type="text" value="" id="search-step-test" />
+                                        <button class="aui-button right" id="cancelFilter">{getText('zephyr.je.submit.form.clear')}</button>
+                                        <button class="aui-button right" id="applyFilter">{getText('cycle.apply.label')}</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mod-content">
+                              <a href="" class="zephyr-file-dialog" style="display:none"></a>
+                              <a href="" class="aui-button zephyr_je_create_issue_link-stepresult create-issue gridAddDefect" style="display:none"></a>
+                              <div class="grid-wrapper stepDetails">
+                                <div id="gridIssuePicker">
+                                </div>
+                                <div class="grid-component" id="testDetailGridExecutionPage"></div>
+                                <!-- {if not $isCycleSummaryExecution}
+                                {/if} -->
+                                <div id="pagination-outer-container" class="pagination-outer-container">
+
+                                </div>
+                            </div>
+                                <!-- <table class="aui mod-content-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="mod-content-th step1"></th>
+                                            <th class="mod-content-th step2 {$stepColumns and $stepColumns.testStep and ($stepColumns.testStep.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('view.issue.steps.table.column.step')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns and $stepColumns.testdata and ($stepColumns.testdata.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('view.issue.steps.table.column.data')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.expectedResult and ($stepColumns.expectedResult.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('view.issue.steps.table.column.result')}</th>
+                                            <th class="mod-content-th step5 {$stepColumns  and $stepColumns.stepAttachment and ($stepColumns.stepAttachment.isVisible == 'true') ? 'tableCell': 'hide'}">Step-attachment</th>
+                                            <th class="mod-content-th step3 {$stepColumns  and $stepColumns.status and ($stepColumns.status.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('zephyr.je.admin.plugin.step.execstatus.name')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.comment and ($stepColumns.comment.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('execute.test.comment.label')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.attachments and ($stepColumns.attachments.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('execute.test.attachment.label')}</th>
+                                            <th class="mod-content-th step2 {$stepColumns  and $stepColumns.defects and ($stepColumns.defects.isVisible == 'true') ? 'tableCell': 'hide'}">{getText('execute.test.defect.label')}</th>
+                                            {foreach $customField in $customFieldsOrder}
+                                              <th class="mod-content-th step2 {$stepColumns and $stepColumns[$customField.customfieldId] and ($stepColumns[$customField.customfieldId].isVisible == 'true') ? 'tableCell': 'hide'}">{$customField.customFieldName}</th>
+                                            {/foreach}
+                                            <th class='mod-content-th step1 colHeaderLink columnCustomisation' name='columnCustomisation'>
+                                            <a class="cursor-pointer" id="step-columnCustomisation-inlineDialog{$isExecutionPage ? '-execution' : ''}" aria-controls="step-columnCustomisation-inlineDialog-1{$isExecutionPage ? '-execution' : ''}"><div class="contextMenuIcon whiteColor aui-icon aui-icon-small aui-iconfont-handle-horizontal"></div></a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                </table> -->
+                            </div>
+                        </div>
+                    </div>
+        	    </div>
+        	{else}
+                <div style="margin-top:150px;text-align:center;vertical-align:middle" class="new-session-status">{getText('cycle.noPermissionTestIssue.label')} ({$schedule.issueKey})</div>
+        	{/if}
+        </div>
+    </div>
+</div>
+{/template}
+
+/**
+ * creates an equivalent of execute test vm
+ * @param limit
+ * @param offset
+ * @param maxRecords
+ * @param lastPageLowerLimit
+ */
+{template .paginationComponent autoescape="true"}
+<div>
+    <div class="pagination-page-number-container">
+        {if $offset == 0}
+    <div class="first-page-number disabled">
+      <span id="first-page-pagination">
+        1 - {if $limit > $maxRecords} {$maxRecords} {else} {$limit} {/if}
+      </span>
+      <span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-arrow disabled"></span>
+      <span class="ellipsis">...</span>
+    </div>
+    {else}
+    <div class="first-page-number">
+      <span id="first-page-pagination" onclick='firstPagePagination()'>
+        1 - {if $limit > $maxRecords} {$maxRecords} {else} {$limit} {/if}
+      </span>
+
+      <span id="pagination-go-to-next-page" onclick='paginationGoToNextPage()'>
+        <span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-arrow"></span>
+        <span class="ellipsis">...</span>
+      </span>
+    </div>
+    {/if}
+        <div class="current-page-number">
+            {$offset + 1} -
+            {if $offset + $limit > $maxRecords}
+                {$maxRecords}
+            {else}
+                {$offset + $limit}
+            {/if}
+        </div>
+        {if $offset == $lastPageLowerLimit}
+    <div class="last-page-number disabled">
+      <span id="pagination-go-to-previous-page">
+        <span class="ellipsis">...</span>
+        <span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow"></span>
+      </span>
+      <span id="last-page-pagination">
+        {$lastPageLowerLimit + 1} - {$maxRecords}
+      </span>
+    </div>
+    {else}
+    <div class="last-page-number">
+
+      <span id="pagination-go-to-previous-page" onclick='paginationGoToPreviousPage()'>
+        <span class="ellipsis">...</span>
+        <span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow"></span>
+      </span>
+
+        {if $lastPageLowerLimit + 1 >  $maxRecords}
+            <span id="last-page-pagination" onclick='lastPagePagination()'>
+                {$maxRecords} - {$maxRecords}
+            </span>
+        {else}
+            <span id="last-page-pagination" onclick='lastPagePagination()'>
+                {$lastPageLowerLimit + 1} - {$maxRecords}
+            </span>
+        {/if}
+    </div>
+    {/if}
+    </div>
+    <div class="pagination-page-width-container">
+        <div class="pagination-dropdown-container">
+            <div class="current-pagination">
+                {$limit}
+            </div>
+            <div id="pagination-dropdown-button" class="pagination-dropdown-button">
+                <span class="aui-icon aui-icon-small aui-iconfont-arrow-down dropDown-Trigger drop-down-arrow-pagination-options"></span>
+            </div>
+        </div>
+        <div id="pagination-options-container" class="pagination-options-container hide">
+            {if $limit != 10}
+                <div class="change-pagination-width-function" data-entries="10">10</div>
+            {/if}
+            {for $i in range(2)}
+                {if $limit != ($i+1)*25}
+                    <div class="change-pagination-width-function" data-entries={($i+1)*25}>{($i+1)*25}</div>
+                {/if}
+            {/for}
+        </div>
+    </div>
+</div>
+{/template}
+
+/**
+ * creates an equivalent of execute test vm
+ * @param schedule
+ * @param contextPath
+ * @param isCycleSummaryExecution
+ * @param navigationObj
+ * @param navObj
+ * @param hideListView
+ * @param? atLastPagination
+ * @param? atFirstPagination
+ */
+{template .leftNavDetails autoescape="true"}
+
+    {if not $isCycleSummaryExecution}
+        {if $hideListView}
+            <div class="stl-exe-nav focus hide" id="stl-exe-left-container" tabindex="0">
+        {else}
+            <div class="stl-exe-nav focus" id="stl-exe-left-container" tabindex="0">
+        {/if}
+            <div class='stl-exe-nav-left-wrapper'>
+                <div class="execution-list-view">{getText('project.cycle.executions.section.label')}</div>
+                    <div class='execution-list-wrapper'>
+                        {foreach $execution in $navigationObj}
+                        <div class='stl-exe-nav-cont'>
+                            <div class='execution-name-wrapper execution-id {$execution.id == $schedule.id ? 'active': ''}' data-index={index($execution)} data-id="{$execution.id}">
+                                <div class="execution-top-layerWrapper">
+                                  <div>
+                                    <img src="{$contextPath}/download/resources/com.thed.zephyr.je/images/icons/ico_zephyr_16x16.png">
+                                  </div>
+                                  <div class="issueKey">{$execution.issueKey}</div>
+                                  <div class="execution-status" title="{$execution.status ? $execution.status.name : ''}">
+                                    <span id="exe-status-{$execution.id}" class="aui-lozenge aui-lozenge-subtle" style="border-color:{$execution.status ? $execution.status.color : ''}; font-weight: normal;">{$execution.status ? $execution.status.name : ''}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div class="executionSummary">{$execution.issueSummary}</div>
+                            </div>
+                        </div>
+                        {/foreach}
+                    </div>
+                <div class="stl-exe-nav-wrap">
+                    <div class="stl-exe-nav-pag">
+                        {if ($atFirstPagination)}
+                            <span title="Not available - this is the first page">
+                                {getText('project.cycle.schedule.previous.label')}
+                              &nbsp;|&nbsp;
+                            </span>
+                          {else}
+                            <a id="prev-page-execution-detail" class="prev-page-execution" type="button" title="Previous Execution">
+                                {getText('project.cycle.schedule.previous.label')}
+                              &nbsp|&nbsp;
+                            </a>
+                        {/if}
+                        <span>{$navObj.offset+1}</span>
+                        <span>-</span>
+                        <span>{$navObj.offset + $navigationObj.total}</span>
+                        {if ($atLastPagination)}
+                            <span title="Not available - this is the last page">
+                                 &nbsp;|&nbsp;
+                                {getText('project.cycle.schedule.next.label')}
+                            </span>
+                        {else}
+                            <a id="next-page-execution-detail" class="next-page-execution" type="button" title="Next Execution">
+                                &nbsp;|&nbsp;
+                                {getText('project.cycle.schedule.next.label')}
+                            </a>
+                        {/if}
+                    </div>
+                    <div class="entries-per-page">
+                        <div id="nav-exe-dropdown" class="dropdown-Wrapper">
+                            <span class="dropDown-select">{$navObj.maxResultAllowed}</span>
+                            <span class="aui-icon aui-icon-small aui-iconfont-arrow-down dropDown-Trigger"></span>
+                            <div class="dropDown-container dropdown-top">
+                                <div class="dropDown-options-wrapper">
+                                    <ul id="nav-exe-dropdown-value">
+                                        {if $navObj.maxResultAllowed != 10}
+                                            <li class="chooseEntries" data-entries="10">10</li>
+                                        {/if}
+                                         {for $i in range(2)}
+                                            {if $navObj.maxResultAllowed != ($i+1)*25}
+                                                <li class="chooseEntries" data-entries={($i+1)*25}>{($i+1)*25}</li>
+                                            {/if}
+                                        {/for}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {/if}
+
+{/template}
+
+
+/**
+ * Render the dialog as Create Cycle
+ */
+{template .executionWrapper}
+<div class="exe-cont">
+
+</div>
+{/template}
+
+
+/**
+ * Render the dialog as Create Cycle
+ * @param image
+ * @param altImage
+ * @param changeFlag
+ */
+{template .caroselView}
+<div class="image-corosel-overlay" id="image-corosel-overlay">
+	<div class="image-container">
+		<div class="corosel-inner-container">
+			{if $changeFlag.previousFlag}
+				<div class="previous-image-options" onClick="previousImageCorosel(this)" data-currentId="{$altImage.fileId}">
+
+				</div>
+			{else}
+				<div class="previous-image-options hide-visibility" onClick="previousImageCorosel(this)" data-currentId="{$altImage.fileId}">
+
+				</div>
+			{/if}
+			<div class="image-outer-container" id="image-outer-container">
+        <div class="close-image-corosel" onClick="closeCorosel(this)">
+          <span class="aui-icon aui-icon-small aui-iconfont-remove-label close-icon"></span>
+        </div>
+				<img class="image-inner-container" src="{$image}" alt="{$altImage.fileName}"/>
+				<div class="image-name-details">
+					{$altImage.fileName}
+				</div>
+        <div class="image-details">
+          <div style="cursor:pointer" data-href="{$image}" onclick="downloadImage(this)">
+            <span class="file-download-container">
+              {getText('zephyr.execution.download')}
+              <span class="file-size-container">
+                ({$altImage.imageSizeInMb} MB)
+              </span>
+              <span class="download-icon"></span>
+            </span>
+          </div>
+        </div>
+			</div>
+			{if $changeFlag.nextFlag}
+				<div class="next-image-options" onClick="nextImageCorosel(this)" data-currentId="{$altImage.fileId}">
+				</div>
+			{else}
+				<div class="next-image-options hide-visibility" onClick="nextImageCorosel(this)" data-currentId="{$altImage.fileId}">
+				</div>
+			{/if}
+		</div>
+	</div>
+</div>
+{/template}
+
+
+/**
+ * update issue description
+ * @param issueDescAsHtml
+ */
+{template .renderIssueDescLabel autoescape="false"}
+    <div id="comment-val" class="editable-field description-val active brkword comment-val collapse">{$issueDescAsHtml}</div>
+    {if $issueDescAsHtml and $issueDescAsHtml.length > 120}
+        <a id="see-more-desc" class="view-in-detail">{getText('cycle.showmore.label')}</a>
+    {/if}
+{/template}
+
+/**
+ * update issue description
+ * @param issueDescAsHtml
+ */
+{template .renderIssueSummLabel autoescape="false"}
+    <div id="summary-val" class="editable-field summ-val active brkword comment-val collapse">{$issueDescAsHtml}</div>
+    {if $issueDescAsHtml and $issueDescAsHtml.length > 120}
+        <a id="see-more-summ" class="view-in-detail">{getText('cycle.showmore.label')}</a>
+    {/if}
+{/template}
+
+/**
+ * update schedule comment value.
+ * added to unescape the html content.
+ * @param scheduleCommentAsHtml
+ */
+{template .renderScheduleCommentLabel autoescape="false"}
+    <div id="comment-val" class="editable-field active brkword comment-val">{$scheduleCommentAsHtml}</div>
+{/template}
+
+/**
+ * creates an equivalent of execute test vm
+ * @param assignee
+ * @param contextPath
+ */
+{template .executionAssigneeDetailView}
+<div class="field-group execution-assignee-container">
+	<!--<label for="assign-to">{getText('execute.test.execution.assigned.to.label')}:</label>
+	<div id="execution-field-current-assignee-{$assignee.executionId}" class="labels exec-status-container">
+		<dl>
+			<dt>{getText('project.cycle.schedule.table.column.status')}</dt>
+			<div id="assign-to" class="execution-assignee-wrapper zfj-editable-field">
+				<span id="execution-assignee-label" title="{if $assignee.assigneeDisplay}{$assignee.assigneeDisplay}{elseif $assignee.assignee}{$assignee.assignee}{/if}" data-assigneeType="{$assignee.assigneeType}" data-assigneeUserName="{$assignee.assigneeUserName}">
+                {if $assignee.assigneeType}
+                    <div class="execution-assignee-wrapper">
+                        <strong>
+              					{if $assignee.assigneeUserName}
+              	    				<a href="{$contextPath}/secure/ViewProfile.jspa?name={$assignee.assigneeUserName}" rel="{$assignee.assigneeUserName}" class="assignee-user-hover user-hover"> {$assignee.assigneeDisplay} </a>
+              	    			{else}
+              	    			    {if $assignee.assigneeDisplay}
+              	    					{$assignee.assigneeDisplay}
+              	    				{elseif $assignee.assignee}
+              	    					{$assignee.assignee}
+              	    				{else}
+              	    					&nbsp;
+              	    				{/if}
+              	    			{/if}
+              			</strong>
+                        <span id="execution-assignee-remove" class="aui-icon aui-icon-small aui-iconfont-remove-label"></span>
+                    </div>
+                {/if}
+				</span>
+			</div>
+		</dl>
+	</div>
+	<div id="execution-field-select-assignee-{$assignee.executionId}" class="execution-field-select-assignee displaynone">
+		{let $assigneeId: 'zephyr-je-execution-assignee-quick-' + $assignee.executionId /}
+		{call ZEPHYR.Templates.Execution.Assignee.executionAssigneeViewNewUI}
+			{param hasHeader: false /}
+			{param hasLabel: false /}
+			{param id: $assigneeId /}
+		{/call}
+	</div>-->
+    <div id="assign-to" class="execution-assignee-wrapper">
+
+        <div class="dropdown-wrapper">
+            <span class="readonly" data-assignee="{$assignee.assignee}" data-assigneeType="{$assignee.assigneeType}">
+                <strong>
+                    {if $assignee.assigneeUserName}
+                        <a id="userName" href="{$contextPath}/secure/ViewProfile.jspa?name={$assignee.assigneeUserName}" rel="{$assignee.assigneeUserName}" data-user="{$assignee.assigneeUserName}" class="assignee-user-hover user-hover"> {$assignee.assigneeDisplay} </a>
+                        <span data-scheduleid={$assignee.executionId} class="remove-assignee">x</span>
+                    {else}
+                    {if $assignee.assigneeDisplay}
+                            <span class="assigneeDetails">
+                                {$assignee.assigneeDisplay}
+                            </span>
+                            <span data-scheduleid={$assignee.executionId} class="remove-assignee">x</span>
+                        {elseif $assignee.assignee}
+                            <span class="assigneeDetails">
+                                {$assignee.assignee}
+                            </span>
+                            <span data-scheduleid={$assignee.executionId} class="remove-assignee">x</span>
+                        {else}
+                            <span>
+                                &nbsp;
+                            </span>
+                        {/if}
+
+                        <!-- <span data-scheduleid={$assignee.executionId} class="remove-assignee">x</span> -->
+                    {/if}
+                </strong>
+            </span>
+            <span id="dropDown-Trigger-{$assignee.executionId}" data-scheduleId={$assignee.executionId} data-field="assignee" class="aui-icon aui-icon-small aui-iconfont-arrow-down dropDown-Trigger assignee-dropDown-Trigger"></span>
+            <div class="droplist" id="execution-select-assignee-{$assignee.executionId}">
+                <div class="input-wrapper">
+                    <input type="text" class="ajax-input" placeholder="Type to Search..." data-scheduleId={$assignee.executionId}>
+                </div>
+                <ul class="dropdown-list">
+
+                </ul>
+            </div>
+            <!--<div class="droplist">
+                <div id="execution-field-select-assignee-{$assignee.executionId}" class="execution-field-select-assignee">
+                    {let $assigneeId: 'zephyr-je-execution-assignee-quick-' + $assignee.executionId /}
+                    {call ZEPHYR.Templates.Execution.Assignee.executionAssigneeViewNewUI}
+                        {param hasHeader: false /}
+                        {param hasLabel: false /}
+                        {param id: $assigneeId /}
+                    {/call}
+                </div>
+            </div>-->
+        </div>
+
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders column customisation view
+ * @param columns
+ * @param submitButtonId
+ * @param closeButtonId
+ */
+{template .columnCustomisation}
+<div class="execution-column-picker-dialog-wrapper">
+  <h3>{getText('cycle.ChooseColumnAttribute.label')}</h3>
+  <div class="aui-list-wrapper aui-list">
+      <div class="aui-list-scroll">
+          <ul class="aui-list">
+            {foreach $key in keys($columns)}
+              <li class="check-list-item">
+                  <label class="item-label">
+                    <input type="checkbox"  name="{$columns[$key].displayName}" id={$key} class="step-column-input" {$columns[$key].isVisible == 'true' ? 'checked' : ''}><span>{$columns[$key].displayName}</span>
+                  </label>
+              </li>
+            {/foreach}
+          </ul>
+      </div>
+  </div>
+  <div id="errorColumnSelector">{getText('cycle.Selectatleastoneoption.label')}</div>
+  <div class="button-panel">
+      <input class="aui-button" type="button" value="Done" id="{$submitButtonId}" href="javascript:void(0)">
+      <a href="javascript:void(0)" class="aui-button aui-button-link close-dialog" id="{$closeButtonId}">{getText('zephyr-je.close.link.title')}</a>
+  </div>
+</div>
+{/template}
+/**
+ * Render node Name
+ * @param nodeName
+ * @param nodeType
+ * @param href
+ */
+{template .nodeNameBar}
+    <div class="node-name">
+        {if $nodeType == 'folder'}
+            <div class="folder-icon left"></div>
+            <span><a target="_parent" title="{$nodeName}" href="{$href}">{$nodeName}</a></span>
+        {else}
+            {if $nodeType == 'cycle'}
+                <div class="cycle-icon left"></div>
+                <span><a target="_parent" title="{$nodeName}" href="{$href}">{$nodeName}</a></span>
+            {/if}
+        {/if}
+    </div>
+{/template}
+
+
+/**
+ * Render Issue Picker
+ * @param id
+ * @param contextPath
+ */
+{template .gridIssuePicker}
+    <select name="zephyrJEdefectskey-stepresult-{$id}" id="zephyrJEdefectskey-stepresult-{$id}" multiple="multiple"
+        class="aui-field-defectpickers  hidden zephyrJEdefectskey-stepresult multi-select-select" size="4" data-remove-on-un-select="true" data-ajax-options.query="true" data-remove-on-un-select="true" data-ajax-options.url="{$contextPath}/rest/api/1.0/issues/picker"
+        data-ajax-options.data.current-issue-key="" data-ajax-options.data.current-project-id="">
+    </select>
+{/template}

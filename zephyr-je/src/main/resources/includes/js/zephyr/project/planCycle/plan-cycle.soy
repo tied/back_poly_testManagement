@@ -1,0 +1,786 @@
+{namespace ZEPHYR.Templates.PlanCycle}
+
+/**
+ * Render Plan Cycle UI
+ *
+ *
+ *
+ */
+{template .planCycleView}
+<div class="plan-cycle-wrapper">
+  <div id="tree-tcr" class="tree-tcr">
+    <div class="module">
+      <div class="mod-header">
+        <h3 class="toggle-title">{getText('project.cycle.summary.section.label')} </h3>
+      </div>
+    </div>
+    <div class="tree-wrapper">
+      <div class="searchFilter" data-content="{getText('project.cycle.summary.section.label')}">
+        <input type="text" id="search-tree" placeholder="{getText('com.thed.zephyr.je.search.tests.plan.cycle.label')}" title="{getText('com.thed.zephyr.je.searchToolTip.tests.plan.cycle.label')}" />
+        <!--<span id="tree-docker" data-title="Collapse tree"></span>-->
+        <span data-title="Create Cycle" id="create-cycle-tree-trigger" class="aui-icon aui-icon-small aui-iconfont-add"></span>
+        <span style="display: none" class="aui-icon aui-icon-small aui-iconfont-build" id="tree-refresh"></span>
+      </div>
+      <div id="js-tree">
+
+      </div>
+    </div>
+  </div>
+  <div id="cycle-details">
+      <div class="module">
+        <div class="mod-header">
+          <h3 class="toggle-title">{getText('project.cycle.executions.section.label')} </h3>
+        </div>
+      </div>
+      <div class="cycle-details-wrapper">
+      <div class="cycle-details-wrapper-header">
+        <div id='cycle-name'></div>
+        <div id="view-btn-container" class="hide">
+            <button id="listViewBtn" class="aui-button view-btn active-view list-view">
+              <div></div>
+              {getText('cycle.list.view.label')}
+            </button>
+            <button id="detailViewBtn" class="aui-button view-btn detail-view">
+              <div></div>
+              {getText('cycle.detail.view.label')}
+            </button>
+        </div>
+      </div>
+        <div id='cycle-info-wrapper'> </div>
+        <div id='cycle-executions-wrapper'> </div>
+        <div class="execution-details clearfix hide">
+          <!--<div class="left back-btn-wrap">
+            <button id="backButton" class="aui-button"></button>
+          </div>-->
+          <div class='execution-details-wrapper left'></div>
+        </div>
+
+      </div>
+  </div>
+
+</div>
+{/template}
+
+/**
+ * Render node Name
+ * @param nodeName
+ * @param nodeType
+ * @param href
+ */
+{template .nodeNameBar}
+    <div class="node-name">
+        {if $nodeType == 'folder'}
+            <div class="folder-icon left"></div>
+            <span><a target="_parent" title="{$nodeName}" href="{$href}">{$nodeName}</a></span>
+        {else}
+            {if $nodeType == 'cycle'}
+                <div class="cycle-icon left"></div>
+                <span><a target="_parent" title="{$nodeName}" href="{$href}">{$nodeName}</a></span>
+            {/if}
+        {/if}
+    </div>
+{/template}
+
+/**
+ * Render particular Cycle info
+ * @param cycle
+ *
+ */
+{template .cycleInfoView}
+
+    {if $cycle.nodeType == 'folder'}
+        <div id="cycle-info" class="node-folder">
+          <div class="cycle-stats">
+            <div class="cycle-infp-top-block cycle-folder-info-top-block">
+              <div>
+                <label>{getText('project.testcase.summary.section.total.executed')} </label>
+                {if $cycle.totalExecuted}
+                    <!--<span> {$cycle.totalExecuted}</span>-->
+                    <span title={$cycle.totalExecuted}><a target="_parent" href="{$cycle.totalExecutedZql}">{$cycle.totalExecuted}</a></span>
+
+                {else}
+                    <span>0</span>
+                {/if}
+              </div>
+            </div>
+            <div class="cycle-infp-top-block cycle-folder-info-top-block">
+              <div>
+                <label>{getText('project.testcase.summary.section.total.executions')} </label>
+                {if $cycle.totalExecutions}
+                    <!--<span> {$cycle.totalExecutions}</span>-->
+                    <span title={$cycle.totalExecutions}><a target="_parent" href="{$cycle.totalExecutionsZql}">{$cycle.totalExecutions}</a></span>
+                {else}
+                    <span>0</span>
+                {/if}
+              </div>
+            </div>
+          </div>
+          {if $cycle.isExecutionWorkflowEnabledForProject }
+          <div class="cycle-stats">
+            <div class='cycle-info-bottom-block'>
+             <div>
+               <label title="{getText('cycle.totalExecutionTime.label')}">{getText('cycle.totalExecutionTime.label')} </label>
+               <span title="{$cycle.totalExecutionEstimatedTimeTitle ? $cycle.totalExecutionEstimatedTimeTitle : ''}">{$cycle.totalExecutionEstimatedTime ? $cycle.totalExecutionEstimatedTime : ''}</span>
+             </div>
+
+             <div>
+               <label title="{getText('cycle.totalLoggedTime.label')}">{getText('cycle.totalLoggedTime.label')} </label>
+               <span title="{$cycle.totalExecutionLoggedTimeTitle  ? $cycle.totalExecutionLoggedTimeTitle : ''}">{$cycle.totalExecutionLoggedTime  ? $cycle.totalExecutionLoggedTime : ''}</span>
+             </div>
+
+             <div>
+               <label title="{getText('cycle.executionsAwaitingLog.label')}">{getText('cycle.executionsAwaitingLog.label')} </label>
+               <span title="{$cycle.executionsAwaitingLog ? $cycle.executionsAwaitingLog : ''}">{$cycle.executionsAwaitingLog ? $cycle.executionsAwaitingLog : ''}</span>
+             </div>
+            </div>
+          </div>
+          {/if}
+        </div>
+    {else}
+
+    {if $cycle.nodeType == 'cycle'}
+      <div id="cycle-info">
+        <div class="cycle-stats">
+          <div class='cycle-infp-top-block'>
+           <div>
+             <label>{getText('cycle.build.label')} </label>
+             <span title="{$cycle.build ? $cycle.build : ''}">{$cycle.build ? $cycle.build : ''}</span>
+           </div>
+
+           <div>
+             <label>{getText('cycle.environment.label')} </label>
+             <span title="{$cycle.environment  ? $cycle.environment : ''}">{$cycle.environment  ? $cycle.environment : ''}</span>
+           </div>
+
+           <div>
+             <label>{getText('cycle.createdby.label')} </label>
+             <span title="{$cycle.createdByDisplay ? $cycle.createdByDisplay : ''}">{$cycle.createdByDisplay ? $cycle.createdByDisplay : ''}</span>
+           </div>
+          </div>
+          <div class='cycle-infp-top-block'>
+           <div>
+             <label>{getText('project.testcase.summary.section.total.executions')} </label>
+             {if $cycle.totalExecutions}
+                <!--<span> {$cycle.totalExecutions}</span>-->
+                <span title={$cycle.totalExecutions}><a target="_parent" href="{$cycle.totalExecutionsZql}">{$cycle.totalExecutions}</a></span>
+              {else}
+                <span></span>
+             {/if}
+           </div>
+
+           <div>
+             <label>{getText('project.testcase.summary.section.cycle.executions')} </label>
+             {if $cycle.totalCycleExecutions}
+                <!--<span> {$cycle.totalCycleExecutions}</span>-->
+                <span><a target="_parent" href="{$cycle.totalCycleExecutionsZql}">{$cycle.totalCycleExecutions}</a></span>
+
+              {else}
+                <span></span>
+             {/if}
+           </div>
+
+           <div>
+             <label>{getText('project.testcase.summary.section.total.executed')} </label>
+             {if $cycle.totalExecuted}
+                <!--<span> {$cycle.totalExecuted}</span>-->
+                <span><a target="_parent" href="{$cycle.totalExecutedZql}">{$cycle.totalExecuted}</a></span>
+              {else}
+                <span></span>
+             {/if}
+           </div>
+          </div>
+          <div class='cycle-infp-top-block'>
+           <div>
+             <label>{getText('cycle.startedon.label')} </label>
+             <span title={$cycle.startDate ? $cycle.startDate : ''}>{$cycle.startDate ? $cycle.startDate : ''}</span>
+           </div>
+
+           <div>
+             <label>{getText('cycle.endedon.label')} </label>
+             <span title={$cycle.endDate ? $cycle.endDate : ''}>{$cycle.endDate ? $cycle.endDate : ''}</span>
+           </div>
+
+           <div>
+             <label class="cycle-info-label">{getText('cycle.description.label')} </label>
+             {if $cycle.description}
+              <a id="inlineDialog">{getText('cycle.viewmore.label')}</a>
+             {/if}
+             <span class="cycle-description" title="{$cycle.description ? $cycle.description : ''}">{$cycle.description ? $cycle.description : ''}</span>
+           </div>
+          </div>
+        </div>
+        {if $cycle.cycleId != -1 and $cycle.isExecutionWorkflowEnabledForProject }
+          <div class="cycle-stats">
+            <div class='cycle-info-bottom-block'>
+             <div>
+               <label title="{getText('cycle.totalExecutionTime.label')}">{getText('cycle.totalExecutionTime.label')} </label>
+               <span title="{$cycle.totalExecutionEstimatedTimeTitle ? $cycle.totalExecutionEstimatedTimeTitle : ''}">{$cycle.totalExecutionEstimatedTime ? $cycle.totalExecutionEstimatedTime : ''}</span>
+             </div>
+
+             <div>
+               <label title="{getText('cycle.totalLoggedTime.label')}">{getText('cycle.totalLoggedTime.label')} </label>
+               <span title="{$cycle.totalExecutionLoggedTimeTitle  ? $cycle.totalExecutionLoggedTimeTitle : ''}">{$cycle.totalExecutionLoggedTime  ? $cycle.totalExecutionLoggedTime : ''}</span>
+             </div>
+
+             <div>
+               <label title="{getText('cycle.executionsAwaitingLog.label')}">{getText('cycle.executionsAwaitingLog.label')} </label>
+               <span title="{$cycle.executionsAwaitingLog ? $cycle.executionsAwaitingLog : ''}">{$cycle.executionsAwaitingLog ? $cycle.executionsAwaitingLog : ''}</span>
+             </div>
+            </div>
+          </div>
+        {/if}
+      </div>
+    {/if}
+  {/if}
+
+
+
+{/template}
+
+/**
+ * Render Execution Table
+ */
+{template .executionNewTable}
+  <div class="grid-componentWrapper">
+    <div class="notifications zfj-permission-message-bar active" id="zfj-permission-message-bar-plancycle-list"></div>
+    <div class="grid-component" id="cycleSummaryGrid"></div>
+  </div>
+{/template}
+
+/**
+ * Render Execution Table
+ * @param executions
+ * @param url
+ * @param allStatusMap
+ * @param dtStatusName
+ * @param? isCheckbox
+ * @param? totalChecked
+ * @param? deleteUrl
+ * @param? columns
+ * @param? isColumns
+ * @param? selectedId
+ * @param? customFieldsOrder
+ */
+{template .executionTable}
+
+<table id="execution-table">
+  <thead>
+    {if $isCheckbox}
+      <th class='colHeaderLink' name='checkbox' rel='ID:ASC'>
+        {if $totalChecked}
+          <input type="checkbox" class="checkbox selectall-execution-check" id="selectAllExecutions" checked/>
+        {else}
+          <input type="checkbox" class="checkbox selectall-execution-check" id="selectAllExecutions"/>
+        {/if}
+      </th>
+    {/if}
+    <th class='colHeaderLink {$isCheckbox ? '': 'sortable'}' name='id' rel='ID:ASC'>{getText('project.cycle.schedule.table.column.id')}</th>
+    <th class='colHeaderLink  Status {$isCheckbox ? '': 'sortable'} {$columns.status.value ? 'show': 'hide'}'     rel='ExecutionStatus:ASC'>{getText('project.cycle.schedule.table.column.status')}</th>
+    <th class='colHeaderLink {($columns.summary and $columns.summary.value) ? 'show': 'hide'}' name='summary' rel='summary:ASC'>{getText('project.cycle.schedule.table.column.summary')}</th>
+    <th class='colHeaderLink {($columns.defect and $columns.defect.value)? 'show': 'hide'}' name='defect' rel='defect:ASC'>{getText('project.cycle.schedule.table.column.defect')}</th>
+    <th class='colHeaderLink {($columns.component and $columns.component.value) ? 'show': 'hide'}' rel='Component:ASC'>{getText('project.cycle.schedule.table.column.component')}</th>
+    <th class='colHeaderLink {($columns.label and $columns.label.value) ? 'show': 'hide'}' rel='Labels:ASC'>{getText('project.cycle.schedule.table.column.label')}</th>
+    <th class='colHeaderLink {$isCheckbox ? '': 'sortable'} ExecutedBy {$columns.executedBy.value ? 'show': 'hide'}' rel='ExecutedBy:ASC'>{getText('project.cycle.schedule.table.column.executedBy')}</th>
+    <th class='colHeaderLink {$isCheckbox ? '': 'sortable'} ExecutionDate {$columns.executedOn.value ? 'show': 'hide'}' rel='ExecutionDate:ASC'>{getText('project.cycle.schedule.table.column.executedOn')}</th>
+    <th class='colHeaderLink {($columns.assignee and $columns.assignee.value) ? 'show': 'hide'}' rel='AssignedTo:ASC' name='assignee'>{getText('project.cycle.schedule.table.column.assignee')}</th>
+    {foreach $customField in $customFieldsOrder}
+      <th class="colHeaderLink {$columns and ($columns[$customField.customfieldId].isVisible == 'true') ? 'show': 'hide'}">{$customField.customFieldName}</th>
+    {/foreach}
+    {if not $isCheckbox}
+      <th class='colHeaderLink' name='action' rel='action'></th>
+    {/if}
+    {if $isColumns}
+      <th class='colHeaderLink columnCustomisation' name='columnCustomisation'>
+        <a id="columnCustomisation-inlineDialog" aria-controls="columnCustomisation-inlineDialog-1"><div class="contextMenuIcon aui-icon aui-icon-small aui-iconfont-handle-horizontal"></div></a>
+      </th>
+    {/if}
+  </thead>
+  <tbody>
+
+  {foreach $execution in $executions}
+    {let $stMap: $allStatusMap[$execution.executionStatus] /}
+    {if $execution.canViewIssue}
+      <tr data-exeuctionid={$execution.id} data-selectedId={$selectedId} data-index={0} class={$execution.id == $selectedId ? 'selected': ''}>
+        {if $isCheckbox}
+          <td>
+            {if $execution.checked}
+              <input type="checkbox" class="checkbox execution-check" name= "{$execution.id}" id="scheduleCheck-{$execution.id}" checked/>
+            {else}
+              <input type="checkbox" class="checkbox execution-check" name= "{$execution.id}" id="scheduleCheck-{$execution.id}"/>
+            {/if}
+          </td>
+        {/if}
+        <td>
+          {if $execution.issueKey}
+              <a href="{$url}/browse/{$execution.issueKey}">{$execution.issueKey}</a>
+          {else}
+              {getText('zephyr.executionDetailsPanel.inactive')}
+          {/if}
+        </td>
+        <td class='execution-status-td {($columns.status.isVisible == 'true') ? 'show': 'hide'}'>
+          <div id="execution-status-container-{$execution.id}" data-statusid={$stMap.id} data-id={$execution.id} class="execution-status-container">
+              {if $isCheckbox}
+                <dl class="exec-status-container">
+                  <dd class="new-session-status" style="background-color:{$stMap.color};" title="{$stMap.name}{$stMap.description ? (': ' + $stMap.description ) : ''}">
+                    {$stMap.name}
+                  </dd>
+                </dl>
+              {else}
+                <div>
+                  <div class='execution-status-lozenges' >
+                      <div class="labels exec-status-container">
+                          <dl class="zfj-editable-field">
+                              <dt>{$dtStatusName}</dt>
+                              <dd class="new-session-status" style="background-color:{$stMap.color};" title="{$stMap.name}{$stMap.description ? (': ' + $stMap.description) : ''}">
+                                {$stMap.name}
+                              </dd>
+                              <a type='button' class="zfj-overlay-icon zExecute icon icon-edit-sml">
+                                <span rel="{$stMap.id}">{$stMap.name}</span>
+                              </a>
+                          </dl>
+                      </div>
+                  </div>
+                </div>
+              {/if}
+
+
+              <div class='displaynone'>
+                <div>
+                    <select class="select exec_status-schedule-select">
+                        {foreach $iStatus in  keys($allStatusMap)}
+                          {if $stMap.id == $allStatusMap[$iStatus].id}
+                              <option value="{$stMap.id}" selected="selected" rel="{$stMap.color}" title="{$stMap.description}">{$stMap.name}</option>
+                          {else}
+                              <option value="{$allStatusMap[$iStatus].id}" rel="{$allStatusMap[$iStatus].color}" title="{$allStatusMap[$iStatus].description}">{$allStatusMap[$iStatus].name}</option>
+                          {/if}
+                         {/foreach}
+                    </select>
+                    <div class="update_cancel-buttons" tabindex="1">
+                        <button class="exec_status_update-schedule zfj-button submit"  type="button">
+                          <span class="icon icon-save"></span>
+                        </button>
+                        <button class="exec_status_cancel-schedule zfj-button cancel"  type="cancel">
+                          <span class="icon icon-cancel"></span>
+                        </button>
+                    </div>
+                </div>
+              </div>
+          </div>
+        </td>
+        <td class='execution-summary-td {$columns.summary.value ? 'show': 'hide'}' title='{$execution.summary}'>{$execution.summary}</td>
+        <td class='{($columns.defect and $columns.defect.value) ? 'show': 'hide'}'>
+          {if $execution.totalDefectCount >0}
+            <div class="zfj-defect-hover" data-issueKey="{$execution.issueKey}" data-executionId="{$execution.id}" data-color="{$stMap.color}"><span class="aui-lozenge aui-lozenge-defects">{$execution.executionDefectCount} | {$execution.stepDefectCount}</span>{/if}
+            {call .defectColumnValue}
+                    {param defects: $execution.defects/}
+                    {param url: $url/}
+            {/call}
+            {if $execution.defects}</div>{/if}
+        </td>
+        <td class='{($columns.component and $columns.component.value) ? 'show': 'hide'}' title='{$execution.component}'>
+          {if $execution.component}
+            {$execution.component}
+          {/if}
+        </td>
+        <td class='{($columns.label and $columns.label.value) ? 'show': 'hide'}' title='{$execution.label}'>
+          {if $execution.label}
+            {$execution.label}
+          {/if}
+        </td>
+        <td class='{($columns.executedBy and $columns.executedBy.value) ? 'show': 'hide'}'>
+          {if $execution.executedByDisplay}
+            {$execution.executedByDisplay}
+          {/if}
+        </td>
+        <td class='{($columns.executedOn and $columns.executedOn.value) ? 'show': 'hide'}'>
+          {if $execution.executedOn}
+            {$execution.executedOn}
+          {/if}
+        </td>
+        <td class='{($columns.assignee and $columns.assignee.value) ? 'show': 'hide'}'>
+          {if $execution.assignedToDisplay}
+            {$execution.assignedToDisplay}
+          {/if}
+        </td>
+        {foreach $customField in $customFieldsOrder}
+          <td class="{$columns and ($columns[$customField.customfieldId].isVisible == 'true') ? 'show': 'hide'}">
+            <span class="customFields" data-field-type={$customField.customFieldType} data-field-name={$customField.customFieldName}>
+              {if $customField.customFieldType == 'CHECKBOX'}
+                {if $execution.customFields[$customField.customfieldId]}
+                  <span>{$execution.customFields[$customField.customfieldId].value}</span>
+                {else}
+                  <span>{$customField.customDefaultValue}</span>
+                {/if}
+              {elseif $customField.customFieldType == 'RADIO_BUTTON'}
+                {if $execution.customFields[$customField.customfieldId]}
+                  <span>{$execution.customFields[$customField.customfieldId].value}</span>
+                {else}
+                  <span>{$customField.customDefaultValue}</span>
+                {/if}
+              {elseif $customField.customFieldType == 'MULTI_SELECT'}
+                {if $execution.customFields[$customField.customfieldId]}
+                  <span>{$execution.customFields[$customField.customfieldId].value}</span>
+                {else}
+                  <span>{$customField.customDefaultValue}</span>
+                {/if}
+              {elseif $customField.customFieldType == 'SINGLE_SELECT'}
+                {if $execution.customFields[$customField.customfieldId]}
+                  <span>{$execution.customFields[$customField.customfieldId].value}</span>
+                {else}
+                  <span>{$customField.customDefaultValue}</span>
+                {/if}
+              {elseif $customField.customFieldType == 'NUMBER'}
+                {if $execution.customFields[$customField.customfieldId]}
+                  <span>{$execution.customFields[$customField.customfieldId].value}</span>
+                {else}
+                  <span>{$customField.customDefaultValue}</span>
+                {/if}
+              {elseif $customField.customFieldType == 'LARGE_TEXT'}
+                {if $execution.customFields[$customField.customfieldId]}
+                  <span>{$execution.customFields[$customField.customfieldId].value}</span>
+                {else}
+                  <span>{$customField.customDefaultValue}</span>
+                {/if}
+              {elseif $customField.customFieldType == 'TEXT'}
+                {if $execution.customFields[$customField.customfieldId]}
+                  <span>{$execution.customFields[$customField.customfieldId].value}</span>
+                {else}
+                  <span>{$customField.customDefaultValue}</span>
+                {/if}
+              {elseif $customField.customFieldType == 'DATE_TIME'}
+                <span>{call convertDate}
+                        {param value: $execution.customFields[$customField.customfieldId] ? $execution.customFields[$customField.customfieldId].value : $customField.customDefaultValue /}
+                        {param isDateTime : true /}
+                      {/call}
+                </span>
+              {elseif $customField.customFieldType == 'DATE'}
+                <span>{call convertDate}
+                        {param value: $execution.customFields[$customField.customfieldId] ? $execution.customFields[$customField.customfieldId].value : $customField.customDefaultValue  /}
+                        {param isDateTime : false /}
+                      {/call}</span>
+              {/if}
+              </span>
+          </td>
+        {/foreach}
+        <td class="quick-execute-grid">
+                <a class="zExecute aui-button" id="execution-button-{$execution.id}" href="{call getExecutionUrl}{param url: $url /}{param execution: $execution /}{param index: index($execution) /}{/call}" style="padding: 4px !important; text-align: center; vertical-align: middle;">{getText('issue.schedule.execute.button.label')}</a>
+
+        </td>
+        {if not $isCheckbox}
+          <td>
+            <a id="schedule-{$execution.id}-operations-trigger" class='icon icon-delete issue-schedule-operations execution-delete-container' href="{$deleteUrl}{$execution.id}" rel="{$execution.id}"></a>
+        {/if}
+        {if $isColumns}
+          <td></td>
+        {/if}
+      </tr>
+    {else}
+      <tr data-exeuctionid={$execution.id} data-selectedId={$selectedId} data-index={0} class={$execution.id == $selectedId ? 'selected': ''}>
+        <td colspan='{$isCheckbox ? 10 : 11}' style='text-align:center'>{getText('zephyr.cycle.noPermissionOnTestAndIssue')}</td>
+      </tr>
+    {/if}
+  {/foreach}
+  </tbody>
+</table>
+{/template}
+
+/**
+ * Renders the previous and next navigator
+ * @param totalCount
+ * @param currentIndex
+ */
+{template .addPrevNextNavigator}
+ <div class="pagination-wrapper" class="prev-next-container">
+  {if $totalCount > 0}
+    <div>
+
+      <span>
+      {getText('project.cycle.schedule.count.label',  $currentIndex  + ' - ' +  (($currentIndex + 9 > $totalCount) ? $totalCount : $currentIndex + 9), $totalCount)}
+       &nbsp;|&nbsp;
+      </span>
+
+      {if $currentIndex <= 1}
+        <span title="Not available - this is the first page">
+          {getText('project.cycle.schedule.previous.label')}
+          &nbsp;|&nbsp;
+        </span>
+      {else}
+        <a id="prev-page-execution" class="prev-page-execution" type="button" title="Previous Execution">
+          {getText('project.cycle.schedule.previous.label')}
+          &nbsp|&nbsp;
+        </a>
+      {/if}
+
+
+      {if ($currentIndex + 10 ) > $totalCount}
+        <span title="Not available - this is the last page">
+          {getText('project.cycle.schedule.next.label')}
+        </span>
+      {else}
+        <a id="next-page-execution" class="next-page-execution" type="button" title="Next Execution">
+           {getText('project.cycle.schedule.next.label')}
+        </a>
+      {/if}
+
+    </div>
+  {/if}
+</div>
+{/template}
+
+
+/**
+ * Renders the previous and next navigator
+ * @param totalPages
+ * @param selectedPage
+ * @param entriesCount
+ * @param totalCount
+ */
+{template .addPaginationNewUI}
+ <div class="pagination-wrapper-newUI" class="prev-next-container">
+    <div class="pagination">
+      <div>
+        <span>
+          {if $selectedPage == 1}
+            <span title="Not available - this is the first page" class="disabled">
+              <span class="pageNumbers">{($totalCount == 0) ? 0 : 1} - {($totalCount < $entriesCount) ? $totalCount : $entriesCount}</span>
+              <span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-arrow disabled"></span>
+              <span class="ellipsis">...</span>
+            </span>
+          {else}
+            <span class="pageNumbers goToPage" data-offset=0>{($totalCount == 0) ? 0 : 1} - {($totalCount < $entriesCount) ? $totalCount : $entriesCount}</span>
+            <span id="prev-page-execution" class="prev-page-execution" type="button" title="Previous Execution">
+              <span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-arrow"></span>
+              <span class="ellipsis">...</span>
+            </span>
+
+          {/if}
+        </span>
+
+        <span>
+          <span class="selected pageNumbers">{($totalCount == 0) ? 0 : $entriesCount*($selectedPage) - ($entriesCount - 1)} - {($totalCount < $entriesCount*($selectedPage)) ? $totalCount : $entriesCount*($selectedPage)}</span>
+        </span>
+
+        <span>
+          {if $selectedPage == $totalPages}
+            <span title="Not available - this is the first page" class="disabled">
+              <span class="ellipsis">...</span>
+              <span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow disabled"></span>
+              <span class="pageNumbers">{($totalCount == 0) ? 0 : $entriesCount*$totalPages - ($entriesCount - 1)} - {$totalCount}</span>
+            </span>
+          {else}
+
+            <span id="next-page-execution" class="next-page-execution" type="button" title="Next Execution">
+              <span class="ellipsis">...</span>
+              <span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow"></span>
+            </span>
+            <span class="pageNumbers goToPage" data-offset={$totalPages}>{($totalCount == 0) ? 0 : $entriesCount*$totalPages - ($entriesCount - 1)} - {$totalCount}</span>
+          {/if}
+        </span>
+      </div>
+
+
+    </div>
+    <div class="entries-per-page">
+      <div class="dropdown-Wrapper">
+        <span class="dropDown-select">{$entriesCount}</span>
+        <span class="aui-icon aui-icon-small aui-iconfont-arrow-down dropDown-Trigger"></span>
+        <div class="dropDown-container dropdown-top">
+          <div class="dropDown-options-wrapper">
+            <ul>
+              {if $entriesCount != 10}
+                <li class="chooseEntries" onClick="changePagenationCount(this)" data-entries=10>10</li>
+              {/if}
+              {for $i in range(2)}
+                {if $entriesCount != ($i+1)*25}
+                  <li class="chooseEntries" onClick="changePagenationCount(this)" data-entries={($i+1)*25}>{($i+1)*25}</li>
+                {/if}
+              {/for}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div >
+</div>
+{/template}
+
+/**
+* generate schedule defect list
+* @param? defects
+* @param? url
+*/
+{template .defectColumnValue}
+  {if $defects}
+    {foreach $defect in $defects}
+      {let $defectStatus}{call convertToLowerCase data="[$defect.status]" /}{/let}
+      {if $defect.maskedIssueKey and $defect.maskedIssueKey == 'XXXXX'}
+                <span {if $defect.resolution} style="text-decoration:line-through;"{/if} data-maskedIssueKey="{$defect.maskedIssueKey}"  data-defect-resolution="{$defect.resolution}" data-issueKey="{$defect.key}" data-status="{$defect.status}" data-summary="{$defect.summary}">{$defect.maskedIssueKey}</span>
+      {else}
+          <a {if $defect.resolution} style="text-decoration:line-through;"{/if} href="{$url}/browse/{$defect.key}" data-maskedIssueKey="" data-defect-resolution="{$defect.resolution}" data-issueKey="{$defect.key}" data-status="{$defect.status}" data-summary="{$defect.summary}">{$defect.key}</a>
+      {/if}
+        {if not isLast($defect)}, {/if}
+    {/foreach}
+  {/if}
+{/template}
+
+/**
+ * Render the dialog as Create Phase
+ * @param projectId
+ * @param cycle
+ */
+{template .createPhaseDialog}
+<div id="create-cycle-dialog" class="aui">
+  {if $cycle}
+  <input id="clonedFromCycle" type="hidden" value="{$cycle.id}"/>
+  {/if}
+  <h2 class="dialog-title" id="dialog-title">{$cycle ? getText('project.cycle.summary.editnode.dialog.heading') : getText('project.cycle.summary.createnode.dialog.heading')}</h2>
+    <form action="#" method="post" id="zcycle" class="aui">
+      {call ZEPHYR.About.evalMessage /}
+      <div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" class="form-body" style="display:none"></div>
+      <fieldset>
+        <div class="field-group">
+          <label for="cycle_name">{getText('cycle.name.label')}<span class="aui-icon icon-required required"></span></label>
+          <input class="text large-field" type="text" id="node_name" name="node_name" title="{getText('zephyr.je.maxChar.tooltip', 210)}" value="{$cycle?$cycle.name:''}" maxlength="210"/>
+        </div>
+        <div class="field-group">
+          <label for="cycle_description">{getText('cycle.description.label')}</label>
+          <textarea rows="2" class="textarea large-field" id="node_description" name="node_description" title="description">{$cycle ?$cycle.description:''}</textarea>
+        </div>
+        <div class="buttons-container">
+          <a href="#" id="zephyr-je-dlgclose" class="cancel" title="Cancel" style="float:right;margin:5px 5px 5px 0">{getText('zephyr.je.submit.form.cancel')}</a>
+          <input class="aui-button" type="submit" id="cycle-create-form-submit-{$projectId}" value="{getText('zephyr.je.save.button.title')}" style="float:right;margin:5px 5px 5px 0"/>
+        </div>
+      </fieldset>
+    </form>
+</div>
+{/template}
+
+/**
+ * Renders the Cycle Aggregated Summary
+ * @param cycle
+ * @param inlineTriggerId
+ */
+{template .cycleAggregatedSummary}
+    <table id="execution-table" class="aui cycle-aggregated-summary">
+        <thead>
+            <th class='colHeaderLink'>{getText('cycle.totalfolders.label')}</th>
+            <th class='colHeaderLink'>{getText('project.testcase.summary.section.total.executions')}</th>
+            <th class='colHeaderLink'>{getText('cycle.executionsummary.label')}</th>
+            <th class='colHeaderLink'>{getText('cycle.totaldefects.label')}</th>
+        </thead>
+        <tbody>
+            <tr>
+              <td>{$cycle.totalFolders or 0}</td>
+              <td>{$cycle.totalExecutions}</td>
+              <td>
+                {if $cycle.totalExecutions}
+                  <div style="width: 70%;" class="executionSummaryBar showSummary" id="{$inlineTriggerId}" onmouseout="closeSummaryInlineDialog(event)" onmouseover="summaryInlineDialog(event,'{$inlineTriggerId}')"><div style="display:none"><div class="{$inlineTriggerId}">{call executionSummaryInlineDialogHTMLSoy data="[$cycle.executionSummaries.executionSummary, $cycle.totalExecutions]" /}</div></div>{call executionSummaryHTMLSoy data="[$cycle.executionSummaries.executionSummary, $cycle.totalExecutions]" /}</div>
+                {else}
+                  <div style="width: 70%;" class="executionSummaryBar">{call executionSummaryHTMLSoy data="[$cycle.executionSummaries.executionSummary, $cycle.totalExecutions]" /}</div>
+                {/if}
+              </td>
+              <td>{$cycle.totalDefects ? $cycle.totalDefects : '0'}</td>
+            </tr>
+        </tbody>
+    </table>
+{/template}
+
+/**
+ * Renders column customisation view
+ * @param columns
+ * @param submitButtonId
+ * @param closeButtonId
+ */
+{template .columnCustomisation}
+<div class="execution-column-picker-dialog-wrapper">
+  <h3>{getText('cycle.ChooseColumnAttribute.label')}</h3>
+  <div class="aui-list-wrapper aui-list">
+      <div class="aui-list-scroll">
+          <ul class="aui-list">
+            {foreach $key in keys($columns)}
+              <li class="check-list-item">
+                  <label class="item-label">
+                    <input type="checkbox" name="{$columns[$key].displayName}" id={$key} class="step-column-input" {$columns[$key].isVisible == 'true' ? 'checked' : ''}><span>{$columns[$key].displayName}</span>
+                  </label>
+              </li>
+            {/foreach}
+          </ul>
+      </div>
+  </div>
+  <div id="errorColumnSelector">{getText('cycle.Selectatleastoneoption.label')}</div>
+  <div class="button-panel">
+      <input class="aui-button" type="button" value="Done" id="{$submitButtonId}" href="javascript:void(0)">
+      <a href="javascript:void(0)" class="aui-button aui-button-link close-dialog" id="{$closeButtonId}">{getText('zephyr-je.close.link.title')}</a>
+  </div>
+</div>
+{/template}
+
+/**
+ * Renders breadcrumbs
+ * @param? contextPath
+ * @param? projectKey
+ * @param? projectName
+ * @param? schedule
+ */
+{template .breadCrumbsView autoescape="true"}
+<ul class="aui-nav aui-nav-breadcrumbs breadcrumbs">
+    <li>
+        <span>{getText('cycle.home.label')}</span>
+    </li>
+    <li>
+        <span>{getText('cycle.tests.label')}</span>
+    </li>
+    <li>
+        <span>{getText('cycle.plancycle.label')}</span>
+    </li>
+    <li>
+        <div></div>
+        <span id="selected-tab">{getText('cycle.cyclesummary.label')}</span>
+    </li>
+    {if $schedule}
+    <li id="project-key" style="align-items: flex-start;display: flex;">
+      <ul class="aui-nav aui-nav-breadcrumbs breadcrumbs">
+      <li>
+          {if $projectKey == 'XXXXX'}
+              <span id="project-name-val">{$projectName}</span></li>
+          {else}
+              <a href="{$contextPath}/browse/{$projectKey}" id="project-name-val">{$projectName}</a></li>
+          {/if}
+
+      <li>
+      {if $schedule.versionId == '-1'}
+          {if $schedule.versionName == 'XXXXX'}
+              <span rel="{$schedule.versionId}">{$schedule.versionName}</span>
+          {else}
+              <a href="{$contextPath}/browse/{$projectKey}" rel="{$schedule.versionId}">{$schedule.versionName}</a>
+          {/if}
+      {else}
+          {if $schedule.versionName == 'XXXXX'}
+              <span rel="{$schedule.versionId}">{$schedule.versionName}</span>
+          {else}
+              <a href="{$contextPath}/browse/{$projectKey}/fixforversion/{$schedule.versionId}" rel="{$schedule.versionId}">{$schedule.versionName}</a>
+          {/if}
+
+      {/if}
+      </li>
+      <li class="brkword"><a href="{$contextPath}/secure/PlanTestCycle.jspa?projectKey={$projectKey}" rel="">{$schedule.cycleName}</a></li>
+      {if $schedule.folderName}
+          <li>
+              <a href="{$contextPath}/secure/PlanTestCycle.jspa?projectKey={$projectKey}" rel="">
+                  <span>{$schedule.folderName}</span>
+              </a>
+          </li>
+      {/if}
+      <li>
+        <div></div>
+         {if $schedule.issueKey=='XXXXX'}
+              <span  rel="">{$schedule.issueKey}</span></li>
+         {elseif $schedule.issueKey == $projectKey+'-XXXXX'}
+              <span  rel="">{$schedule.issueKey}</span></li>
+         {else}
+              <a href="{$contextPath}/browse/{$schedule.issueKey}" rel="">{$schedule.issueKey}</a></li>
+         {/if}
+       </ul>
+       </li>
+    {/if}
+</ul>
+{/template}

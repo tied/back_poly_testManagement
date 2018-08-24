@@ -1,0 +1,72 @@
+{namespace ZEPHYR.Step.Attachment}
+
+/**
+ * Render the dialog as Create Cycle
+ * @param attachments
+ * @param baseUrl
+ * @param entityId
+ */
+{template .createTestStepAttachmentDiv}
+  <a id="attachment-inlineDialog-{$entityId}" class="attachment-inline-dialog-trigger" onclick='triggerInlineDialog({$entityId})'>Click To View Attachments</a>
+  <div id="attachment-content-container-{$entityId}" class="attachment-container" style="display: none;">
+    <div class="attachment-content-wrapper" data-id="{$entityId}">
+      <ol>
+          {foreach $attachment in $attachments}
+          <li class="attachment-content attachment-content{$attachment.fileId}" id="attachment-content{$attachment.fileId}"  data-fileid={$attachment.fileId} data-fileName={$attachment.fileName} data-dateCreated={$attachment.dateCreated} data-fileSize={$attachment.fileSize} data-fileIcon={$attachment.fileIcon} data-author={$attachment.author} data-fileIconAltText={$attachment.fileIconAltText} data-comment="{$attachment.comment}">
+               <div class="zephyr-attachment-thumb">
+                    <a href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">
+                         <img width="16" height="16" border="0" alt="{$attachment.fileIconAltText}" src="{$baseUrl}/images/icons/attach/{$attachment.fileIcon}">
+                    </a>
+                </div>
+             <dl>
+             <dt class="zephyr-attachment-title">
+               <a title="{$attachment.fileName}" href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">{$attachment.fileName}</a>
+             </dt>
+             <dd class="zephyr-attachment-delete">
+               <a href="javascript:void(0);" id="entity-operations-delete" class="icon icon-delete entity-operations-delete" title="Delete this attachment" val="{$attachment.fileId}:{$attachment.fileName}"></a>
+             </dd>
+           </dl>
+         </li>
+        {/foreach}
+      </ol>
+    </div>
+  </div>
+{/template}
+
+/**
+ * Render the dialog as Create Cycle
+ * @param attachments
+ * @param baseUrl
+ * @param entityId
+ */
+{template .createAttachmentDiv}
+{if $attachments}
+{if $attachments.length}
+<a id="attachment-inlineDialog-{$entityId}" class="attachment-inline-dialog-trigger cursor-pointer" onclick='triggerInlineDialogExecutionAttachment({$entityId})'>{getText('attachment.operation.view.message')}</a>
+<div id="attachment-content-container-{$entityId}" class="attachment-container" style="display: none;">
+  <div class="attachment-content-wrapper" data-id="{$entityId}">
+    <ol>
+      {foreach $attachment in $attachments}
+      	<li class="attachment-content" id="attachment-content{$attachment.fileId}" data-fileid={$attachment.fileId} data-fileName={$attachment.fileName} data-dateCreated={$attachment.dateCreated} data-fileSize={$attachment.fileSize} data-fileIcon={$attachment.fileIcon} data-author={$attachment.author} data-fileIconAltText={$attachment.fileIconAltText} data-comment="{$attachment.comment}">
+      			<div class="zephyr-attachment-thumb">
+                      <a href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">
+                           <img width="16" height="16" border="0" alt="{$attachment.fileIconAltText}" src="{$baseUrl}/images/icons/attach/{$attachment.fileIcon}">
+                      </a>
+                  </div>
+
+      			<dl>
+      				<dt class="zephyr-attachment-title">
+      					<a title="{$attachment.fileName}" href="{$baseUrl}/plugins/servlet/schedule/viewAttachment?id={$attachment.fileId}&name={$attachment.fileName}">{$attachment.fileName}</a>
+      				</dt>
+      				<dd class="zephyr-attachment-delete">
+      					<a href="javascript:void(0);" id="entity-operations-delete" class="icon icon-delete entity-operations-delete" title="Delete this attachment" val="{$attachment.fileId}:{$attachment.fileName}"></a>
+      				</dd>
+      			</dl>
+      	</li>
+      {/foreach}
+    </ol>
+  </div>
+</div>
+{/if}
+{/if}
+{/template}

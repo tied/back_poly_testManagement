@@ -1,0 +1,130 @@
+/*
+ * D3 chart
+ */
+/* Tooltip */ 
+.zephyr-d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.zephyr-d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Northward tooltips */
+.zephyr-d3-tip.n:after {
+  content: "\25BC";
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+  text-align: center;
+}
+
+/* Eastward tooltips */
+.zephyr-d3-tip.e:after {
+  content: "\25C0";
+  margin: -4px 0 0 0;
+  top: 50%;
+  left: -8px;
+}
+
+/* Southward tooltips */
+.zephyr-d3-tip.s:after {
+  content: "\25B2";
+  margin: 0 0 1px 0;
+  top: -8px;
+  left: 0;
+  text-align: center;
+}
+
+/* Westward tooltips */
+.zephyr-d3-tip.w:after {
+  content: "\25B6";
+  margin: -4px 0 0 -1px;
+  top: 50%;
+  left: 100%;
+}
+
+.zephyr-chart .axis path,
+.zephyr-chart .axis line {
+  fill: none;
+  stroke: #A9A9A9;
+  shape-rendering: crispEdges;
+}
+
+.zephyr-chart .bar {
+  fill: #336699;
+}
+
+.zephyr-chart .bar:hover {
+  fill: #205081;
+}
+
+.zephyr-chart svg .legend {
+   padding: 5px;
+   font-size: 10px;
+   box-shadow: 2px 2px 1px #888;
+}
+  
+/*#.zephyr-chart chartLegend svg {
+	 position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}*/
+  
+.zephyr-chart svg .line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.zephyr-chart svg .burndown-line {
+    fill: none;
+    stroke: none;
+    stroke-width: 1.5px;
+}
+
+.zephyr-chart svg .summary-execution-line {
+    fill: transparent;
+    stroke: #A5EB84;
+    stroke-width: 3px;
+}
+
+.zephyr-chart svg .summary-creation-line {
+    fill: transparent;
+    stroke: #BCC3C3;
+    stroke-width: 3px;
+}
+
+.zephyr-chart svg .area {
+    fill: none;
+    opacity: 0.5;
+}
+
+.zephyr-chart svg .dot {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+/* x and y axis text*/
+.zephyr-chart .x.axis text, .y.axis text {
+  	fill: #545454;
+  	font-size: 11px;
+}

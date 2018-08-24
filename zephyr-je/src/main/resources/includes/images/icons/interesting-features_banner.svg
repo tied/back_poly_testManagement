@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="369px" height="211px" viewBox="0 0 369 211" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>interesting-features_banner</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M3.98910098,50.9891602 L366.989101,49.0109586 C368.093654,49.0049392 368.993951,49.8954768 368.99997,51.0000299 C368.99999,51.0036628 369,51.0072959 369,51.0109289 L369,162.010869 C369,163.111185 368.111198,164.004844 367.010899,164.01084 L4.01089902,165.989041 C2.90634592,165.995061 2.00604906,165.104523 2.0000297,163.99997 C2.0000099,163.996337 2,163.992704 2,163.989071 L2,52.9891305 C2,51.888815 2.88880177,50.9951564 3.98910098,50.9891602 Z" id="path-1"></path>
+        <rect id="path-2" x="0" y="19" width="335" height="135" rx="2"></rect>
+        <rect id="path-3" x="17" y="0" width="300" height="169" rx="2"></rect>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="interesting-features_banner">
+            <g id="Rectangle-8">
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <path stroke="#C1C1C1" stroke-width="4" d="M4,52.9891305 L4,163.989071 L367,162.010869 L367,51.0109289 L4,52.9891305 Z"></path>
+            </g>
+            <g id="Group-5" transform="translate(18.000000, 21.000000)">
+                <g id="Rectangle-8">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-2"></use>
+                    <rect stroke="#C1C1C1" stroke-width="4" x="2" y="21" width="331" height="131" rx="2"></rect>
+                </g>
+                <g id="Rectangle-8">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-3"></use>
+                    <rect stroke="#C1C1C1" stroke-width="4" x="19" y="2" width="296" height="165" rx="2"></rect>
+                </g>
+            </g>
+            <g id="Group-6" transform="translate(41.000000, 27.000000)">
+                <g id="Group">
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="0" y="0" width="17" height="158"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="21" y="39" width="42" height="119"></rect>
+                    <rect id="Rectangle-3" fill="#4A90E2" x="30" y="53" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#4A90E2" x="33" y="62" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#4A90E2" x="33" y="70" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#4A90E2" x="33" y="78" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#4A90E2" x="33" y="86" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="263" y="59" width="17" height="93"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="39" width="209" height="15"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="59" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="21" y="2" width="72" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="21" y="15" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="54" y="15" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="87" y="15" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="271" y="2" width="10" height="8"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="257" y="2" width="10" height="8"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="67" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="76" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="84" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="92" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="101" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="109" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="117" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="126" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="134" width="200" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="72" y="141" width="200" height="11"></rect>
+                    <rect id="Rectangle-3" fill="#4A90E2" x="78" y="145" width="26" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#4A90E2" x="266" y="145" width="12" height="5"></rect>
+                    <rect id="Rectangle-3" fill="#D8D8D8" x="21" y="22" width="268" height="2"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

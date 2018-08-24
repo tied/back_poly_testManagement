@@ -1,0 +1,99 @@
+{namespace ZEPHYR.Templates.Execution.Assignee}
+
+/**
+ * Render execution asignee UI
+ * @param hasHeader
+ * @param hasLabel
+ * @param id
+ */
+{template .executionAssigneeView}
+<div id="assignee-module" class="module toggle-wrap expanded">
+	{if $hasHeader}
+	<div id="assignee-module-heading" class="mod-header">
+		<h3 class="toggle-title"><strong>{getText('execute.test.execution.assignee.label')}</strong></h3>
+	</div>
+	{/if}
+	{if $hasLabel}
+	<div class="mod-content">
+	    <div class="field-group zephyr-assignee-field-group">
+	        <label class="execution-assignee-label">{getText('execute.test.execution.assign.to.label')}</label>
+	        <div>
+	{/if}
+	         <ul class="zephyr-assignee-options">
+	         	<li>
+	         		<input type="radio" name="{$id}-type" id="{$id}-currentUser" value="currentUser" title="{getText('execute.test.execution.assignee.radio.unselect.label')}" />
+	         		<label for="{$id}-currentUser" title="{getText('execute.test.execution.assignee.radio.unselect.label')}">{getText('execute.test.execution.assign.to.currentUser.label')}</label>
+	         	</li>
+				<li>
+					<input type="radio" name="{$id}-type" id="{$id}-assignee" value="assignee" title="{getText('execute.test.execution.assignee.radio.unselect.label')}">
+					<label for="{$id}-assignee" title="{getText('execute.test.execution.assignee.radio.unselect.label')}">{getText('execute.test.execution.assign.to.assignee.label')}</label>
+				</li>
+				<li>
+					<select id="{$id}" name="{$id}" class="single-user-picker js-default-user-picker"
+						data-input-text=""
+						data-show-dropdown-button="true">
+					</select>
+				</li>
+				<div class="error assignee-error" id="assignee-error"></div>
+	 {if $hasLabel}
+	        </div>
+	    </div>
+    </div>
+    {/if}
+</div>
+{/template}
+
+/**
+ * Render execution asignee UI
+ * @param hasHeader
+ * @param hasLabel
+ * @param id
+ */
+{template .executionAssigneeViewNewUI}
+<div id="assignee-module" class="module toggle-wrap expanded">
+	{if $hasHeader}
+	<div id="assignee-module-heading" class="mod-header">
+		<h3 class="toggle-title"><strong>{getText('execute.test.execution.assignee.label')}</strong></h3>
+	</div>
+	{/if}
+	{if $hasLabel}
+	<div class="mod-content">
+	    <div class="field-group zephyr-assignee-field-group">
+	        <label class="execution-assignee-label">{getText('execute.test.execution.assign.to.label')}</label>
+	        <div>
+	{/if}
+	         <ul class="zephyr-assignee-options">
+				<li>
+					<select id="{$id}" name="{$id}" class="single-user-picker js-default-user-picker"
+						data-input-text=""
+						data-show-dropdown-button="false">
+					</select>
+				</li>
+				<div class="error assignee-error" id="assignee-error"></div>
+	 {if $hasLabel}
+	        </div>
+	    </div>
+    </div>
+    {/if}
+</div>
+{/template}
+
+/**
+ * Render execution asignee UI
+ * @param users
+ * @param footer
+ * @param scheduleId
+ */
+{template .executionAssigneeViewAjaxUI}
+	<h6>{$footer}</h6>
+	{foreach $user in $users}
+		<li data-scheduleid="{$scheduleId}" data-assignee="{$user.name}" data-displayname="{$user.displayName}">
+			{if $user.userNameAvatar}
+				<span class="user-name-image">{$user.userNameAvatar}</span>
+			{else}
+				<img class="user-avatar" src="{$user.avatarUrl}"/>
+			{/if}
+			<span class="user-name-container">{$user.displayName}</span>
+		</li>
+	{/foreach}
+{/template}

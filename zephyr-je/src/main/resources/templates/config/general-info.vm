@@ -1,0 +1,102 @@
+<html lang="en">
+<head>
+	$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-admin-config")
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_info_configuration"/>
+    <meta name="decorator" content="admin"/>
+    <title>$i18n.getText("zephyr.je.admin.plugin.test.section.item.zephyr.info.label")</title>
+</head>
+<body>	
+<div class="module">
+	<div id="general-config-aui-message-bar"> </div>
+	<h3>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.info.label')</h3>
+	<table class="aui aui-table-rowhover">
+		<tr>
+			<td width="40%">
+				<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.info.issueType.id.name')</label>
+			</td>
+			<td width="60%">
+				<label style="vertical-align:baseline">$action.getIssueTypeId()</label>
+				
+			</td>
+		</tr>
+		<tr>
+			<td width="40%">
+				<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.info.customField.id.name')</label>
+			</td>
+			<td width="60%">
+				<label style="vertical-align:baseline">$action.getCustomFieldTypeId()</label>
+			</td>
+		</tr>
+	</table>
+	<br/>
+	<input id="changeHistory" class="aui-button zchangeHistory" type="button" value="$action.getText('zephyr.je.audit.history.view.button.label')"/>
+	<div class="overlay-icon icon loading hidden"></div>
+	<div id="changeHistoryDetails" class="hidden">
+    	<form class="aui" style="padding-top:10px">
+        	<fieldset class="aui">
+        		<div class="matrix">
+        			<label for="entityType">$action.getText('zephyr.je.audit.history.entity.type.label')</label>
+        			<select id="entityType" name="entityType" class="select">
+    						<option selected hidden value=''>$action.getText('zephyr.je.audit.history.entity.type.all.label')</option>"
+        		    		<option value="CYCLE">$action.getText('zephyr.je.audit.history.entity.type.CYCLE')</option>
+        					<option value="EXECUTION">$action.getText('zephyr.je.audit.history.entity.type.EXECUTION')</option>
+        					<option value="STEPRESULT">$action.getText('zephyr.je.audit.history.entity.type.STEPRESULT')</option>
+        					<option value="TESTSTEP">$action.getText('zephyr.je.audit.history.entity.type.TESTSTEP')</option>
+        			</select>
+        			<label for="eventType" style="padding-left:20px">$action.getText('zephyr.je.audit.history.event.type.label')</label>
+        			<select id="eventType" name="eventType" class="select">
+    						<option selected hidden value=''>$action.getText('zephyr.je.audit.history.event.type.all.label')</option>"
+        		    		<option value="CYCLE_UPDATED">$action.getText('zephyr.je.audit.history.event.type.cycle.updated.label')</option>
+        		    		<option value="CYCLE_DELETED">$action.getText('zephyr.je.audit.history.event.type.cycle.deleted.label')</option>
+        					<option value="EXECUTION_UPDATED">$action.getText('zephyr.je.audit.history.event.type.exec.updated.label')</option>
+        					<option value="EXECUTION_DELETED">$action.getText('zephyr.je.audit.history.event.type.exec.deleted.label')</option>
+        					<option value="EXECUTION_ATTACHMENT_ADDED">$action.getText('zephyr.je.audit.history.event.type.execattachmentadded.label')</option>
+        					<option value="EXECUTION_ATTACHMENT_DELETED">$action.getText('zephyr.je.audit.history.event.type.execattachmentdeleted.label')</option>
+        					<option value="STEPRESULT_UPDATED">$action.getText('zephyr.je.audit.history.event.type.stepresult.updated.label')</option>
+        					<option value="STEPRESULT_ATTACHMENT_ADDED">$action.getText('zephyr.je.audit.history.event.type.stepresattachadded.label')</option>
+        					<option value="STEPRESULT_ATTACHMENT_DELETED">$action.getText('zephyr.je.audit.history.event.type.stepresattachdeleted.label')</option>
+        					<option value="TESTSTEP_UPDATED">$action.getText('zephyr.je.audit.history.event.type.step.updated.label')</option>
+        					<option value="TESTSTEP_DELETED">$action.getText('zephyr.je.audit.history.event.type.step.deleted.label')</option>
+                            <option value="EXECUTION_WORKFLOW_UPDATED">$action.getText('zephyr.je.audit.history.event.type.execution.workflow.label')</option>
+                        	<option value="EXECUTION_CUSTOMFIELD_UPDATED">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.label')</option>
+        			</select>
+    				<a href="#" class="znav" name="refresh" original-title="$action.getText('zephyr.je.audit.history.refresh.href.label')"
+                       title="$action.getText('zephyr.je.audit.history.refresh.href.title')" style="padding-left:20px">
+						##vector icons only available post AUI 5.0, aui-iconfont-build
+    					<span class="aui-icon aui-icon-small" style="background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAMFBMVEX///9wcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHAAAAAAAACVER+kAAAADXRSTlMAETNEVWZ3iJmqu8zuvnd8xQAAAGFJREFUeNpjYEAHzAyFZ3bXCR9gYGJgjvwR7QkSW3WDgUGFASgi/JKB4Q6IoSCVAFHeboSk16QSKAUELJUpEMaf/H8ghhIDQ+F5BhYGhuprLzyKGBgZGCS28qVef4lhOQMA3iUVc38oZiwAAAAASUVORK5CYII=) 0 0 no-repeat" data-unicode="UTF+E016" original-title=""></span>
+    				</a>
+        		</div>
+        	</fieldset>
+    	</form>
+    	
+    	<table id="changeHistoryTable" class="aui aui-table-sortable" style="table-layout:fixed;">
+    	    <thead>
+    	        <tr>
+    	            <th class="aui-table-column-issue-key">#</th>
+    	            <th class="aui-table-column-issue-key">Issue key</th>
+    	            <th>$action.getText('admin.common.words.type')</th>
+    	            <th>$action.getText('admin.common.words.event')</th>
+    	            <th>$action.getText('admin.issuefields.field.name')</th>
+    	            <th>$action.getText('bulk.move.oldvalue')</th>
+    	            <th>$action.getText('bulk.move.newvalue')</th>
+    	            <th>$action.getText('zephyr.je.audit.history.column.changeon.label')</th>
+    	            <th>$action.getText('zephyr.je.audit.history.column.changeby.label')</th>
+    	            <!--<th class="aui-table-column-unsortable">Description</th>-->
+    	        <tr>
+    	    </thead>	
+    	    <tbody></tbody>
+    	</table>
+		<br>
+    	<div>
+    		<p class="aui-buttons" style="float:right">
+                <button class="aui-button znav" id="zPrev" name="prev">&lt;</button>
+                <button class="aui-button znav" id="zNext" name="next">&gt;</button>
+    		</p>
+    	</div>
+	<div>
+</div>
+</body>
+</html>

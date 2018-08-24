@@ -1,0 +1,121 @@
+{namespace ZEPHYR.ZQLFilter.Save}
+
+/**
+ * Render the dialog for Save ZQL Filter. 
+ * @param method
+ * @param? fName
+ * @param? fDesc
+ * @param? isFav
+ * @param? sharePerm
+ * @param dialogTitle
+ */
+{template .saveZQLFilter}
+<div >
+	<h2 class="dialog-title">{$dialogTitle}
+	<a target="_jirahelp"
+		href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Zephyr+for+JIRA+Documentation+Home#managing_filters"
+		title="Get online help about Saving Searches ('Execution Filters')"
+		class="aui-icon icon-help" style="height:16px;width:16px;"> Get help! </a></h2>
+	<form method={$method} class="aui" action="#">
+	{call ZEPHYR.About.evalMessage /}
+		<div class="form-body">
+			</h2>			
+			<div class="field-group" style="margin-top:15px;">
+				<label for="filterName">{getText('zql.filter.dialog.name.label')}<span
+					class="aui-icon icon-required"></span><span class="content">
+						required</span></label> <input type="text" name="filterName" id="filterName"
+					 value="{$fName}" class="text"/>
+			</div>
+			<div class="field-group" style="margin-top:15px;">
+				<label for="filterDescription">{getText('zql.filter.dialog.desc.label')}</label>
+				<textarea type="text" rows="4" name="filterDescription"
+					id="filterDescription" cols="" class="textarea">{$fDesc}
+				</textarea>
+			</div>
+			<div class="field-group" style="margin-top:15px;">
+				<label for="isFavFilter">{getText('zql.filter.dialog.fav.label')}</label>
+				{if $isFav == false}
+					<input type="checkbox" class="checkbox" name="isFavFilter" id="isFavFilter"/>
+				{else}
+					<input type="checkbox" class="checkbox" name="isFavFilter" id="isFavFilter" checked="checked"/>
+				{/if}	
+			</div>			
+			<div class="field-group" style="margin-top:15px;">
+				<label for="sharePerm">{getText('zql.filter.dialog.share.perm.label')}</label>
+				{if $sharePerm == 1}				
+					<input type="radio" name="sharePerm" value="1" checked="checked">{getText('zql.filter.dialog.share.perm.global.label')}&nbsp;&nbsp;&nbsp;
+				{else}
+					<input type="radio" name="sharePerm" value="1">{getText('zql.filter.dialog.share.perm.global.label')}&nbsp;&nbsp;&nbsp;
+				{/if}
+				{if $sharePerm == 2}				
+					<input type="radio" name="sharePerm" value="2" checked="checked">{getText('zql.filter.dialog.share.perm.private.label')}<br>
+				{else}
+					<input type="radio" name="sharePerm" value="2">{getText('zql.filter.dialog.share.perm.private.label')}<br>
+				{/if}				
+								
+			</div>			
+		</div>		
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="bulk-update-status-form-submit" value="{getText('zephyr.je.save.button.title')}" />
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>		
+	</form>
+</div>
+{/template}
+
+/**
+ * Renders rename ZQL Filter dialog
+ * @param filterName
+ * @param dlgTitle
+ */
+{template .renameZQLFilter}
+<div >
+	<h2 class="dialog-title">{$dlgTitle}<span>{$filterName}</span></h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form method="post" class="aui" action="#">
+		<div class="form-body">
+			</h2>			
+			<div class="field-group" style="margin-top:15px;">
+				<label for="filterName">{getText('zql.filter.dialog.name.label')}<span
+					class="aui-icon icon-required"></span><span class="content">
+						required</span></label> <input type="text" name="filterName" id="filterName" value="{$filterName}" data-filterName="{$filterName}"
+					class="text">
+			</div>		
+		</div>		
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="bulk-update-status-form-submit" value="{getText('zephyr.je.save.button.title')}" />
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>		
+	</form>
+</div>
+{/template}
+
+/**
+* Render the dialog for releasing the done column as a version
+* @param filterName
+*/
+{template .deleteZQLFilterConfirmationDialog}
+<h2 class="dialog-title">{getText('zql.filter.delete.dialog.title')}: {$filterName}</h2>
+{call ZEPHYR.About.evalMessage /}
+<form class="aui" action="#" method="post">
+    <div class="form-body">
+        <div id="cycle-aui-message-bar">
+            <div class="aui-message warning" id="">
+                <span class="aui-icon icon-warning"></span>
+                {getText('zql.filter.delete.dialog.warning')}
+            </div>
+        </div>
+        <label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+    </div>
+    <div class="form-footer buttons-container">
+        <div class="buttons">
+            <input class="button" type="submit" id="zql-filter-delete-form-submit" value="{getText('common.words.delete')}" />
+            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+        </div>
+    </div>
+</form>
+{/template}

@@ -1,0 +1,230 @@
+#set ($projects = $req.getAttribute("projects"))
+#set ($versions = $req.getAttribute("versions"))
+#set ($cycles = $req.getAttribute("cycles"))
+#set ($issueSelectCount = $req.getAttribute("issueCount"))
+#set ($projectSelectCount = $req.getAttribute("projectCount"))
+
+$webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+$webResourceManager.requireResource("jira.webresources:jira-global")
+
+
+#if ($req.getAttribute("errors"))
+	#set ($errors =  $req.getAttribute("errors"))
+#else
+	#set ($errors =  "")
+#end
+<script type="text/javascript">
+    	var isLoadedInIframe = function() {
+			try {
+				return (window !== window.parent);
+			} catch(e) {
+				return false;
+			}
+		}
+
+		var InitPageContent = function(initCallback) {
+			if(isLoadedInIframe()) {
+				AJS.$(window).load(function(){
+					initCallback();
+				});
+			} else {
+				AJS.$(document).ready(function(){
+					initCallback();
+				});
+			}
+		}
+
+		InitPageContent(function(){
+			var projectId = AJS.$("#projId").val();
+			var version = AJS.$("#versionId").val();
+			var cycleId;
+    		getVersions(projectId);
+    		getCycles(projectId,"-1", function() {
+    			cycleId = AJS.$("#cycleId").val();
+    			if( cycleId != -1) {
+                    getFolders(projectId,"-1",cycleId);
+                }else {
+                    AJS.$("#folderId").html('');
+                    var folderOptions = "<option value='-1' title='-'>" + '-' + "</option>";
+                    AJS.$("#folderId").html(folderOptions);
+                }
+    		});
+
+	    	AJS.$("#projId").on("change", function(event) {
+	    		projectId = AJS.$("#projId").val();
+	    		getVersions(projectId);
+	    		getCycles(projectId,"-1", function() {
+	    			cycleId = AJS.$("#cycleId").val();
+                    if( cycleId != -1) {
+                        getFolders(projectId,-1,cycleId);
+                    }else {
+                        AJS.$("#folderId").html('');
+                        var folderOptions = "<option value='-1' title='-'>" + '-' + "</option>";
+                        AJS.$("#folderId").html(folderOptions);
+                    }
+
+	    		});
+	    	});
+
+	    	AJS.$("#versionId").on("change", function(event) {
+	    		projectId = AJS.$("#projId").val();
+	    		version = AJS.$("#versionId").val();
+	    		getCycles(projectId,version, function(){
+	    			cycleId = AJS.$("#cycleId").val();
+                    if( cycleId != -1) {
+                        getFolders(projectId,version,cycleId);
+                    }else {
+                        AJS.$("#folderId").html('');
+                        var folderOptions = "<option value='-1' title='-'>" + '-' + "</option>";
+                        AJS.$("#folderId").html(folderOptions);
+                    }
+	    		});
+	    	});
+
+	    	AJS.$("#cycleId").on("change", function(event) {
+	    		projectId = AJS.$("#projId").val();
+	    		version = AJS.$("#versionId").val();
+	    		cycleId = AJS.$("#cycleId").val();
+                if( cycleId != -1) {
+                    getFolders(projectId,version, cycleId);
+                }else {
+                    AJS.$("#folderId").html('');
+                    var folderOptions = "<option value='-1' title='-'>" + '-' + "</option>";
+                    AJS.$("#folderId").html(folderOptions);
+                }
+	    	});
+
+	    	function getVersions(projectId) {
+			    jQuery.ajax({
+			        url: getRestURL() + "/util/versionBoard-list?projectId=" + projectId,
+			        type : "get",
+			        success : function(versions) {
+				        var headerReleasedVersionOption = AJS.$("<optgroup label='$i18n.getText('je.gadget.common.version.released.label')' id='released-version'>");
+				        if (versions.releasedVersions && versions.releasedVersions.length != 0) {
+				        	AJS.$(versions.releasedVersions).each(function() {
+    	            			var versionOption = AJS.$("<option/>").attr("value", this.value).attr("title",this.label).text(this.label);
+    	            			headerReleasedVersionOption.append(versionOption);
+		        			});
+		        			headerReleasedVersionOption.append("</optgroup>");
+		        		}
+		        		var headerUnreleasedVersionOption = AJS.$("<optgroup label='$i18n.getText('je.gadget.common.version.unreleased.label')' id='unreleased-version'>");
+
+		        		if (versions.unreleasedVersions && versions.unreleasedVersions.length != 0) {
+		        		   	AJS.$(versions.unreleasedVersions).each(function() {
+    	            			var versionOption = AJS.$("<option/>").attr("value", this.value).attr("title",this.label).text(this.label);
+    	            			headerUnreleasedVersionOption.append(versionOption);
+		        			});
+		        			headerUnreleasedVersionOption.append("</optgroup>");
+		        		}
+			        	AJS.$("#versionId").html(headerUnreleasedVersionOption).append(headerReleasedVersionOption);
+			        }
+			    });
+	    	}
+
+	   		function getCycles(projectId,versionId, callback) {
+			    jQuery.ajax({
+			        url: getRestURL() + "/cycle?projectId=" + projectId + "&versionId="+versionId + "&offset=0&expand=executionSummaries",
+			        type : "get",
+			        success : function(cycles) {
+			        	var cycleOptions = "";
+			        	for(var key in cycles) {
+			        		if(key != "recordsCount" && key != "offsetCount") {
+	    						cycleOptions += '<option value="' + key + '" title="' + cycles[key].name + '">' + htmlEncode(cycles[key].name) + "</option>";
+		    				}
+        				}
+        				AJS.$("#cycleId").html(cycleOptions);
+        				if(callback) {
+        					callback();
+        				}
+			        }
+			    });
+	    	}
+
+	    	function htmlEncode(value){
+			    return AJS.$('<div/>').text(value).html();
+			}
+
+	    	function getFolders(projectId,versionId, cycleId) {
+			    jQuery.ajax({
+			        url: getRestURL() + "/cycle/"+ cycleId +"/folders?projectId=" + projectId + "&versionId="+versionId + "&offset=0&expand=executionSummaries",
+			        type : "get",
+			        success : function(folders) {
+			        	var folderOptions = "<option value='-1' title='-'>" + '-' + "</option>";
+			        	folders.forEach(function(folder) {
+			        		folderOptions += '<option value="' + folder.folderId + '" title="' + folder.folderName + '" >' + htmlEncode(folder.folderName) + '</option>';
+			        	});
+        				AJS.$("#folderId").html(folderOptions);
+			        }
+			    });
+	    	}
+	    });
+</script>
+<div class="aui-page-panel" id="stepped-process">
+	<div class="aui-page-panel-inner">
+		#parse("/templates/zephyr/bulk/bulkaddtest_leftnav.vm")
+		<section class="aui-page-panel-content">
+                    <header class="aui-page-header">
+                    	<div class="aui-page-header-inner">
+                            <div class="aui-page-header-main">
+                                    <h2>Step 4 of 4: Confirmation</h2>
+                            </div><!-- .aui-page-header-main -->
+                        </div><!-- .aui-page-header-inner -->
+                    </header><!-- .aui-page-header -->
+
+                    <p>
+                        Please confirm that you wish to add the following <strong>$issueSelectCount</strong> tests to a Cycle.
+                    </p>
+                    <p><strong>Only Tests belonging to the Project selected during this operation will be added to the Cycle.</strong></p>
+    		<form action="BulkAddTestToCyclePerform.jspa?projectId="+projId class="aui" id="bulkAdddTestToCycle" method="post">
+	    		<div class="form-body">
+					<input type="hidden" id="zerrors" value="$textutils.htmlEncode($!errors)"/>
+
+					 #if($!errors && $!errors.length() > 0)
+						<div style="opacity:0.9;">
+							#parse("/templates/zephyr/common/licenseerror.vm")
+						</div>
+					 #else
+			   	     	   	<fieldset id="dropdownsFieldSet">
+				   	     	   		<div class="field-group groupspacing">
+			                           <label for="projIdLabel">$i18n.getText('je.gadget.common.project.label')</label>
+			                           <select id="projId" name="projId" class="select">
+				                				#if ($projects && $projects.size() > 0)
+				                					#foreach($project in $projects)
+														#if($project.getName().length() > 50)
+															#set($separator = '...')
+															#set($name = $project.getName().substring(0, 50))
+														#else
+															#set($separator = '')
+															#set($name = $project.getName())
+														#end
+				                			    		<option value="$project.getId()" title="$project.getName()">$name$separator</option>
+				                			    	#end
+				                				#end
+			               				</select>
+				   					</div>
+			                       	<div class="field-group groupspacing">
+			                           <label for="versionIdLabel">$i18n.getText('je.gadget.common.version.label')</label>
+			               			   <select id="versionId" name="versionId" class="select">
+			               			   </select>
+			   						</div>
+			   						<div class="field-group groupspacing">
+									   <label for="cycleIdLabel">$i18n.getText('execute.dialog.execute.cycle.label')</label>
+										<select id="cycleId" name="cycleId" class="select">
+										</select>
+									</div>
+									<div class="field-group groupspacing">
+									   <label for="folderIdLabel">$i18n.getText('execute.dialog.execute.folder.label')</label>
+										<select id="folderId" name="folderId" class="select">
+										</select>
+									</div>
+			   				</fieldset>
+			   			<p>
+				        <input class="aui-button" type="submit" name="Confirm" value="Confirm"/>
+				        <a class="aui-button aui-button-link" id="cancel-bottom" href="BulkCancelWizard.jspa">Cancel</a>
+						</p>
+					#end
+				</div>
+			</form>
+		</section>
+	</div>
+</div>

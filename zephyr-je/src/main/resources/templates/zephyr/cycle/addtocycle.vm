@@ -1,0 +1,196 @@
+#set ($versionsUnreleased = $req.getAttribute("versionsUnreleased"))
+#set ($versionsReleased = $req.getAttribute("versionsReleased"))
+#set ($cycles = $req.getAttribute("cycles"))
+#set ($project = $req.getAttribute("project"))
+#set ($issue =  $req.getAttribute("issue"))
+<script type="text/javascript">
+	var isLoadedInIframe = function() {
+		try {
+			return (window !== window.parent);
+		} catch(e) {
+			return false;
+		}
+	}
+
+	var InitPageContent = function(initCallback) {
+		if(isLoadedInIframe()) {
+			AJS.$(document).bind('dialogContentReady', function(event, dialog) {
+				initCallback();
+			});
+		} else {
+			AJS.$(document).ready(function(){
+				initCallback();
+			});
+		}
+	}
+
+	InitPageContent(function() {
+    	AJS.$("#project_version")[0].onchange = selectedVersionChanged;
+    	selectedVersionChanged();
+
+		AJS.$("#cycle_names")[0].onchange = selectedCycleNameChanged;
+    	selectedCycleNameChanged();
+
+    	ZEPHYR.About.evalMessage({selector:"div.execute-test", position:"prepend"})
+
+		// Attach Execution Assignee UI
+    var _assignee = {
+      "executionId": null,
+      "assignee": null,
+      "assigneeDisplay": null,
+      "assigneeUserName": null,
+      "assigneeType": null
+    };
+    AJS.$(document).trigger( "appendAssigneeUI", [_assignee , contextPath ] );
+		// var _assigneeHTML = ZEPHYR.Templates.Execution.Assignee.executionAssigneeView({hasHeader: true, hasLabel: true, id: 'zephyr-je-execution-assignee-add-tests'});
+		// AJS.$('#add-tests-execution-assignee-container').html(_assigneeHTML);
+		// ZEPHYR.Execution.Assignee.init({
+		// 	id: 'zephyr-je-execution-assignee-add-tests'
+		// });
+	});
+
+    function selectedVersionChanged() {
+    	var valueSelectBox = AJS.$("#project_version")[0];
+		var versionId = valueSelectBox.options[valueSelectBox.selectedIndex].value;
+		setCycleSelectBox(versionId);
+	}
+
+	function selectedCycleNameChanged() {
+    	var valueSelectBox = AJS.$("#cycle_names")[0];
+    	var cycleId = valueSelectBox.options[valueSelectBox.selectedIndex].value;
+        var version = AJS.$("#project_version")[0];
+        var versionId = version.options[version.selectedIndex].value;
+        var projectId = $project.getId();
+        if(cycleId == -1) {
+            AJS.$("#folders").hide();
+            AJS.$("#folder_names").empty();
+        }else {
+            AJS.$("#folders").show();
+            ZEPHYR.Schedule.fetchFoldersByCycle(cycleId,projectId,versionId,setFolderOptions);
+        }
+    }
+
+    function setFolderOptions(folders) {
+    	var folderOption = "<option value=\"-1\" selected:\"selected\"> - </option>";
+		folders.forEach(function(folder) {
+			folderOption += "<option value=" + folder.folderId + " title=\"" + folder.folderName + "\">" + htmlEncode(folder.folderName) + "</option>";
+		});
+		AJS.$("#folder_names").html(folderOption);
+    }
+
+	function setCycleSelectBox(versionId) {
+		var cycleOption, arr = [];
+
+		#foreach ($mapEntry in $cycles.entrySet())
+			var key = $mapEntry.key;
+			if(key == versionId) {
+				#foreach($cycle in $mapEntry.value.entrySet())
+          arr.push({
+            key: $cycle.key,
+            value: "$cycle.value"
+          });
+					//cycleOption += "<option value=\"$cycle.key\" title=\"$cycle.value\">$cycle.value</option>";
+    		#end
+			}
+		#end
+    arr.forEach(function(cycle) {
+      var name  = cycle.value;
+      cycleOption += "<option value=" + cycle.key + " title=\"" + cycle.value + "\">" + name + "</option>";
+    })
+        //Updated as part of ZFJ-2196
+        cycleOption += "<option value=\"-1\" selected:\"selected\">$i18n.getText('zephyr.je.select.default')</option>";
+		AJS.$("#cycle_names").empty();
+		AJS.$("#cycle_names").append(cycleOption);
+
+        var version = AJS.$("#project_version")[0];
+        var versionId = version.options[version.selectedIndex].value;
+        var projectId = $project.getId();
+        var cycleId = AJS.$("#cycle_names").val();
+
+        if(cycleId == -1) {
+            AJS.$("#folders").hide();
+        }else {
+            AJS.$("#folders").show();
+            ZEPHYR.Schedule.fetchFoldersByCycle(cycleId,projectId,versionId,setFolderOptions);
+        }
+	}
+
+</script>
+#macro (versionOptions $versions)
+	#if ($versions && $versions.size() > 0)
+		#foreach($version in $versions)
+			#if($version.getName().length() > 50)
+				#set($separator = '...')
+				#set($name = $version.getName().substring(0, 50))
+			#else
+				#set($separator = '')
+				#set($name = $version.getName())
+			#end
+        <option value="$version.getId()" title="$version.getName()">$name$separator</option>
+		#end
+	#end
+#end
+<div class="aui" id="add-cycle-dialog">
+	<div class="add-execute-test">
+		<h4>$i18n.getText('zephyr-je.viewissue.addtocycle')</h4>
+		<form class="aui">
+		<div class="execute-test">
+			<div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" style="margin-top:20px"></div>
+		    <div id="custom-context"></div>
+			<div>
+	     	   	<fieldset>
+                    <div class="field-group groupspacing">
+                        <label for="versionID">$i18n.getText('je.gadget.common.version.label')</label>
+        				<select id="project_version" class="select">
+							#if ($versionsUnreleased && $versionsUnreleased.size() > 0)
+                            <optgroup label="$i18n.getText('common.filters.unreleasedversions')">
+                                <option value="-1">$i18n.getText('zephyr.je.version.unscheduled')</option>
+								#versionOptions($versionsUnreleased))
+                            </optgroup>
+							#else
+                            <optgroup label="$i18n.getText('common.filters.unreleasedversions')">
+                                <option value="-1">$i18n.getText('zephyr.je.version.unscheduled')</option>
+							</optgroup>
+							#end
+							#if ($versionsReleased && $versionsReleased.size() > 0)
+								<optgroup label="$i18n.getText('common.filters.releasedversions')">
+									#versionOptions($versionsReleased))
+								</optgroup>
+							#end
+        				</select>
+					</div>
+					<div class="field-group">
+					   <label for="cycleName">$i18n.getText('execute.dialog.execute.cycle.label')</label>
+					   <select id="cycle_names" class="select">
+							<option value="-1" selected:"selected">$i18n.getText('zephyr.je.select.default')</option>
+                       </select>
+					</div>
+					<div class="field-group" id="folders">
+					   <label for="folder_names">$i18n.getText('execute.dialog.execute.folder.label')</label>
+					   <select id="folder_names" class="select"></select>
+					</div>
+				</fieldset>
+			</div>
+			<br/>
+			<!-- <div id="add-tests-execution-assignee-container" /> -->
+      <div class="dialog-exec-assignee">
+          <div class="field-group">
+              <label for="exec-assignee-wrapper">$i18n.getText('zephyr.cycle.assignedTo')</label>
+              <div id="exec-assignee-wrapper" />
+          </div>
+      </div>
+		</div>
+		</div>
+		<div class="buttons-container" style="padding:10px 10px 10px 0;">
+			<a href="#" id="zephyr-je-dlgclose" class="cancel floatright" type="button" title="Cancel" style="padding:5px 5px 5px 5px"
+			onClick="ZEPHYR.Schedule.refreshTestExecutions($issue.getId());">$i18n.getText('zephyr.je.submit.form.cancel')</a>
+			<a href="javascript:void(0);" class="aui-button floatright zephyr-je-add-tests-execution-button" type="button" onClick="ZEPHYR.Schedule.addIssueToCycle(AJS.$('#zephyr-je-add-cycle').attr('checked'),(AJS.$('#project_version')).val(),(AJS.$('#cycle_names')).val(),$project.getId(),$issue.getId(), (AJS.$('#folder_names')).val());">$i18n.getText('zephyr.je.add.button.title')</a>
+			<span style="padding-right:10px;margin-top:5px;" class="floatright">
+                <input type="checkbox" id="zephyr-je-add-cycle">
+                <label title="$i18n.getText('zephyr-je.viewissue.addtocycle')" for="zephyr-je-add-cycle">
+                    &nbsp;&nbsp;$i18n.getText('zephyr-je.viewissue.addtomorecycle')
+                </label>
+			</span>
+		</div>
+	</div>
+</div>

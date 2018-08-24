@@ -1,0 +1,120 @@
+    ## Reference: /templates/greenhopper/jira/license/license-board.vm
+    ## used to organize the admin menu
+    
+<html lang="en">
+	<head>
+        <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+        <meta name="admin.active.tab" content="zephyr_license"/>
+    	<meta name="decorator" content="admin"/>
+	    <title>$i18n.getText("zephyr.license.title")</title>
+	    <script type="text/javascript">
+	    	AJS.$(document).ready(function() {
+	    		var buttonBar = AJS.$('.jiraformfooter');
+	    		var toggleHidden = function(e){
+					AJS.$('#zLic').toggleClass("hidden")
+					AJS.$('#zLic').select()
+					buttonBar.toggleClass("hidden")
+					e.preventDefault()
+				}
+				buttonBar.children("a").bind('click', toggleHidden)				
+	    		AJS.$('.icon-edit-sml').bind('click', toggleHidden)
+	    	});
+	    </script>
+	</head>
+    <style type="text/css">
+		.fieldLabelArea{width: 10%;}
+	</style>
+	<body>
+    	<table class="jiraform  maxWidth">
+        	<tr>
+        		<td class="jiraformheader">
+        		<h3 class="formtitle">$i18n.getText('zephyr.license.title')</h3></td>
+        	</tr>
+    	<tr><td class="jiraformbody">$i18n.getText('zephyr.license.desc')</td></tr>
+    	</table>
+    	<p></p>
+    	<table width="80%" cellspacing="0" cellpadding="0" border="0" bgcolor="#bbbbbb" align="center">
+        	<tr>
+        		<td>
+        			<table width="100%" cellspacing="1" cellpadding="3" border="0" id="license_table">
+        				<tr>
+        					<td width="20%" valign="top" bgcolor="#f0f0f0" class="colHeaderLink"><strong>$i18n.getText('zephyr.license.organisation')</strong></td>
+        			        <td bgcolor="#ffffff"><strong>$!action.license.organisation</strong></td>
+        				</tr>
+        				<tr>
+        					<td width="20%" valign="top" bgcolor="#f0f0f0" class="colHeaderLink"><strong>$i18n.getText('zephyr.license.organisationId')</strong></td>
+        			        <td bgcolor="#ffffff"><strong>$!action.license.organisationId</strong></td>
+        				</tr>
+        				<tr bgcolor="#f0f0f0">
+        			        <td valign="top" class="colHeaderLink"><strong>$i18n.getText('zephyr.license.purchase')</strong></td>
+        			        <td bgcolor="#ffffff"><strong>$!action.purchaseDateString</strong></td>
+        				</tr>
+        			    <tr bgcolor="#f0f0f0">
+        			        <td valign="top" class="colHeaderLink"><strong>$i18n.getText('zephyr.license.type')</strong></td>
+        			        <td bgcolor="#ffffff"><strong>$!action.licenseDescription</strong>$!action.licenseExpiryStatusMessage</td>
+        			    </tr>
+        				<tr bgcolor="#f0f0f0">
+        			        <td valign="top" class="colHeaderLink"><strong>$i18n.getText('zephyr.license.serverid')</strong></td>
+        			        <td bgcolor="#ffffff"><strong>$!action.serverId</strong></td>
+        			    </tr>
+        			    #if(!$action.license.isUnlimitedNumberOfUsers())
+        			        <tr bgcolor="#f0f0f0">
+        			            <td valign="top" class="colHeaderLink"><strong>$i18n.getText('zephyr.license.maxusers')</strong></td>
+        			            <td bgcolor="#ffffff"><strong>$!action.maximumNumberOfUsers</strong></td>
+        			        </tr>
+        		        #end
+        			</table>
+        		</td>
+        	</tr>
+        </table>
+        <p></p>
+        
+        <form onsubmit="if (this.submitted) return false; this.submitted = true; return true" name="jiraform" method="post" action="ZUpdateLicense.jspa?decorator=admin">
+	    	<table class="jiraform">
+        		<tr><td class="jiraformheader" colspan=2><h3 class="formtitle">$i18n.getText('zephyr.license.upload')</h3></td></tr>
+        		<tr><td class="jiraformheader" colspan=2>$i18n.getText('zephyr.license.instruction', $action.getMPLicURL())</td></tr>
+        		#if($action.isUPMLicensePresent())
+        			<tr>
+        				<td colspan="2"> <div class="aui-message warning" style="padding: 5px 5px 5px 5px; margin:0;"><span>$i18n.getText("zephyr.license.not.effective", $action.getMPLicURL())</span></div></td>
+        				<br>
+        			</tr>
+				#end
+				        		
+        		#if(!$action.errors.isEmpty())
+        			<tr>
+        				<td bgcolor="#ffcccc">&nbsp;</td>
+        				<td bgcolor="#ffcccc">
+        					#foreach($error in $action.errors.keySet())<span class="errMsg">$i18n.getText($action.errors.get($error))</span><br/>#end
+        				</td>
+        			</tr>
+        		#else
+        			<span class="errMsg"></span>
+        		#end
+        		
+        		<tr>
+        			<td class="fieldLabelArea #if(!$action.errors.isEmpty())formErrors#end" #if(!$action.errors.isEmpty()) bgcolor="#ffcccc"#end>$i18n.getText('zephyr.license.license'):</td>
+        			<td #if(!$action.errors.isEmpty()) bgcolor="#ffcccc"#else bgcolor="#ffffff"#end class="fieldValueArea">
+        				<textarea id="zLic" style="wrap="virtual" rows="6" cols="50" name="newLicenseKey" class="#if("$!action.userEnteredLicenseString" != "") hidden #end">$!action.userEnteredLicenseString</textarea>
+        				<div class="jiraformfooter #if("$!action.userEnteredLicenseString" == "") hidden #end" style="width:400px; text-overflow: ellipsis; overflow: hidden; clear:both">
+        					<span style="text-overflow: ellipsis;">$!action.userEnteredLicenseString</span>
+        					<span class="icon icon-edit-sml" style="background-repeat: no-repeat;"></span>
+        				</div>
+        			</td>
+        		</tr>
+        		<tr>
+                    <td >&nbsp;</td>
+                    <td class="jiraformfooter #if("$!action.userEnteredLicenseString" != "") hidden #end">
+        				<input type="submit" class="spaced" title="$i18n.getText('zephyr.license.accesskey')" accesskey="S" value="$i18n.getText('common.words.update')" id="Add" name="Add">
+        				<a href="#">$i18n.getText('common.words.cancel')</a>
+        			</td>
+        		</tr>
+        		#if(!$action.isUpmLicensingAware())
+	    			<tr><td colspan="2"><span class="aui-message warning" style="padding:.5em .5em .5em 35px">
+	    				<span class="aui-icon icon-warning" style="top:0.5em"></span>
+	    				$i18n.getText('mp.license.instruction', $action.getMPLicURL())
+	    			</span></td></tr>
+        		#end
+        	</table>
+        </form>
+	</body>
+</html>

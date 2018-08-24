@@ -1,0 +1,3018 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}.${version.prefix}${git.buildnumber}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+		<param name="configure.url">/secure/admin/ZephyrGeneralConfiguration!default.jspa</param>
+		<param name="zephyr.je.current.version">${project.version}.${version.prefix}${git.buildnumber}</param>
+		<param name="zephyr.je.product.version">${project.version}</param>
+        <!-- Support for the following marketing assets has been implemented -->
+        <param name="plugin-icon">includes/images/icons/ico_zephyr_16x16.png</param>
+        <param name="plugin-logo">includes/images/icons/zephyr_mark_48x48.png</param>
+        <param name="plugin-banner">includes/images/zephyr_banner_920x450.png</param>
+        <param name="atlassian-licensing-enabled">true</param>
+        <param name="atlassian-data-center-compatible">true</param>
+    </plugin-info>
+
+<!-- =========================================================================================== -->
+<!-- ========================================= RESOURCES START ================================= -->
+	<resource type="download" name="images/" location="includes/images/" />
+	<resource type="i18n" name="i18nMessages" location="com.thed.zephyr.je.messages.Zephyr" />
+<!-- ========================================= RESOURCES END =================================== -->
+<!-- =========================================================================================== -->
+<!-- ================================= ZEPHYR TEST PERMISSIONS START =========================== -->
+
+	<global-permission key="ZEPHYR_TEST_MANAGEMENT_PERMISSION"
+						i18n-name-key="zephyr.plugin.permission.test.management.name"
+						i18n-description-key="zephyr.plugin.permission.test.management.description"
+						category="GLOBAL" anonymous-allowed="true" can-use="true" />
+
+	<project-permission key="ZEPHYR_BROWSE_CYCLE"
+						i18n-name-key="zephyr.plugin.permission.project.can.browse.cycle.name"
+						i18n-description-key="zephyr.plugin.permission.project.can.browse.cycle.description"
+						category="PROJECTS" anonymous-allowed="true" can-use="true" />
+
+	<project-permission key="ZEPHYR_CREATE_CYCLE"
+						i18n-name-key="zephyr.plugin.permission.project.can.create.cycle.name"
+						i18n-description-key="zephyr.plugin.permission.project.can.create.cycle.description"
+						category="PROJECTS" anonymous-allowed="true" can-use="true" />
+
+	<project-permission key="ZEPHYR_EDIT_CYCLE"
+						i18n-name-key="zephyr.plugin.permission.project.can.edit.cycle.name"
+						i18n-description-key="zephyr.plugin.permission.project.can.edit.cycle.description"
+						category="PROJECTS" anonymous-allowed="true" can-use="true" />
+
+	<project-permission key="ZEPHYR_DELETE_CYCLE"
+						i18n-name-key="zephyr.plugin.permission.project.can.delete.cycle.name"
+						i18n-description-key="zephyr.plugin.permission.project.can.delete.cycle.description"
+						category="PROJECTS" anonymous-allowed="true" can-use="true" />
+
+	<project-permission key="ZEPHYR_CREATE_EXECUTION"
+						i18n-name-key="zephyr.plugin.permission.project.can.create.execution.name"
+						i18n-description-key="zephyr.plugin.permission.project.can.create.execution.description"
+						category="PROJECTS" anonymous-allowed="true" can-use="true" />
+
+	<project-permission key="ZEPHYR_EDIT_EXECUTION"
+						i18n-name-key="zephyr.plugin.permission.project.can.edit.execution.name"
+						i18n-description-key="zephyr.plugin.permission.project.can.edit.execution.description"
+						category="PROJECTS" anonymous-allowed="true" can-use="true" />
+
+	<project-permission key="ZEPHYR_DELETE_EXECUTION"
+						i18n-name-key="zephyr.plugin.permission.project.can.delete.execution.name"
+						i18n-description-key="zephyr.plugin.permission.project.can.delete.execution.description"
+						category="PROJECTS" anonymous-allowed="true" can-use="true" />
+
+
+	<!-- ========================================= RESOURCES END =================================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- ===================================== ZEPHYR LISTENER START =============================== -->
+    <servlet-filter name="Zephyr Project Filter"
+    				key="zephyr-project-filter"
+    				class="com.thed.zephyr.je.filter.ZephyrProjectFilter"
+    				location="before-dispatch"
+    				weight="200">
+        <description>Intercepts Project Administration requests</description>
+        <url-pattern>/secure/admin/DeleteProject.jspa</url-pattern>
+        <url-pattern>/secure/project/DeleteProject.jspa</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </servlet-filter>
+
+    <servlet-filter name="Zephyr REST Filter"
+    				key="zephyr-rest-filter"
+    				class="com.thed.zephyr.je.filter.ZephyrRestFilter"
+    				location="before-dispatch"
+    				weight="105">
+        <description>Intercepts Zephyr REST requests</description>
+        <url-pattern>/rest/zephyr/latest/importer</url-pattern>
+        <url-pattern>/rest/zephyr/latest/cycle</url-pattern>
+        <url-pattern>/rest/zephyr/latest/execution</url-pattern>
+        <url-pattern>/rest/zephyr/latest/stepresult</url-pattern>
+        <url-pattern>/rest/zephyr/latest/issues</url-pattern>
+        <url-pattern>/rest/zephyr/latest/license</url-pattern>
+        <url-pattern>/rest/zephyr/latest/systemInfo</url-pattern>
+        <url-pattern>/rest/zephyr/latest/moduleInfo</url-pattern>
+        <url-pattern>/rest/zephyr/latest/audit</url-pattern>
+        <url-pattern>/rest/zephyr/latest/ZAttachTemporaryFile</url-pattern>
+        <url-pattern>/rest/zephyr/latest/traceability</url-pattern>
+		<url-pattern>/rest/zephyr/latest/folder</url-pattern>
+		<url-pattern>/rest/zephyr/latest/customfield</url-pattern>
+		<url-pattern>/rest/zephyr/latest/customfieldvalue</url-pattern>
+        <url-pattern>/rest/zephyr/latest/*/*</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/cycle</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/execution</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/stepresult</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/issues</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/license</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/systemInfo</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/moduleInfo</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/audit</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/ZAttachTemporaryFile</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/traceability</url-pattern>
+        <url-pattern>/rest/zephyr/1.0/*/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </servlet-filter>
+
+    <servlet-filter name="ZAPI REST Filter"
+    				key="zapi-rest-filter"
+    				class="com.thed.zephyr.je.filter.ZAPIRestFilter"
+    				location="before-dispatch"
+    				weight="105">
+        <description>Intercepts ZAPI REST requests</description>
+        <url-pattern>/rest/zapi/latest/cycle</url-pattern>
+        <url-pattern>/rest/zapi/latest/execution</url-pattern>
+        <url-pattern>/rest/zapi/latest/stepresult</url-pattern>
+        <url-pattern>/rest/zapi/latest/issues</url-pattern>
+        <url-pattern>/rest/zapi/latest/license</url-pattern>
+        <url-pattern>/rest/zapi/latest/systemInfo</url-pattern>
+        <url-pattern>/rest/zapi/latest/moduleInfo</url-pattern>
+        <url-pattern>/rest/zapi/latest/audit</url-pattern>
+        <url-pattern>/rest/zapi/latest/ZAttachTemporaryFile</url-pattern>
+        <url-pattern>/rest/zapi/latest/traceability</url-pattern>
+        <url-pattern>/rest/zapi/latest/folder</url-pattern>
+		<url-pattern>/rest/zapi/latest/customfield</url-pattern>
+		<url-pattern>/rest/zapi/latest/customfieldvalue</url-pattern>
+        <url-pattern>/rest/zapi/latest/*/*</url-pattern>
+        <url-pattern>/rest/zapi/1.0/cycle</url-pattern>
+        <url-pattern>/rest/zapi/1.0/execution</url-pattern>
+        <url-pattern>/rest/zapi/1.0/stepresult</url-pattern>
+        <url-pattern>/rest/zapi/1.0/issues</url-pattern>
+        <url-pattern>/rest/zapi/1.0/license</url-pattern>
+        <url-pattern>/rest/zapi/1.0/systemInfo</url-pattern>
+        <url-pattern>/rest/zapi/1.0/moduleInfo</url-pattern>
+        <url-pattern>/rest/zapi/1.0/audit</url-pattern>
+        <url-pattern>/rest/zapi/1.0/ZAttachTemporaryFile</url-pattern>
+        <url-pattern>/rest/zapi/1.0/traceability</url-pattern>
+        <url-pattern>/rest/zapi/1.0/*/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </servlet-filter>
+
+    <servlet-filter name="ExecNav URL Rewriter" key="execnav_rewrite" class="com.thed.zephyr.je.filter.ExecNavRewriteFilter" location="before-dispatch" weight="200">
+        <description>Redirects to search from /enav/</description>
+        <url-pattern>/secure/enav/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </servlet-filter>
+
+    <servlet-filter name="ExecNav kickass-rewrite" key="kickass-rewrite" class="com.thed.zephyr.je.filter.ENavRedirectFilter" location="before-decoration" weight="200">
+        <description>Redirects from execution navigator to /execution/ if the user has picked this preference</description>
+        <url-pattern>/secure/ExecutionNavigator.*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </servlet-filter>
+
+
+	<component key="permissionTypeManager" class="com.atlassian.jira.permission.PermissionTypeManager"/>
+	<component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher"/>
+	<component-import key="featureManager" interface="com.atlassian.jira.config.FeatureManager"/>
+	<component-import key="jiraSearchService" interface="com.atlassian.jira.bc.issue.search.SearchService"/>
+	<component-import key="emailFormatter" interface="com.atlassian.jira.util.EmailFormatter"/>
+	<component-import key="taskManager" interface="com.atlassian.jira.task.TaskManager"/>
+	<component key="bulkEditBeanSessionHelper" class="com.atlassian.jira.web.bean.BulkEditBeanSessionHelper"/>
+
+
+	<component-import key="issueLinkService" interface="com.atlassian.jira.bc.issue.link.IssueLinkService"/>
+	<component-import key="ao" name="Active Objects components" interface="com.atlassian.activeobjects.external.ActiveObjects">
+		<description>Access to the Active Objects service</description>
+	</component-import>
+	<component-import key="i18nResolver" interface="com.atlassian.sal.api.message.I18nResolver"/>
+	<component-import key="jiraAuthenticationContext" interface="com.atlassian.jira.security.JiraAuthenticationContext"/>
+	<component-import key="permissionManager" interface="com.atlassian.jira.security.PermissionManager"/>
+	<component-import key="dateTimeFormatterFactory" interface="com.atlassian.jira.datetime.DateTimeFormatterFactory"/>
+	<component-import key="projectManager" interface="com.atlassian.jira.project.ProjectManager"/>
+	<component-import key="pluginScheduler">
+		<description>SAL Scheduler</description>
+		<interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+	</component-import>
+
+	<component key="eventListener" class="com.thed.zephyr.je.event.listener.ZephyrIssueEventListener">
+	    <description>Class that processes the incoming JIRA Issue events.</description>
+	</component>
+
+	<component key="versionEventListener" class="com.thed.zephyr.je.event.listener.ZephyrVersionEventListener">
+	    <description>Class that processes the incoming JIRA Version events.</description>
+	</component>
+
+	<component key="projectEventListener" class="com.thed.zephyr.je.event.listener.ZephyrProjectEventListener">
+	    <description>Class that processes the incoming JIRA Project events.</description>
+	</component>
+
+	<component key="indexEventListener" class="com.thed.zephyr.je.event.listener.ScheduleEventListener"/>
+
+	<component key="userEventListener" class="com.thed.zephyr.je.event.listener.ZephyrUserEventListener">
+	    <description>Class that processes the incoming JIRA User modification/deletion events.</description>
+	</component>
+
+    <component key="zephyrModuleEventListener" class="com.thed.zephyr.je.event.listener.ZephyrModuleEventListener">
+        <description>Listener that processes any Zephyr Plugin Module enable/disable events.</description>
+    </component>
+
+	<component key="cycleEventListener" class="com.thed.zephyr.je.event.listener.CycleEventListener">
+	    <description>Class that processes the incoming Test Cycle modification/deletion events.</description>
+	</component>
+
+	<component key="teststepEventListener" class="com.thed.zephyr.je.event.listener.StepEventListener">
+	    <description>Class that processes the incoming Teststep modification/deletion events.</description>
+	</component>
+
+	<component key="zephyrDarkFeatureEventListener" class="com.thed.zephyr.je.permissions.event.listener.ZephyrDarkFeatureEventListener">
+	    <description>Class that processes the incoming Global Permissions modification events.</description>
+	</component>
+
+    <component key="clusterLockServiceFactory" class="com.atlassian.beehive.compat.ClusterLockServiceFactory">
+        <description>Integration point for beehive-compat</description>
+    </component>
+
+    <component key="clusterLockServiceAccessor" class="com.atlassian.beehive.compat.delegate.DelegatingClusterLockServiceAccessor" >
+        <description>Integration point for beehive-compat</description>
+    </component>
+
+    <component key="compatibilityPluginScheduler" class="com.atlassian.scheduler.compat.AutoDetectingCompatibilityPluginScheduler" public="false">
+          <interface>com.atlassian.scheduler.compat.CompatibilityPluginScheduler</interface>
+    </component>
+
+    <component key="compatibilityCacheFactory" class="com.atlassian.cache.compat.CompatibilityCacheFactory">
+        <description>Integration point for atlassian-cache-compat</description>
+        <interface>com.atlassian.cache.compat.CacheFactory</interface>
+    </component>
+
+	<component key="zephyrFeatureManager" name="ZephyrFeatureManager" class="com.thed.zephyr.je.config.ZephyrFeatureManagerImpl">
+		<description>FeatureManager to implement Zephyr Dark Features</description>
+		<interface>com.thed.zephyr.je.config.ZephyrFeatureManager</interface>
+	</component>
+
+	<component key="folderEventListener" class="com.thed.zephyr.je.event.listener.FolderEventListener">
+		<description>Class that processes the incoming Test folder modification/deletion events.</description>
+	</component>
+
+    <component key="executionWorkflowEventListener" class="com.thed.zephyr.je.event.listener.ExecutionWorkflowEventListener">
+        <description>Class that processes the incoming execution workflow modification/completion events.</description>
+    </component>
+
+<!-- ========================================= ZEPHYR LISTENER END =================================== -->
+<!-- =========================================================================================== -->
+
+
+<!-- =========================================================================================== -->
+<!-- =================================== CONFIGURATION SECTION START =========================== -->
+<!--  Admin Plugin Configuration - Menu Navigation -->
+
+	    <web-section key="zephyr_admin_section" name="Zephyr General Configuration" location="testing_section" i18n-name-key="zephyr.je.admin.plugin.test.section.zephyr.name"  weight="10">
+			<label key="zephyr.je.admin.plugin.test.section.zephyr.label"/>
+			<link linkId="zephyr_general_configuration"><![CDATA[/secure/admin/ZephyrGeneralConfiguration!default.jspa]]></link>
+			<condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />
+		</web-section>
+		    <web-item key="zephyr_general_configuration" name="Zephyr General Configuration" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.configuration.name"  weight="10">
+		        <label key="zephyr.je.admin.plugin.test.section.item.zephyr.configuration.label"/>
+		  		<link linkId="zephyr_general_configuration"><![CDATA[/secure/admin/ZephyrGeneralConfiguration!default.jspa]]></link>
+		        <condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />
+		    </web-item>
+		    <web-item key="zephyr_license" name="Zephyr License" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.license.name"  weight="20">
+		        <label key="zephyr.je.admin.plugin.test.section.item.zephyr.license.label"/>
+		  		<link linkId="zephyr_license"><![CDATA[/secure/admin/ZLicense.jspa]]></link>
+		        <condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />
+		    </web-item>
+		    <web-item key="zephyr_execution_statuses" name="Zephyr Test Execution Status" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.status.name"  weight="30">
+		        <label key="zephyr.je.admin.plugin.test.section.item.zephyr.status.label"/>
+		  		<link linkId="zephyr_execution_statuses"><![CDATA[/secure/admin/ViewZephyrExecutionStatuses!default.jspa]]></link>
+		        <condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />
+		    </web-item>
+			<web-item key="zephyr_step_execution_statuses" name="Zephyr Test Step Execution Status" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.step.status.name"  weight="40">
+			    <label key="zephyr.je.admin.plugin.test.section.item.zephyr.step.status.label"/>
+				<link linkId="zephyr_step_execution_statuses"><![CDATA[/secure/admin/ViewZephyrTestStepStatuses!default.jspa]]></link>
+			    <condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />
+			</web-item>
+			<web-item key="zephyr_info" name="Zephyr Info" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.info.name"  weight="50">
+			    <label key="zephyr.je.admin.plugin.test.section.item.zephyr.info.label"/>
+				<link linkId="zephyr_info_configuration"><![CDATA[/secure/admin/ZephyrGeneralConfiguration!info.jspa]]></link>
+			    <condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />
+			</web-item>
+			<web-item key="zephyr_custom_field" name="Zephyr Custom Fields" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.custom.name"  weight="60">
+          		<label key="zephyr.je.admin.plugin.test.section.item.zephyr.custom.label"/>
+      			<link linkId="zephyr_custom_field"><![CDATA[/secure/admin/ViewZephyrCustomField!default.jspa]]></link>
+          		<condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />
+      		</web-item>
+			<!--<web-item key="zephyr_analytics_info" name="Zephyr Analytics Info" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.analytics.info.name" weight="60">-->
+				<!--<label key="zephyr.je.admin.plugin.analytics.title.view"/>-->
+				<!--<link linkId="zephyr_analytics_info"><![CDATA[/secure/admin/ViewZephyrAnalytics!default.jspa]]></link>-->
+				<!--<condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />-->
+			<!--</web-item>-->
+
+			<web-item key="zephyr_datacenter_info" name="Zephyr Datacenter" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.datacenter.name" weight="60">
+				<label key="zephyr.je.admin.plugin.test.section.item.zephyr.datacenter.label"/>
+				<link linkId="zephyr_datacenter_configuration"><![CDATA[/secure/admin/ZephyrDatacenter!default.jspa]]></link>
+				<conditions type = "AND">
+					<condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />
+					<!-- <condition class="com.atlassian.jira.plugin.webfragment.conditions.IsClusteredCondition" /> -->
+				</conditions>
+			</web-item>
+
+			<!--<web-item key="zephyr_products_info" name="Zephyr Products Info" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.product.info.name" weight="60">-->
+			<!--<label key="zephyr.je.admin.plugin.test.section.item.zephyr.product.info.label"/>-->
+			<!--<link linkId="zephyr_product_configuration"><![CDATA[/secure/admin/ZephyrGeneralConfiguration!products.jspa]]></link>-->
+			<!--<condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition" />-->
+			<!--</web-item>-->
+
+			<web-item key="zephyr_dark_features" name="Zephyr Dark Feature Configuration" section="testing_section/zephyr_admin_section" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.darkfeatures.name">
+				<label key="zephyr.je.admin.plugin.test.section.item.zephyr.darkfeatures.name"/>
+				<link linkId="zephyr_dark_features"><![CDATA[/secure/admin/ZephyrLabFeatures!default.jspa]]></link>
+				<conditions type="AND">
+					<condition class="com.atlassian.jira.plugin.webfragment.conditions.IsAdminCondition"/>
+					<condition class="com.atlassian.jira.plugin.webfragment.conditions.IsFeatureEnabledCondition">
+						<param name="featureKey">jira.site.darkfeature.admin</param>
+					</condition>
+				</conditions>
+				<!--<param name="webfragments.keywords">webfragments.keywords.admin.system.darkfeatures</param>-->
+			</web-item>
+<!--  DONE Admin Plugin Configuration - Menu Navigation -->
+
+<!--  Configurator Launcher -->
+	<component key="zephyr-je-Launcher" name="Zephyr JE Configuration Setup" i18n-name-key="zephyr.je.component.configuration.setup"
+		class="com.thed.zephyr.je.config.ZephyrJELauncher" public="true">
+		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+	</component>
+
+	<component key="zephyr-je-Buildproperties" name="Zephyr JE Build Properties"
+		class="com.thed.zephyr.util.BuildPropertiesImpl" public="true">
+		<interface>com.thed.zephyr.util.BuildProperties</interface>
+	</component>
+
+	<component key="zephyr-je-Licensestore" name="Zephyr JE License Store"
+		class="com.thed.zephyr.je.config.license.ZephyrLicenseStoreImpl" public="true">
+		<interface>com.thed.zephyr.je.config.license.ZephyrLicenseStore</interface>
+	</component>
+
+	<component key="zephyr-je-Licensemanager" name="Zephyr JE License Manager"
+		class="com.thed.zephyr.je.config.license.ZephyrLicenseManagerImpl" public="true">
+		<interface>com.thed.zephyr.je.config.license.ZephyrLicenseManager</interface>
+	</component>
+
+<!--  Custom Field Setup -->
+	<customfield-type key="zephyr-je-customfield-teststep" i18n-name-key="Zephyr Teststep Field Type"
+		class="com.thed.zephyr.je.config.customfield.TeststepCFType">
+		<description>It creates custom field to hold steps for given Testcase
+		</description>
+		<resource type="velocity" name="xml" location="templates/zephyr/customfield/teststep/teststep-xml.vm" />
+		<!--
+			View template is required to display issues in printable and word mode along with plain View Issue Mode.
+			We need to find out way to mask the issue display in plain View Issue Mode as we are doing it through other mode!
+		 -->
+		<resource type="velocity" name="view" location="templates/zephyr/customfield/teststep/teststep-view.vm" />
+		<resource type="velocity" name="edit" location="templates/zephyr/customfield/teststep/teststep-create.vm" />
+ 	</customfield-type>
+
+	<customfield-searcher key="zephyr-je-customfield-teststep-searcher"
+		name="Zephyr Exact Teststep Searcher"
+		class="com.thed.zephyr.je.config.customfield.searcher.ExactTeststepSearcher">
+		<description>
+			Allow searching for Issues matching to 'Teststep search input' criteria
+		</description>
+		<resource type="velocity" name="search"
+			location="templates/zephyr/customfield/teststep/searcher/teststep-search.vm" />
+		<valid-customfield-type package="com.thed.zephyr.je" key="zephyr-je-customfield-teststep" />
+	</customfield-searcher>
+
+
+<!-- =================================== CONFIGURATION SECTION END =========================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- ====================================== GADGET SECTION START =================================== -->
+	<!--<web-resource key="zephyr-je-flot" name="Zephyr Flot Chart Resources">
+		<resource type="download" name="jquery.flot.js" location="includes/js/component/flot/jquery.flot.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="jquery.flot.stack.js" location="includes/js/component/flot/jquery.flot.stack.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="jquery.flot.dashes.js" location="includes/js/component/flot/jquery.flot.dashes.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="excanvas.js" location="includes/js/component/flot/excanvas.flot.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+	</web-resource>-->
+
+    <web-resource key='grid-component-adapter' name="Zephyr Grid Component Adapter">
+        <resource type="download" name="custom-elements-es5-adapter.js" location="includes/gridComponent/views/js/custom-elements-es5-adapter.js">
+            <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="jquery.datetimepicker.css" location="includes/gridComponent/views/css/jquery.datetimepicker.css">
+          <property key="content-type" value="text/css"/>
+        </resource>
+        <resource type="download" name="webcomponents-lite.js" location="includes/gridComponent/views/js/webcomponents-lite.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="polymer.js" location="includes/gridComponent/views/js/polymer.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="element.js" location="includes/gridComponent/views/js/element.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="jquery.datetimepicker.js" location="includes/gridComponent/views/js/jquery.datetimepicker.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+        <condition class="com.thed.zephyr.je.conditions.IsBrowserIECondition">
+            <param name="isIEResource">false</param>
+        </condition>
+        <context>com.zephyr.je.grid-context-adapter</context>
+      </web-resource>
+
+    <web-resource key='grid-component' name="Zephyr Grid Component">
+        <resource type="download" name="jquery.datetimepicker-ie.css" location="includes/gridComponent/views/css/jquery.datetimepicker.css">
+          <property key="content-type" value="text/css"/>
+        </resource>
+        <resource type="download" name="webcomponents-lite-ie.js" location="includes/gridComponent/views/js/webcomponents-lite.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="polymer-ie.js" location="includes/gridComponent/views/js/polymer.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="element-ie.js" location="includes/gridComponent/views/js/element.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="jquery.datetimepicker-ie.js" location="includes/gridComponent/views/js/jquery.datetimepicker.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+        <condition class="com.thed.zephyr.je.conditions.IsBrowserIECondition">
+            <param name="isIEResource">true</param>
+        </condition>
+        <context>com.zephyr.je.grid-context</context>
+      </web-resource>
+
+
+  <web-resource key='walk-through-tour' name="Zephyr Walk Through Tour Component">
+  	<transformation extension="js">
+		<transformer key="jsI18n"/>
+	</transformation>
+	<transformation extension="zeph">
+		<transformer key="zeph-key"/>
+	</transformation>
+	<transformation extension="soy">
+		<transformer key="jiraSoyTransformer"/>
+	</transformation>
+
+	<resource type="download" name="walkthroughtour.soy.js" location="includes/js/zephyr/component/walkthroughtour/walkthroughtour.soy"/>
+
+	<resource type="download" name="walkthroughtour.css" location="includes/css/zephyr/walkthroughtour/walkthroughtour.scss">
+      <property key="content-type" value="text/css"/>
+    </resource>
+    <resource type="download" name="walkthroughtour.js" location="includes/js/zephyr/component/walkthroughtour/walkthroughtour.js">
+      <property key="content-type" value="text/javascript"/>
+    </resource>
+  </web-resource>
+
+	<web-resource key="zephyr-je-d3" name="Zephyr D3 Chart Resources">
+		<resource type="download" name="d3.css" location="includes/css/zephyr/gadget/d3.css">
+            <property key="content-type" value="text/css"/>
+        </resource>
+        <resource type="download" name="es5-shim.min.js" location="includes/js/component/d3/es5shim/es5-shim.min.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="d3.js" location="includes/js/component/d3/d3.v3.min.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="d3-tip.js" location="includes/js/component/d3/d3-tip.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+	</web-resource>
+	<web-resource key="zephyr-je-gadget-common" name="Zephyr Common Gadget Resources">
+		<transformation extension="zeph">
+            <transformer key="zeph-key"/>
+        </transformation>
+		<resource type="download" name="zephyr-gadget.css" location="includes/css/zephyr/gadget/zephyr-gadget.css">
+            <property key="content-type" value="text/css" />
+        </resource>
+        <resource type="download" name="zephyr-gadget-common.js" location="includes/js/gadgets/zephyr-common.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<!-- <dependency>com.thed.zephyr.je:zephyr-je-flot</dependency>-->
+		<dependency>com.thed.zephyr.je:zephyr-je-d3</dependency>
+	</web-resource>
+	<web-resource key="aui-experimental-sidebar" name="Resizeable Sidebar">
+        <resource type="download" name="sidebar.js" location="includes/js/zephyr/component/sidebar/sidebar.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+	</web-resource>
+	<web-resource key="zephyr-je-url" name="Zephyr URL Parser Resource">
+        <resource type="download" name="url_parser.js" location="includes/js/component/url/url.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+	</web-resource>
+	<web-resource key="zephyr-defect-hover" name="Zephyr Defect Hover Resource">
+        <resource type="download" name="zephyr_defect_hover.js" location="includes/js/zephyr/execution/execution-defect-hover.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <transformation extension="less">
+            <transformer key="lessTransformer"/>
+        </transformation>
+        <resource type="download" name="zephyr_defect_hover.css" location="includes/css/zephyr/execution/execution-defect-hover.less" />
+        <resource type="download" name="zephyr_defect_hover.soy.js" location="includes/js/zephyr/execution/execution-defect-hover.soy" />
+	</web-resource>
+    <web-resource key="zephyr-execution-workflow" name="Zephyr Execution Workflow">
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <transformation extension="less">
+            <transformer key="lessTransformer"/>
+        </transformation>
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <resource type="download" name="execution-workflow.css" location="includes/css/zephyr/execution/workflow/execution-workflow.less" />
+        <resource type="download" name="execution-workflow.soy.js" location="includes/js/zephyr/execution/workflow/execution-workflow.soy" />
+        <resource type="download" name="resize-observer.js" location="includes/js/component/polyfill/ResizeObserver.js"/>
+        <resource type="download" name="zephyr-utility-observer.js" location="includes/js/zephyr/zephyr-utility-observer.js"/>
+        <resource type="download" name="execution-workflow.js" location="includes/js/zephyr/execution/workflow/execution-workflow.js">
+            <property key="content-type" value="text/javascript" />
+        </resource>
+    </web-resource>
+
+	<web-resource key="analytics-head" name="Zephyr Analytics Library Resource">
+		<resource type="download" name="rsaencrypt.js" location="includes/js/analytics/rsaencrypt.js" />
+		<resource type="download" name="aes.js" location="includes/js/CryptoJS/rollups/aes.js" />
+		<resource type="download" name="pbkdf2.js" location="includes/js/CryptoJS/rollups/pbkdf2.js" />
+		<resource type="download" name="enc-base64-min.js" location="includes/js/CryptoJS/components/enc-base64-min.js" />
+		<resource type="download" name="polyfills.js" location="includes/js/zephyr/polyfills.js">
+            <property key="content-type" value="text/javascript" />
+        </resource>
+        <resource type="download" name="analytics.js" location="includes/js/analytics/analytics.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<context>jira.view.issue</context>
+	</web-resource>
+
+	<!-- Zephyr ZQL-->
+	<web-resource key="zephyr-zql" name="Zephyr ZQL">
+    <dependency>jira.webresources:jira-global</dependency>
+		<dependency>jira.webresources:select-pickers</dependency>
+		<dependency>com.thed.zephyr.je:aui-experimental-sidebar</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-execute-test</dependency>
+		<dependency>com.atlassian.auiplugin:jquery-ui-other</dependency>
+        <dependency>com.thed.zephyr.je:zephyr-je-url</dependency>
+        <dependency>com.thed.zephyr.je:zephyr-defect-hover</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-execution-assignee</dependency>
+		<dependency>com.atlassian.auiplugin:aui-experimental-progress-indicator</dependency>
+		<dependency>com.thed.zephyr.je:walk-through-tour</dependency>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <resource type="download" name="zephyr_enav.css" location="includes/css/zephyr/zql/zephyr_enav.css">
+            <property key="content-type" value="text/css"/>
+        </resource>
+		<resource type="download" name="zephyr-zql-result.soy.js" location="includes/js/zephyr/zql/zephyr-zql-result.soy"/>
+		<resource type="download" name="zephyr-zql-savefilter.soy.js" location="includes/js/zephyr/zql/zephyr-zql-savefilter.soy"/>
+		<resource type="download" name="zephyr-je-bulk-status.soy.js" location="includes/js/zephyr/zql/zephyr-je-bulk-status.soy"/>
+		<resource type="download" name="zephyr_zql.js" location="includes/js/zephyr/zql/zephyr_zql.js" />
+		<resource type="download" name="execution.soy.js" location="includes/js/zephyr/execution/execution.soy" />
+		<resource type="download" name="zephyr_zqlutility.js" location="includes/js/zephyr/zql/zephyr_zqlutility.js" />
+		<resource type="download" name="zephyr-zfj-bulk.js" location="includes/js/zephyr/zql/zephyr-zfj-bulk.js" />
+		<resource type="download" name="zephyr_autocomplete.js" location="includes/js/zephyr/zql/ZQLAutoComplete.js" />
+        <dependency>com.thed.zephyr.je:zephyr-execution-workflow</dependency>
+	</web-resource>
+	<!-- Zephyr ZQL-->
+
+	<!-- Zephyr ZQL Manage Filters -->
+	<web-resource key="zql-manage-filters" name="ZQL Manage Filters">
+		<dependency>jira.webresources:jira-global</dependency>
+		<dependency>jira.webresources:select-pickers</dependency>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <resource type="download" name="zephyr_enav.css" location="includes/css/zephyr/zql/zephyr_enav.css">
+            <property key="content-type" value="text/css"/>
+        </resource>
+		<resource type="download" name="zql-manage-filters.soy.js" location="includes/js/zephyr/zql/zql-manage-filters.soy"/>
+		<resource type="download" name="zql-manage-filters.js" location="includes/js/zephyr/zql/zql-manage-filters.js" />
+		<resource type="download" name="zephyr-zql-savefilter.soy.js" location="includes/js/zephyr/zql/zephyr-zql-savefilter.soy"/>
+	</web-resource>
+	<!-- Zephyr ZQL Manage Filters -->
+
+	<!-- TOP DEFECTS GADGET -->
+	<gadget key="zephyr-je-top-defects-finder" location="gadgets/top-defects.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-top-defect-resources"
+		name="Top Defects Gadget Resources">
+		<resource type="download" name="zephyr-top-defects-gadget.css" location="includes/css/zephyr/gadget/zephyr-top-defects-gadget.css">
+			<property key="content-type" value="text/css" />
+		</resource>
+		<resource type="download" name="gadget-top-defects.js" location="includes/js/gadgets/top-defects.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="jquery.tablesorter.js" location="includes/js/component/tablesorter/jquery.tablesorter.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+	</web-resource>
+
+	<!-- TESTCASE CREATION GADGET -->
+	<gadget key="zephyr-je-gadget-testcase-creation" location="gadgets/testcase-creation.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-testcase-creation-resources"
+		name="Testcase creation Gadget Resources">
+		<resource type="download" name="gadget-testcase-creation.js" location="includes/js/gadgets/testcase-creation.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+	</web-resource>
+
+	<!-- TESTCASE EXECUTION GADGET -->
+	<gadget key="zephyr-je-gadget-testcase-execution" location="gadgets/testcase-execution.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-testcase-execution-resources"
+		name="Testcase execution Gadget Resources">
+		<resource type="download" name="gadget-testcase-execution.js" location="includes/js/gadgets/testcase-execution.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="test-execution-parser.js" location="/includes/js/reports/test-execution-parser.js"/>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+	</web-resource>
+
+	<!-- Unexecuted Schedules Gadget -->
+	<gadget key="zephyr-je-gadget-unexecuted-schedules" location="gadgets/unexecuted-schedules-graph.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-unexecuted-schedules-resources"
+		name="Unexecuted Schedules Gadget Resources">
+		<resource type="download" name="gadget-unexcuted-schedules.js" location="includes/js/gadgets/unexecuted-schedules.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+	</web-resource>
+
+
+	<gadget key="zephyr-je-gadget-zql-filter" location="gadgets/zql-gadget.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-zql-filter-resources"
+		name="ZQL Filter Gadget Resources">
+		<dependency>jira.webresources:jira-global</dependency>
+		<dependency>jira.webresources:select-pickers</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-common</dependency>
+		<dependency>jira.webresources:autocomplete</dependency>
+		<dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
+		<dependency>com.atlassian.auiplugin:aui-navigation</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-url</dependency>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <resource type="download" name="zephyr_enav.css" location="includes/css/zephyr/zql/zephyr_enav.css">
+            <property key="content-type" value="text/css"/>
+        </resource>
+		<resource type="download" name="zephyr-zql-result.soy.js" location="includes/js/zephyr/zql/zephyr-zql-result.soy"/>
+    <resource type="download" name="gadget-zql-execution.js" location="includes/js/gadgets/zql-execution.js"/>
+		<resource type="download" name="zephyr_autocomplete.js" location="includes/js/zephyr/zql/ZQLAutoComplete.js" />
+		<resource type="download" name="zephyr_zql.js" location="includes/js/zephyr/zql/zephyr_zql.js" />
+		<resource type="download" name="zephyr_zqlutility.js" location="includes/js/zephyr/zql/zephyr_zqlutility.js" />
+	</web-resource>
+
+
+    <web-resource key="zephyr-je-getting-started-resources" name="Zephyr Welcome Page">
+        <resource type="download" name="zephyr-getting-started.css" location="includes/css/zephyr/welcome/zephyr-getting-started.css">
+            <property key="content-type" value="text/css" />
+        </resource>
+        <context>zephyr.about.start</context>
+    </web-resource>
+
+	<!-- EXECUTION STATUS DISTRIBUTION GADGET -->
+	<gadget key="zephyr-je-gadget-execution-status" location="gadgets/execution-status.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-execution-status-resources"
+				  name="Execution Status distribution Gadget Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+
+        <resource type="download" name="gadget-donut-drill-down-chart.js" location="includes/js/gadgets/donut-drill-down-chart.js">
+            <property key="content-type" value="text/javascript" />
+        </resource>
+		<resource type="download" name="gadget-execution-status.js" location="includes/js/gadgets/execution-status.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+	</web-resource>
+
+	<!-- ASSIGNEE EXECUTION STATUS DISTRIBUTION GADGET -->
+	<gadget key="zephyr-je-gadget-assignee-execution-status" location="gadgets/assignee-execution-status.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-assignee-execution-status-resources"
+				  name="Assignee Execution status distribution Gadget Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+
+        <resource type="download" name="gadget-donut-drill-down-chart.js" location="includes/js/gadgets/donut-drill-down-chart.js">
+            <property key="content-type" value="text/javascript" />
+        </resource>
+		<resource type="download" name="gadget-assignee-execution-status.js" location="includes/js/gadgets/assignee-execution-status.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+	</web-resource>
+
+	<!-- EXECUTION STATUS DISTRIBUTION PER CYCLE GADGET -->
+	<gadget key="zephyr-je-gadget-cycle-execution-status" location="gadgets/cycle-execution-status.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-cycle-execution-status-resources"
+				  name="Cycle Execution status distribution Gadget Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+		<resource type="download" name="gadget-donut-drill-down-chart.js" location="includes/js/gadgets/donut-drill-down-chart.js">
+            <property key="content-type" value="text/javascript" />
+        </resource>
+        <resource type="download" name="gadget-cycle-execution-status.js" location="includes/js/gadgets/cycle-execution-status.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+	</web-resource>
+
+
+	<web-resource key="zephyr-execution-assignee" name="Zephyr Defect Hover Resource">
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <transformation extension="less">
+            <transformer key="lessTransformer"/>
+        </transformation>
+        <resource type="download" name="zephyr-execution-assignee.css" location="includes/css/zephyr/execution/execution-assignee.less" />
+        <resource type="download" name="zephyr-execution-assignee-newUI.js" location="includes/js/zephyr/execution/assignee/execution-assignee-newUI.js" />
+        <resource type="download" name="zephyr-execution-assignee.js" location="includes/js/zephyr/execution/assignee/execution-assignee.js" />
+        <resource type="download" name="zephyr-execution-assignee.soy.js" location="includes/js/zephyr/execution/assignee/execution-assignee.soy" />
+	</web-resource>
+
+	<!-- PAST EXECUTION STATUS GADGET -->
+	<!--<gadget key="zephyr-je-gadget-past-execution-status" location="gadgets/past-execution-status.xml">-->
+		<!--<param name="roles-required">browse</param>-->
+	<!--</gadget>-->
+	<!--<web-resource key="zephyr-je-gadget-past-execution-status-resources"-->
+				  <!--name="Past Execution status distribution Gadget Resources">-->
+        <!--<dependency>com.atlassian.auiplugin:ajs</dependency>-->
+        <!--<dependency>com.atlassian.auiplugin:aui-select2</dependency>-->
+		<!--<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>-->
+
+		<!--<resource type="download" name="gadget-past-execution-status.js" location="includes/js/gadgets/past-execution-status.js">-->
+			<!--<property key="content-type" value="text/javascript" />-->
+		<!--</resource>-->
+		<!--<resource type="download" name="test-execution-parser.js" location="/includes/js/reports/test-execution-parser.js"/>-->
+		<!--<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>-->
+	<!--</web-resource>-->
+
+	<!-- EXECUTION WORKFLOW ESTIMATED-LOGGED TIME PER CYCLE GADGET -->
+	<gadget key="zephyr-je-gadget-cycle-execution-workflow-time" location="gadgets/cycle-execution-workflow-time.xml">
+		<param name="roles-required">browse</param>
+	</gadget>
+	<web-resource key="zephyr-je-gadget-cycle-execution-workflow-time-resources"
+				  name="Cycle Execution Workflow Time Gadget Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<resource type="download" name="zephyr-execution-workflow-gadget.css" location="includes/css/zephyr/gadget/zephyr-execution-workflow-gadget.css">
+			<property key="content-type" value="text/css" />
+		</resource>
+		<resource type="download" name="gadget-cycle-execution-workflow-time.js" location="includes/js/gadgets/cycle-execution-workflow-time.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="test-execution-parser.js" location="/includes/js/reports/test-execution-parser.js"/>
+        <resource type="download" name="jquery.tablesorter.js" location="includes/js/component/tablesorter/jquery.tablesorter.js">
+            <property key="content-type" value="text/javascript" />
+        </resource>
+		<dependency>com.thed.zephyr.je:zephyr-je-gadget-common</dependency>
+	</web-resource>
+    <!--
+	<web-resource key="zephyr-gadget-fusion-chart-resources" name="Zephyr Fusion Chart Resources">
+		<resource type="download" name="fusionCharts.js" location="gadgets/component/fusionchart/js/FusionCharts.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<resource type="download" name="fusioncharts/" location="gadgets/component/fusionchart/"/>
+	</web-resource>
+	 -->
+<!-- ====================================== GADGET SECTION END =================================== -->
+<!-- =========================================================================================== -->
+
+
+
+<!-- =========================================================================================== -->
+<!-- ====================================== WEB ACTION START =================================== -->
+
+	<webwork1 key="zephyr-je-webwork" i18n-name-key="zephyr-je-webwork.name"
+		name="Testcase Management webwork Action" class="java.lang.Object">
+		<actions>
+			<action name="com.thed.zephyr.je.action.enav.ExecutionNavigatorAction" alias="ExecutionNavigator">
+			      <view name="input">/templates/zephyr/enav/enav.vm</view>
+			      <view name="success">/templates/zephyr/enav/enav.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.ExecuteTestAction"
+				alias="ExecuteTest">
+				<view name="input">/templates/zephyr/execution/executetest.vm</view>
+				<view name="success">/templates/zephyr/execution/executetest.vm</view>
+				<view name="error">/templates/zephyr/execution/scheduleNotFound.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.ExecuteTestAction"
+				alias="AddExecute">
+				<view name="input">/templates/zephyr/execution/executedialog.vm</view>
+				<view name="success">/templates/zephyr/execution/executedialog.vm</view>
+				<view name="error">/templates/zephyr/common/issue_permission_error.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.ExecuteTestAction"
+				alias="AddTestsToCycle">
+				<view name="input">/templates/zephyr/execution/addteststocycle.vm</view>
+				<view name="success">/templates/zephyr/execution/addteststocycle.vm</view>
+				<view name="error">/templates/zephyr/common/issue_permission_error.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.ExecuteTestAction"
+				alias="AddToCycle">
+				<view name="input">/templates/zephyr/cycle/addtocycle.vm</view>
+				<view name="success">/templates/zephyr/cycle/addtocycle.vm</view>
+				<view name="error">/templates/zephyr/common/issue_permission_error.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.ZephyrGeneralConfiguration" alias="ZephyrGeneralConfiguration" roles-required="admin">
+				<view name="input">/templates/config/general-config.vm</view>
+				<view name="success">/templates/config/general-config.vm</view>
+				<view name="info">/templates/config/general-info.vm</view>
+				<!--<view name="products">/templates/messaging/zephyr-products.vm</view>-->
+				<view name="analytics">/templates/messaging/zephyr-analytics.vm</view>
+
+				<command name="configureWorkflowSettings" alias="ZSetWorkflowSettings">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="configureVersionCheck" alias="ZSetVersionSettings">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="linkIssueToTest" alias="ZLinkIssueToTest">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="linkIssueToTestStep" alias="ZLinkIssueToTestStep">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="linkTestToIssue" alias="ZLinkTestToIssue">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="configurePermissionCheck" alias="ZConfigurePermissionSetting">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="configureZephyrLogLevel" alias="ZConfigureLogLevel">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="configureZephyrLogMaxSize" alias="ZConfigureLogMaxSize">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="configureZephyrLogMaxBackup" alias="ZConfigureLogMaxBackup">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="enableIssueSecurity" alias="ZEnableIssueSecurity">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="disableTestSummaryLabels" alias="ZDisableTestSummaryLabelsFilter">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="testToRequirementLinkType" alias="ZSetTestRequirementLinkType">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="SaveNonIssueTypeTestList" alias="ZSaveNonIssueTypeTestList">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="disableTestSummaryAllFilters" alias="ZDisableTestSummaryAllFilters">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="addAnalytics" alias="ZDisableZephyrAnalytics">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+				<command name="remoteLinkIssueToTestExecution" alias="ZRemoteLinkIssueToTestExecution">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="remoteLinkIssueToTestStepExecution" alias="ZRemoteLinkIssueToTestStepExecution">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="updateTestMetricsMenu" alias="ZUpdateTestMetricsMenu">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="addIssueTypeTestonProjectCreate" alias="ZSetIssueTypeTestProjectCreateSettings">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="updateDisableTestMenu" alias="ZUpdateDisableTestMenu">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="removeDisableTestMenu" alias="ZRemoveDisableTestMenu">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="enableZephyrUpdateExecutionExecutedon" alias="ZEnableZephyrUpdateExecutionExecutedon">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="updateDisableExecWorkflow" alias="ZUpdateDisableExecWorkflow">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+
+				<command name="removeDisableExecWorkflow" alias="ZRemoveDisableExecWorkflow">
+					<view name="success">/templates/zephyr/common/blank.vm</view>
+					<view name="error">/templates/config/general-config-remote-error.vm</view>
+				</command>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.ZephyrLabFeatures" alias="ZephyrLabFeatures" roles-required="admin">
+				<view name="success">/templates/config/zephyrdarkfeatures.vm</view>
+				<view name="error">/templates/config/zephyrdarkfeatures.vm</view>
+				<view name="securitybreach">/secure/views/securitybreach.jsp</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.ViewZephyrExecutionStatuses" alias="ViewZephyrExecutionStatuses" roles-required="admin">
+				<view name="success">/templates/config/execstatus-view.vm</view>
+				<command name="addExecutionStatus" alias="AddZephyrExecutionStatus">
+				    <view name="success">/templates/config/execstatus-view.vm</view>
+				    <view name="error">/templates/config/execstatus-view.vm</view>
+				</command>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.EditZephyrExecutionStatuses" alias="EditZephyrExecutionStatus" roles-required="admin">
+			    <view name="input">/templates/config/execstatus-edit.vm</view>
+			    <view name="error">/templates/config/execstatus-edit.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.DeleteZephyrExecutionStatuses" alias="DeleteZephyrExecutionStatus" roles-required="admin">
+			    <view name="input">/templates/config/execstatus-delete.vm</view>
+			    <view name="error">/templates/config/execstatus-delete.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.ViewZephyrCustomField" alias="ViewZephyrCustomField" roles-required="admin">
+    			<view name="success">/templates/config/customfield-view.vm</view>
+				<view name="error">/templates/config/customfield-view.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.ViewZephyrTestStepStatuses" alias="ViewZephyrTestStepStatuses" roles-required="admin">
+				<view name="success">/templates/config/stepstatus-view.vm</view>
+				<command name="addTestStepStatus" alias="AddZephyrTestStepStatus">
+				    <view name="success">/templates/config/stepstatus-view.vm</view>
+				    <view name="error">/templates/config/stepstatus-view.vm</view>
+				</command>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.ViewZephyrAnalytics" alias="ViewZephyrAnalytics" roles-required="admin">
+				<view name="success">/templates/config/analytics-view.vm</view>
+				<command name="addAnalytics" alias="addZephyrAnalytics">
+					<view name="success">/templates/config/analytics-view.vm</view>
+					<view name="error">/templates/config/analytics-view.vm</view>
+				</command>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.EditZephyrTestStepStatuses" alias="EditZephyrTestStepStatus" roles-required="admin">
+			    <view name="input">/templates/config/stepstatus-edit.vm</view>
+			    <view name="error">/templates/config/stepstatus-edit.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.DeleteZephyrTestStepStatuses" alias="DeleteZephyrTestStepStatus" roles-required="admin">
+			    <view name="input">/templates/config/stepstatus-delete.vm</view>
+			    <view name="error">/templates/config/stepstatus-delete.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.ZephyrLicenseAction" alias="ZephyrLicense" roles-required="admin">
+
+        		<command name="success" alias="ZLicense">
+              		<view name="success">/templates/config/zephyr-license.vm</view>
+				    <view name="error">/templates/config/zephyr-license.vm</view>
+        		</command>
+
+        		<command name="update" alias="ZUpdateLicense">
+              		<view name="success">/templates/config/zephyr-license.vm</view>
+				    <view name="error">/templates/config/zephyr-license.vm</view>
+        		</command>
+			</action>
+
+			<action name="com.thed.zephyr.je.config.action.ZephyrDatacenter" alias="ZephyrDatacenter" roles-required="admin">
+        		<view name="success">templates/zephyr/datacenter/zephyr-datacenter.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.RedirectionAction" alias="RedirectionAction">
+				<command name="PlanTest" alias="PlanTest">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+					<view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
+				</command>
+				<command name="CreateTestIssue" alias="CreateTestIssue">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+				</command>
+				<command name="SearchTest" alias="SearchTest">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+				</command>
+				<command name="PlanTest" alias="TestSummary">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+					<view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
+				</command>
+				<command name="PlanTestCycle" alias="PlanTestCycle">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+					<view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
+				</command>
+				<command name="ExecNavAction" alias="ExecNavAction">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+			     	<view name="success">/templates/zephyr/enav/enav.vm</view>
+				</command>
+				<command name="ZQLManageFilters" alias="ZQLManageFilters">
+			      	<view name="input">/templates/zephyr/enav/manageZQLFilter.vm</view>
+			      	<view name="success">/templates/zephyr/enav/manageZQLFilter.vm</view>
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+					<view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
+				</command>
+				<command name="PlanExecuteTest" alias="PlanExecuteTest">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+					<view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
+				</command>
+				<command name="DisplayTestMetrics" alias="DisplayMetricsDashboard">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+				</command>
+				<command name="TraceabilityReport" alias="TraceabilityReport">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+					<view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
+				</command>
+				<command name="Help" alias="Help">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+				</command>
+				<command name="DisplayCycle" alias="DisplayCycle">
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+				</command>
+				<command name="Welcome" alias="ZephyrWelcome">
+					<view name="success">/templates/zephyr/welcome/GettingStarted.vm</view>
+					<view name="error">/templates/zephyr/common/errorlicense.vm</view>
+				</command>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.AttachFileAction"
+				alias="AttachFileAction">
+				<view name="input">/templates/zephyr/execution/attachfile.vm</view>
+				<view name="success">/templates/zephyr/execution/attachfile.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.attachment.ZAttachTemporaryFile"
+				alias="ZAttachTemporaryFile">
+				<view name="input">/templates/zephyr/execution/tempfilejson.vm</view>
+				<view name="temp_file_json">/templates/zephyr/execution/tempfilejson.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.ZephyrEncKeyLoadAction"
+					alias="ZephyrEncKeyLoadAction">
+				<view name="success">/templates/zephyr/wallboard/zenckeyjson.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.ZephyrJiraBulkOperationAction" alias="addTestsToCycle">
+				<command name="details" alias="AddTestsToCycleDetails">
+            		<view name="success">/templates/zephyr/bulk/bulkaddtesttocycle.vm</view>
+					<view name="input">/templates/zephyr/bulk/bulkaddtesttocycle.vm</view>
+					<view name="error">/templates/zephyr/bulk/bulkaddtesttocycle.vm</view>
+				</command>
+				<command name="detailsValidation" alias="BulkAddToCycleDetailsValidation">
+					<view name="input">/templates/zephyr/bulk/bulkaddtesttocycle.vm</view>
+					<view name="error">/templates/zephyr/bulk/bulkaddtesttocycle.vm</view>
+				</command>
+				<command name="perform" alias="BulkAddTestToCyclePerform">
+					<view name="error">/templates/zephyr/bulk/bulkaddtesttocycle.vm</view>
+				</command>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.CopyTestStepAction"
+				alias="CopyTestStep">
+				<view name="success">/templates/zephyr/copyteststeps/copy-teststeps.vm</view>
+			</action>
+
+			<action name="com.thed.zephyr.je.action.TestIssueImporter" alias="importTests">
+				<command name="Import" alias="TestIssueImporter">
+					<view name="success">/templates/zephyr/importer/test-issue-importer.vm</view>
+					<view name="error">/templates/zephyr/importer/test-issue-importer.vm</view>
+					<view name="input">/templates/zephyr/importer/test-issue-importer.vm</view>
+				</command>
+
+
+
+			</action>
+		</actions>
+	</webwork1>
+
+<!-- ========================================== WEB ACTION END  ================================ -->
+<!-- =========================================================================================== -->
+
+
+<!-- =========================================================================================== -->
+<!-- ========================================= WEB RESOURCE START ============================== -->
+
+	<web-resource key="zephyr-je-aboutus" name="Zephyr About Us Resource">
+		<dependency>jira.webresources:jira-global</dependency>
+		<dependency>jira.webresources:dialogs</dependency>
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<resource type="download" name="zaboutus.js" location="includes/js/zephyr/zaboutus.js" />
+        <context>atl.general</context>
+        <context>atl.admin</context>
+	</web-resource>
+
+	<web-resource key="zephyr-je-feedback" name="Zephyr Feedback Resource">
+		<dependency>jira.webresources:jira-global</dependency>
+		<dependency>jira.webresources:dialogs</dependency>
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<transformation extension="js">
+			<transformer key="jsI18n"/>
+		</transformation>
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer"/>
+        </transformation>
+		<resource type="download" name="zephyr.css" location="css/zephyr.css">
+			<property key="content-type" value="text/css" />
+		</resource>
+		<resource type="download" name="zfeedback.js" location="includes/js/zephyr/zfeedback.js" />
+		<resource type="download" name="feedback.soy.js" location="includes/js/zephyr/feedback.soy"/>
+		<context>atl.general</context>
+		<context>atl.admin</context>
+	</web-resource>
+
+	<web-resource key="zephyr-je-common" name="Zephyr Common Resources">
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<transformation extension="zeph">
+            <transformer key="zeph-key"/>
+        </transformation>
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+		<resource type="download" name="zephyr.css" location="css/zephyr.css">
+			<property key="content-type" value="text/css" />
+		</resource>
+        <resource type="download" name="jquery.datetimepicker.css" location="includes/gridComponent/views/css/jquery.datetimepicker.css">
+          <property key="content-type" value="text/css"/>
+        </resource>
+		<resource type="download" name="zephyr_common.js" location="includes/js/zephyr/zephyr_common.js" />
+		<resource type="download" name="rsaencrypt.js" location="includes/js/analytics/rsaencrypt.js" />
+		<resource type="download" name="aes.js" location="includes/js/CryptoJS/rollups/aes.js" />
+		<resource type="download" name="pbkdf2.js" location="includes/js/CryptoJS/rollups/pbkdf2.js" />
+		<resource type="download" name="enc-base64-min.js" location="includes/js/CryptoJS/components/enc-base64-min.js" />
+		<resource type="download" name="analytics.js" location="includes/js/analytics/analytics.js" />
+        <resource type="download" name="polyfills.js" location="includes/js/zephyr/polyfills.js">
+            <property key="content-type" value="text/javascript" />
+        </resource>
+        <resource type="download" name="jquery.datetimepicker.js" location="includes/gridComponent/views/js/jquery.datetimepicker.js">
+          <property key="content-type" value="text/javascript"/>
+        </resource>
+		<resource type="download" name="zephyr-utility.js" location="includes/js/zephyr/zephyr-utility.js" />
+		<resource type="download" name="initDefectPicker.js" location="includes/js/zephyr/execution/initDefectPicker.js"/>
+		<resource type="download" name="dialog.soy.js" location="includes/js/zephyr/dialog.soy"/>
+
+		<context>atl.general</context>
+        <context>atl.admin</context>
+	</web-resource>
+
+    <web-resource key="zephyr-je-create-testcase" name="Zephyr Create Testcase Resources">
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <transformation extension="zeph">
+            <transformer key="zeph-key"/>
+        </transformation>
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer"/>
+        </transformation>
+        <resource type="download" name="zephyr.css" location="css/zephyr.css">
+            <property key="content-type" value="text/css"/>
+        </resource>
+        <resource type="download" name="zephyr_common.js" location="includes/js/zephyr/zephyr_common.js"/>
+        <resource type="download" name="zephyr-utility.js" location="includes/js/zephyr/zephyr-utility.js"/>
+        <resource type="download" name="dialog.soy.js" location="includes/js/zephyr/dialog.soy"/>
+        <resource type="download" name="zephyr_testcase.js" location="includes/js/zephyr/testcase/zephyr_testcase.js"/>
+        <context>atl.general</context>
+        <context>atl.admin</context>
+    </web-resource>
+
+	<web-resource key="zephyr-admin-config" name="Zephyr Resources for JIRA Configuration">
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <transformation extension="zeph">
+            <transformer key="zeph-key"/>
+        </transformation>
+		<transformation extension="soy">
+			<transformer key="jiraSoyTransformer"/>
+    	</transformation>
+		<dependency>com.thed.zephyr.je:walk-through-tour</dependency>
+		<dependency>com.atlassian.auiplugin:aui-experimental-progress-indicator</dependency>
+		<resource type="download" name="zephyr-test-summary.css" location="includes/css/zephyr/project/zephyr-test-summary.css">
+        	<property key="content-type" value="text/css"/>
+    	</resource>
+		<resource type="download" name="zephyr_configuration.js" location="includes/js/config/zephyr_configuration.js" />
+		<resource type="download" name="zephyrprojects.soy.js" location="includes/js/config/zephyrprojects.soy">
+			<property key="content-type" value="text/javascript"/>
+		</resource>
+	</web-resource>
+
+	<web-resource key="zephyr-custom-field" name="Zephyr Resources for JIRA Configuration">
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <transformation extension="zeph">
+            <transformer key="zeph-key"/>
+        </transformation>
+		<transformation extension="soy">
+			<transformer key="jiraSoyTransformer"/>
+    	</transformation>
+		<dependency>com.atlassian.auiplugin:aui-experimental-progress-indicator</dependency>
+		<dependency>com.atlassian.auiplugin:dialog2</dependency>
+    	<dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<resource type="download" name="zephyr-custom-field.css" location="includes/css/zephyr/project/zephyr-custom-field.css">
+        	<property key="content-type" value="text/css"/>
+    	</resource>
+        <resource type="download" name="zephyr_custom_field.soy.js" location="includes/js/config/zephyr_custom_field.soy"/>
+		<resource type="download" name="zephyr_custom_field.js" location="includes/js/config/zephyr_custom_field.js" />
+	</web-resource>
+
+	<web-resource key="zephyr-datacenter" name="Zephyr Datacenter">
+	<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+  <transformation extension="soy">
+    			<transformer key="jiraSoyTransformer"/>
+  </transformation>
+  <transformation extension="less">
+      <transformer key="lessTransformer"/>
+  </transformation>
+    <resource type="download" name="zephyr_datacenter.soy.js" location="includes/js/datacenter/zephyr_datacenter.soy" />
+		<resource type="download" name="zephyr_datacenter.js" location="includes/js/datacenter/zephyr_datacenter.js" />
+    <resource type="download" name="zephyr-je-execute-test.css" location="includes/css/zephyr/execution/zephyr-je-execute-test.css">
+        	<property key="content-type" value="text/css"/>
+    	</resource>
+      <resource type="download" name="zephyr_enav.css" location="includes/css/zephyr/zql/zephyr_enav.css">
+          <property key="content-type" value="text/css"/>
+      </resource>
+      <resource type="download" name="execution-workflow.css" location="includes/css/zephyr/execution/workflow/execution-workflow.less" />
+	</web-resource>
+
+	<web-resource key="zephyr-product-config" name="Zephyr Resources for Product Configuration">
+		<transformation extension="js">
+			<transformer key="jsI18n"/>
+		</transformation>
+		<resource type="download" name="zephyr.css" location="css/zephyr.css">
+			<property key="content-type" value="text/css"/>
+		</resource>
+	</web-resource>
+
+	<!-- this is a optional dependency for JIRA 5.0, For 5.1 onwards, backbone is already included on ViewIssue page -->
+	<web-resource key="zephyr-je-backbone" name="Backbone for Zephyr Test Steps Resources">
+		<resource type="download" name="underscore.js" location="includes/js/zephyr/component/restful/underscore.js">
+            <property key="content-type" value="text/javascript"/>
+        </resource>
+		<resource type="download" name="backbone.js" location="includes/js/zephyr/component/restful/backbone.js">
+            <property key="content-type" value="text/javascript"/>
+        </resource>
+	</web-resource>
+
+	<web-resource key="zephyr-wiki-editor" name="Zephyr Wiki Editor">
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<resource type="download" name="zephyr-wiki-editor.js" location="includes/js/zephyr/component/wiki/zephyr-wiki-editor.js"/>
+		<resource type="download" name="zephyr-wiki-editor.soy.js" location="includes/js/zephyr/component/wiki/zephyr-wiki-editor.soy"/>
+	</web-resource>
+
+	<web-resource key="zephyr-je-execution-history" name="Zephyr Execution History Resources">
+		<dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
+		<dependency>com.atlassian.auiplugin:dialog2</dependency>
+		<dependency>com.atlassian.auiplugin:aui-inline-dialog2</dependency>
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<resource type="download" name="dialog.soy.js" location="includes/js/zephyr/dialog.soy"/>
+		<resource type="download" name="zephyr-execution-details-panel.soy.js" location="includes/js/zephyr/execution/history/executiondetailspanel.soy"/>
+    <resource type="download" name="zephyr-execution-details-panel.js" location="includes/js/zephyr/execution/history/executiondetailspanel.js"/>
+	</web-resource>
+
+  <web-resource key="zephyr-je-execution-customField" name="Zephyr Execution Custom Field Resources">
+    <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
+    <dependency>com.atlassian.auiplugin:dialog2</dependency>
+    <dependency>com.atlassian.auiplugin:aui-inline-dialog2</dependency>
+    <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+    <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+    <resource type="download" name="dialog.soy.js" location="includes/js/zephyr/dialog.soy"/>
+    <resource type="download" name="zephyr-execution-customField.soy.js" location="includes/js/zephyr/execution/customField/executionCustomField.soy"/>
+    <resource type="download" name="zephyr-execution-customField.js" location="includes/js/zephyr/execution/customField/executionCustomField.js"/>
+  </web-resource>
+
+	<web-resource key="zephyr-je-steps" name="Zephyr Test Steps Resources">
+		<dependency>jira.webresources:dialogs</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-defect-hover</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-wiki-editor</dependency>
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<dependency>com.thed.zephyr.je:walk-through-tour</dependency>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+
+		<transformation extension="less">
+            <transformer key="lessTransformer"/>
+        </transformation>
+
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+
+        <!--<resource type="download" name="underscore.js" location="includes/js/zephyr/component/restful/underscore.js">
+            <property key="content-type" value="text/javascript"/>
+        </resource>-->
+        <resource type="download" name="delete_confirmation.soy.js" location="includes/js/zephyr/component/confirmation/delete-confirmation.soy" />
+       	<resource type="download" name="serializeToObject.js" location="includes/js/zephyr/component/restful/serializeToObject.js" />
+        <resource type="download" name="restful.js" location="includes/js/zephyr/component/restful/RestfulTable.js"/>
+        <resource type="download" name="events.js" location="includes/js/zephyr/component/restful/events.js" />
+        <resource type="download" name="zephyr-je-init-attach.js" location="includes/js/zephyr/execution/attachment/initInlineAttach.js" />
+        <resource type="download" name="zephyr-je-inline-attach.js" location="includes/js/zephyr/execution/attachment/ZInlineAttach.js" />
+        <resource type="download" name="schedule_attachment.soy.js" location="includes/js/zephyr/execution/attachment/schedule_attachment.soy" />
+    		<resource type="download" name="step_attachment.soy.js" location="includes/js/zephyr/execution/attachment/step_attachment.soy" />
+        <resource type="download" name="project-config.js" location="includes/js/zephyr/component/restful/project-config.js" />
+        <resource type="download" name="restful.soy.js" location="includes/js/zephyr/component/restful/restfultable.soy"/>
+        <resource type="download" name="steps.soy.js" location="includes/js/zephyr/testcase/steps.soy"/>
+        <resource type="download" name="steps.js" location="includes/js/zephyr/testcase/steps.js">
+        	<property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="zfj_common.js" location="includes/js/zephyr/zfj_common.js">
+            <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="step-row.js" location="includes/js/zephyr/testcase/StepRow.js">
+        	<property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="edit-step-row.js" location="includes/js/zephyr/testcase/EditStepRow.js">
+        	<property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="restfultable.css" location="includes/js/zephyr/component/restful/restfultable.less" />
+        <resource type="download" name="steps.css" location="includes/css/zephyr/testcase/steps.less">
+            <property key="content-type" value="text/css"/>
+        </resource>
+        <resource type="download" name="common.soy.js" location="includes/js/zephyr/component/restful/common.soy" />
+        <context>jira.view.issue</context>
+	</web-resource>
+
+	<web-resource key="zephyr-je-execute-test" name="Zephyr Execute Test Resources">
+		<dependency>jira.webresources:jira-global</dependency>
+		<dependency>jira.webresources:issue-table</dependency>
+		<dependency>jira.webresources:dropdown</dependency>
+		<dependency>jira.webresources:dropdown-select</dependency>
+		<dependency>jira.webresources:select-pickers</dependency>
+		<dependency>jira.webresources:dialogs</dependency>
+		<dependency>jira.webresources:calendar</dependency>
+		<dependency>jira.webresources:calendar-en</dependency>
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-execution-history</dependency>
+    	<dependency>com.thed.zephyr.je:zephyr-je-execution-customField</dependency>
+    	<dependency>com.atlassian.auiplugin:aui-experimental-progress-indicator</dependency>
+		<dependency>com.thed.zephyr.je:walk-through-tour</dependency>
+
+		<transformation extension="soy">
+        <transformer key="jiraSoyTransformer" />
+    </transformation>
+		<transformation extension="js">
+        <transformer key="jsI18n"/>
+    </transformation>
+		<resource type="download" name="delete_confirmation.soy.js" location="includes/js/zephyr/component/confirmation/delete-confirmation.soy" />
+		<resource type="download" name="schedule_attachment.soy.js" location="includes/js/zephyr/execution/attachment/schedule_attachment.soy" />
+		<resource type="download" name="step_attachment.soy.js" location="includes/js/zephyr/execution/attachment/step_attachment.soy" />
+		<resource type="download" name="step-result-row.soy.js" location="includes/js/zephyr/execution/step-result-row.soy" />
+		<resource type="download" name="zephyr-je-execute-test.css" location="includes/css/zephyr/execution/zephyr-je-execute-test.css"/>
+		<resource type="download" name="zephyr-je-execute-test.js" location="includes/js/zephyr/execution/zephyr-je-execute-test.js" />
+		<resource type="download" name="execution.soy.js" location="includes/js/zephyr/execution/execution.soy" />
+		<resource type="download" name="zephyr-je-init-attach.js" location="includes/js/zephyr/execution/attachment/initInlineAttach.js" />
+		<resource type="download" name="zephyr-je-inline-attach.js" location="includes/js/zephyr/execution/attachment/ZInlineAttach.js" />
+		<resource type="download" name="step-result.js" location="includes/js/zephyr/execution/step-result.js" />
+		<resource type="download" name="step-result-execution-view.js" location="includes/js/zephyr/execution/step-result-execution-view.js" />
+		<resource type="download" name="schedule.js" location="includes/js/zephyr/schedule/schedule.js" />
+		<resource type="download" name="zephyr-execution-field-view.js" location="includes/js/zephyr/execution/execution-field-view.js" />
+	</web-resource>
+
+	<web-resource key="zephyr-je-schedule" name="Zephyr Schedule Resources">
+		<dependency>jira.webresources:jira-global</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-execution-assignee</dependency>
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<resource type="download" name="zephyr-je-execute-test.css" location="includes/css/zephyr/execution/zephyr-je-execute-test.css"/>
+		<resource type="download" name="zephyr-je-schedule.js" location="includes/js/zephyr/schedule/zephyr-je-schedule.js" />
+		<resource type="download" name="zephyr-je-schedule-delete.js" location="includes/js/zephyr/schedule/zephyr-je-schedule-delete.js" />
+		<resource type="download" name="zephyr-je-schedule.soy.js" location="includes/js/zephyr/schedule/zephyr-je-schedule.soy" />
+        <resource type="download" name="execution.soy.js" location="includes/js/zephyr/execution/execution.soy" />
+        <resource type="download" name="zephyr-execution-field-view.js" location="includes/js/zephyr/execution/execution-field-view.js" />
+		<context>jira.view.issue</context>
+		<context>atl.general</context>
+	</web-resource>
+
+	<web-resource key="zephyr-je-test-summary" name="Zephyr Project Test Summary Resources">
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<resource type="download" name="zephyr-testscreation-chart.js" location="includes/js/zephyr/project/panel/zephyr-testcreation-chart.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<!--<dependency>com.thed.zephyr.je:zephyr-je-flot</dependency> -->
+		<dependency>com.thed.zephyr.je:zephyr-je-d3</dependency>
+        <context>jira.browse.project</context>
+         <resource type="download" name="zephyr-test-summary.css" location="includes/css/zephyr/project/zephyr-test-summary.css">
+            <property key="content-type" value="text/css"/>
+        </resource>
+        <resource type="download" name="test-summary.js" location="includes/js/zephyr/project/panel/test-summary.js">
+            <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="test-summary.soy.js" location="includes/js/zephyr/project/panel/test-summary.soy"/>
+	</web-resource>
+
+	<web-resource key="zephyr-je-test-board" name="Zephyr Test Board Resources">
+		<dependency>jira.webresources:jira-global</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-common</dependency>
+		<dependency>com.atlassian.auiplugin:aui-sidebar</dependency>
+		<dependency>com.atlassian.auiplugin:jquery-ui-other</dependency>
+		<dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <resource type="download" name="zephyr-testboard.css" location="includes/css/zephyr/testboard/testboard.css" />
+        <resource type="download" name="zephyr-je-execute-test.css" location="includes/css/zephyr/execution/zephyr-je-execute-test.css"/>
+        <resource type="download" name="zephyr-test-board-router.js" location="includes/js/zephyr/testboard/zephyr-test-board-router.js"/>
+        <resource type="download" name="zephyr-test-board-header.js" location="includes/js/zephyr/testboard/zephyr-test-board-header.js"/>
+        <resource type="download" name="zephyr-test-board-view.js" location="includes/js/zephyr/testboard/zephyr-test-board-view.js"/>
+        <resource type="download" name="zephyr-test-board-execution.js" location="includes/js/zephyr/testboard/zephyr-test-board-execution.js"/>
+        <resource type="download" name="zephyr-test-board.soy.js" location="includes/js/zephyr/testboard/zephyr-test-board.soy"/>
+        <resource type="download" name="zephyr-test-board-menu.js" location="includes/js/zephyr/testboard/zephyr-test-board-menu.js"/>
+        <resource type="download" name="zephyr-sprint-board-view.js" location="includes/js/zephyr/testboard/sprint/zephyr-sprint-board-view.js"/>
+        <resource type="download" name="zephyr-sprint-board.soy.js" location="includes/js/zephyr/testboard/sprint/zephyr-sprint-board.soy"/>
+        <resource type="download" name="zephyr-issues-board-view.js" location="includes/js/zephyr/testboard/issues/zephyr-issues-board-view.js"/>
+        <resource type="download" name="zephyr-issues-view.js" location="includes/js/zephyr/testboard/issues/zephyr-issues-view.js"/>
+        <resource type="download" name="zephyr-issues-sprints.js" location="includes/js/zephyr/testboard/issues/zephyr-issues-sprints.js"/>
+        <resource type="download" name="zephyr-issues-executions.js" location="includes/js/zephyr/testboard/issues/zephyr-issues-executions.js"/>
+        <resource type="download" name="zephyr-issues-board.soy.js" location="includes/js/zephyr/testboard/issues/zephyr-issues-board.soy"/>
+        <resource type="download" name="zephyr-sprint-cycle-detail-view.js" location="includes/js/zephyr/testboard/sprint/zephyr-sprint-cycle-detail-view.js"/>
+        <resource type="download" name="zephyr-sprint-cycles-view.js" location="includes/js/zephyr/testboard/sprint/zephyr-sprint-cycles-view.js"/>
+        <resource type="download" name="zephyr-sprint-view.js" location="includes/js/zephyr/testboard/sprint/zephyr-sprint-view.js"/>
+        <resource type="download" name="zephyr-sprints-view.js" location="includes/js/zephyr/testboard/sprint/zephyr-sprints-view.js"/>
+        <resource type="download" name="zephyr-execution-field-view.js" location="includes/js/zephyr/execution/execution-field-view.js" />
+        <resource type="download" name="dialog.soy.js" location="includes/js/zephyr/dialog.soy"/>
+        <context>gh-rapid</context>
+        <context>jira.project.sidebar</context>
+	</web-resource>
+
+	<web-resource key="zephyr-je-create-steps" name="Zephyr Test Steps Create Resources">
+        <dependency>com.thed.zephyr.je:zephyr-wiki-editor</dependency>
+        <dependency>com.atlassian.auiplugin:jquery-ui-other</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-restfultable</dependency>
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <transformation extension="less">
+            <transformer key="lessTransformer"/>
+        </transformation>
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <resource type="download" name="zephyr-restfultable-create.js" location="includes/js/zephyr/component/restful/restfultable-create.js"/>
+        <resource type="download" name="zephyr-steps-create.js" location="includes/js/zephyr/testcase/steps-create.js"/>
+        <resource type="download" name="zephyr-create-steps.css" location="includes/css/zephyr/testcase/create-steps.less">
+            <property key="content-type" value="text/css"/>
+        </resource>
+        <context>atl.general</context>
+        <context>atl.admin</context>
+    </web-resource>
+
+    <web-resource key="zephyr-je-copy-teststeps" name="Copy Zephyr teststeps">
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <dependency>com.atlassian.auiplugin:aui-experimental-progress-indicator</dependency>
+		<resource type="download" name="zephyr-copy-teststeps.js" location="includes/js/zephyr/testcase/copy-teststeps.js" />
+		<resource type="download" name="zephyr-copy-teststeps.css" location="includes/css/zephyr/testcase/copy-teststeps.css"/>
+	</web-resource>
+
+<!-- ======================================== WEB RESOURCE END ================================= -->
+<!-- =========================================================================================== -->
+
+
+
+<!-- =========================================================================================== -->
+<!-- =================================== TOP NAV WEB SECTION START ============================= -->
+
+	<!-- key and linkId shouldn't have -, else accesskey fails. Use _ (underscore) instead -->
+    <web-item key="zephyr_je.topnav.tests" name="Zephyr Top Navigation Test Management Menu" section="system.top.navigation.bar"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.name" weight="41">
+		<label key="com.thed.zephyr.je.topnav.tests.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.tooltip"/>
+		<!-- The Below line needs to be commented before going live for next release and the line after that uncommented -->
+        <link linkId="zephyr_je.topnav.tests">/secure/ZephyrWelcome.jspa</link>
+        <conditions type="AND">
+			<condition
+				class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition" />
+			<condition
+				class="com.thed.zephyr.je.conditions.IsProjectPresentAndUserLoggedInCondition" />
+			<condition
+				class="com.thed.zephyr.je.conditions.IsTestManagementEnabledForUserCondition" />
+	   		<condition class="com.thed.zephyr.je.conditions.IsTestManagementEnabledForProjectCondition"/>
+		</conditions>
+    </web-item>
+
+    <web-section key="zephyr-je.topnav.section" name="Zephyr Test Management Menu Main Section" location="zephyr_je.topnav.tests"
+                 i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.section" weight="10">
+		<!--  Only show this for JIRA 5.x and dark features are not visible -->
+		<conditions type="AND">
+			<condition class="com.thed.zephyr.je.conditions.IsPriorToJiraVersion">
+		 		<param name="majorVersion">6</param>
+        		<param name="minorVersion">0</param>
+			</condition>
+			<condition class="com.atlassian.jira.plugin.webfragment.conditions.IsFeatureEnabledCondition" invert="true">
+				<param name="featureKey">com.atlassian.jira.darkfeature.CommonHeader</param>
+			</condition>
+		</conditions>
+	</web-section>
+
+	<!--  For Some reason JIra Top Menu does not create Multiple web sections, below is a hack to do that -->
+    <simple-link-factory key="com.thed.zephyr.je.topnav.tests.dropfactory" name="Link Factory"
+                         section="zephyr_je.topnav.tests/zephyr-je.topnav.section"
+                         i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.dropfactory" weight="20"
+                         lazy="true"
+                         class="com.thed.zephyr.je.factory.DummyLinkFactory"/>
+
+    <web-section key="zephyr-je.topnav.manage.section" name="Manage Zephyr Test Management Dropdown Section" location="zephyr_je.topnav.tests"
+                 i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.manage.section" weight="20">
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-section>
+	<web-item key="zephyr-je.topnav.tests.test.search" name="Search Tests Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.manage.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.test.search" weight="10">
+		<label key="com.thed.zephyr.je.topnav.tests.test.search.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.test.search.tooltip"/>
+		<link linkId="zephyr-je.topnav.tests.test.search">/secure/SearchTest.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserHasVisibleProjectsCondition">
+            <param name="permission">Browse</param>
+        </condition>
+    </web-item>
+    <web-item key="zephyr-je.topnav.tests.create" name="Zephyr Test Creation Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.manage.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.create.name" weight="15">
+		<label key="com.thed.zephyr.je.topnav.tests.create.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.create.tooltip"/>
+        <link linkId="zephyr-je.topnav.tests.create">/secure/CreateTestIssue.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.thed.zephyr.je.conditions.CanCreateJiraIssue"/>
+    </web-item>
+
+
+    <web-section key="zephyr-je.topnav.tests.execution.section" name="Manage test execution Section" location="zephyr_je.topnav.tests"
+                 i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.search.section" weight="30">
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-section>
+    <web-item key="zephyr-je.topnav.tests.plan.cycle" name="Manage Dashboards Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.execution.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.plan.cycle" weight="10">
+		<label key="com.thed.zephyr.je.topnav.tests.plan.cycle.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.plan.cycle.tooltip"/>
+		<link linkId="zephyr-je.topnav.tests.plan.cycle">/secure/PlanTestCycle.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserHasVisibleProjectsCondition">
+            <param name="permission">Browse</param>
+        </condition>
+    </web-item>
+    <web-item key="zephyr-je.topnav.tests.execution.search" name="Manage Dashboards Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.execution.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.execution.search" weight="15">
+		<label key="com.thed.zephyr.je.topnav.tests.execution.search.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.execution.search.tooltip"/>
+        <link linkId="zephyr-je.topnav.tests.execution.search">/secure/ExecutionNavigator.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserHasVisibleProjectsCondition">
+            <param name="permission">Browse</param>
+        </condition>
+    </web-item>
+    <web-item key="zql_manage_filters_link" name="Manage Filters Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.execution.section"
+              i18n-name-key="webfragments.navigation.bar.issues.item.manage.filters" weight="20">
+        <label key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters"/>
+        <tooltip key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters.title"/>
+        <link linkId="manage_zql_filters_link">/secure/ZQLManageFilters.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-item>
+    <web-item key="zephyr-je.topnav.tests.plan.execute" name="Zephyr Top Navigation Execute Tests Item" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.execution.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.plan.execute" weight="25">
+		<label key="com.thed.zephyr.je.topnav.tests.plan.execute.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.plan.execute.tooltip"/>
+		<link linkId="zephyr-je.topnav.tests.plan.execute">/secure/PlanExecuteTest.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserHasVisibleProjectsCondition">
+            <param name="permission">Browse</param>
+        </condition>
+    </web-item>
+
+
+
+    <web-section key="zephyr-je.topnav.tests.summary.section" name="Manage Dashboards Dropdown Section" location="zephyr_je.topnav.tests"
+                 i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.plan.section" weight="40">
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-section>
+
+	<web-item key="zephyr-je.topnav.tests.test.plan.summary" name="Zephyr Top Navigation Test Summary Item" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.summary.section"
+              i18n-name-key="webfragment.zephyr-je.pdb.cycle.test.panel" weight="10">
+		<label key="zephyr-je.pdb.test.summary.label" />
+		<tooltip key="webfragment.zephyr-je.pdb.cycle.test.panel"/>
+		<link linkId="zephyr-je.topnav.tests.test.plan.summary">/secure/TestSummary.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserHasVisibleProjectsCondition">
+            <param name="permission">Browse</param>
+        </condition>
+	</web-item>
+
+     <web-item key="zephyr-je.topnav.tests.test.plan.metrics" name="Zephyr Top Navigation Test Metrics Item" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.summary.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.test.plan.metrics" weight="15">
+		<label key="com.thed.zephyr.je.topnav.tests.test.plan.metrics.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.test.plan.metrics.tooltip"/>
+		<link linkId="zephyr-je.topnav.tests.test.plan.metrics">/secure/DisplayMetricsDashboard.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserHasVisibleProjectsCondition">
+            <param name="permission">Browse</param>
+        </condition>
+    </web-item>
+
+    <web-item key="zephyr-je.topnav.tests.test.plan.traceability" name="Zephyr Top Navigation Traceability Item" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.summary.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.test.plan.traceability" weight="15">
+		<label key="com.thed.zephyr.je.topnav.tests.test.plan.traceability.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.test.plan.traceability.tooltip"/>
+		<link linkId="zephyr-je.topnav.tests.test.plan.traceability">/secure/TraceabilityReport.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserHasVisibleProjectsCondition">
+            <param name="permission">Browse</param>
+        </condition>
+    </web-item>
+
+	<web-section key="zephyr-je.topnav.tests.importer.section" name="Zephyr Test Importer Section" location="zephyr_je.topnav.tests"
+                 i18n-name-key="com.thed.zephyr.je.topnav.tests.test.importer.import.label" weight="50">
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-section>
+
+ 	<web-item key="zephyr-je.topnav.tests.test.importer.import" name="Zephyr Top Navigation Importer Item" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.importer.section"
+              i18n-name-key="com.thed.zephyr.je.topnav.tests.test.importer.import.tooltip" weight="15">
+		<label key="com.thed.zephyr.je.topnav.tests.test.importer.import.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.test.importer.import.tooltip"/>
+		<link linkId="zephyr-je.topnav.tests.test.importer.import">/secure/TestIssueImporter.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserHasVisibleProjectsCondition">
+            <param name="permission">Browse</param>
+        </condition>
+    </web-item>
+
+    <web-section key="zephyr-je.topnav.tests.about.section" name="Zephyr About Section" location="zephyr_je.topnav.tests"
+                 i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.about.section" weight="60">
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-section>
+
+    <web-item key="zephyr-je.topnav.tests.welcome" name="Zephyr Welcome Page Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.about.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.welcome" weight="10">
+		<label key="com.thed.zephyr.je.topnav.tests.welcome.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.welcome.tooltip"/>
+		<styleClass>add-about-link</styleClass>
+		<link linkId="zfj_welcome">/secure/ZephyrWelcome.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-item>
+
+    <web-item key="zephyr-je.topnav.tests.help" name="Zephyr Help Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.about.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.help" weight="10">
+		<label key="com.thed.zephyr.je.topnav.tests.help.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.help.tooltip"/>
+		<styleClass>add-about-link</styleClass>
+		<link>/secure/Help.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-item>
+
+	<web-item key="zephyr-je.topnav.tests.feedback" name="Zephyr Feedback Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.about.section"
+			  i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.feedback" weight="10">
+		<label key="com.thed.zephyr.je.topnav.tests.feedback.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.feedback.tooltip"/>
+		<styleClass>create-about</styleClass>
+		<link linkId="add-feedback"/>
+		<condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+	</web-item>
+
+	<web-item key="zephyr-je.topnav.tests.support" name="Zephyr Contact Support" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.about.section"
+			  i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.support" weight="10">
+		<label key="com.thed.zephyr.je.topnav.tests.support.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.support.tooltip"/>
+		<link linkId="support_link">https://support.getzephyr.com</link>
+		<condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+	</web-item>
+
+    <web-item key="zephyr-je.topnav.tests.about" name="Zephyr About Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.about.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.about" weight="10">
+		<label key="com.thed.zephyr.je.topnav.tests.about.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.about.tooltip"/>
+		<styleClass>create-about</styleClass>
+		<link linkId="add-about"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+    </web-item>
+
+
+	<web-section key="zephyr-je.topnav.tests.buylicense.section" name="Zephyr License Section" location="zephyr_je.topnav.tests"
+                 i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.buylicense.section" weight="70">
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" invert="true"/>
+    </web-section>
+
+	<web-item key="zephyr-je.topnav.tests.buy" name="Zephyr License Link" section="zephyr_je.topnav.tests/zephyr-je.topnav.tests.buylicense.section"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.topnav.tests.buylicense" weight="10">
+		<label key="com.thed.zephyr.je.topnav.tests.buylicense.label" />
+		<tooltip key="com.thed.zephyr.je.topnav.tests.buylicense.tooltip"/>
+		<link>http://www.getzephyr.com/buy/buy_zephyr_for_jira.php</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"/>
+        <condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition"  invert="true"/>
+    </web-item>
+<!-- ======================================== TOP NAV END  ===================================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- ======================================== JIRA AGILE TEST BOARD START =========================== -->
+
+    <web-section location="jira.agile.board.tools" key="zephyr-je.test.board.tool.section" weight="10">
+		<label key="webfragments.navigation.com.thed.zephyr.je.testboard.section"/>
+		<!--<condition class="com.thed.zephyr.je.conditions.IsDarkFeatureEnabled">-->
+			<!--<param name="featureKey" value="zephyr.lab.feature.agileboard"/>-->
+		<!--</condition>-->
+	</web-section>
+
+	<web-panel key="zephyr-je.test.board.tool.webpanel" location="zephyr-je.test.board.tool.section" weight="100">
+		<resource name="view" type="velocity" location="templates/zephyr/agile/board/testboard.vm" />
+		<context-provider class="com.atlassian.jira.plugin.webfragment.contextproviders.DefaultVelocityContextProvider" />
+	</web-panel>
+
+	<web-item section="zephyr-je.test.board.tool.section" key="zephyr-je.test.board.sprint"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.testboard.sprint" weight="20">
+		<label key="com.thed.zephyr.je.testboard.sprint.label" />
+		<tooltip key="com.thed.zephyr.je.testboard.sprint.tooltip"/>
+		<link linkId="zephyr-test-board-sprint" />
+    </web-item>
+
+	<web-item section="zephyr-je.test.board.tool.section" key="zephyr-je.test.board.issues"
+              i18n-name-key="webfragments.navigation.com.thed.zephyr.je.testboard.issues" weight="20">
+		<label key="com.thed.zephyr.je.testboard.issues.label" />
+		<tooltip key="com.thed.zephyr.je.testboard.issues.tooltip"/>
+		<link linkId="zephyr-test-board-issues" />
+    </web-item>
+
+<!-- ======================================== JIRA AGILE TEST BOARD END  ============================ -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- ======================================== PROJECT DASHBOARD START ========================== -->
+
+	<!-- The class defined should implement com.atlassian.jira.plugin.projectpanel.ProjectTabPanel
+		and it may be useful to use the functionality provided by com.atlassian.jira.plugin.projectpanel.impl.GenericProjectTabPanel. -->
+	<project-tabpanel key="pdb_test_panel_section"
+		i18n-name-key="webfragment.zephyr-je.pdb.test.panel" name="Project Dashboard Testcase Summary Panel"
+		class="com.thed.zephyr.je.panel.TestcaseCreationProjectTabPanel">
+		<description>
+			Testcase Creation tab in this project.
+		</description>
+		<label key="zephyr-je.pdb.test.summary.label" />
+		<tooltip key="zephyr-je.pdb.test.summary.tooltip"></tooltip>
+		<!-- this is a number defining the order of all panels. The system panels
+			are 10, 20, 30 and 40. -->
+		<order>35</order>
+		<!-- this template produces the HTML for the panel -->
+		<resource type="velocity" name="view"
+			location="templates/com/thed/zephyr/je/pdb/panel/testsummarypanel.vm" />
+		<!-- this properties files contains i18n keys for the panel -->
+		<resource type="i18n" name="i18n" location="com.thed.zephyr.je.messages.Zephyr" />
+	</project-tabpanel>
+
+	<project-tabpanel key="pdb_cycle_panel_section"
+		i18n-name-key="webfragment.zephyr-je.pdb.cycle.panel" name="Project Dashboard Test Cycle Summary Panel"
+		class="com.thed.zephyr.je.panel.TestcaseExecutionProjectTabPanel">
+		<description>
+			Testcase Cycle tab in this project.
+		</description>
+		<label key="zephyr-je.pdb.cycle.summary.label" />
+		<tooltip key="zephyr-je.pdb.cycle.summary.tooltip"></tooltip>
+		<!-- this is a number defining the order of all panels. The system panels
+			are 10, 20, 30 and 40. -->
+		<order>36</order>
+		<!-- this template produces the HTML for the panel -->
+		<resource type="velocity" name="view"
+			location="templates/com/thed/zephyr/je/pdb/panel/testcyclesummarypanel.vm" />
+		<!-- this properties files contains i18n keys for the panel -->
+		<resource type="i18n" name="i18n" location="com.thed.zephyr.je.messages.Zephyr" />
+	</project-tabpanel>
+
+	<project-tabpanel key="pdb_traceability_panel_section"
+		i18n-name-key="webfragment.zephyr-je.pdb.traceability.panel" name="Project Dashboard Traceability Report Panel"
+		class="com.thed.zephyr.je.panel.TraceabilityProjectTabPanel">
+		<description>
+			Traceability report tab in this project.
+		</description>
+		<label key="zephyr-je.pdb.traceability.label" />
+		<tooltip key="zephyr-je.pdb.traceability.tooltip"></tooltip>
+		<!-- this is a number defining the order of all panels. The system panels
+			are 10, 20, 30 and 40. -->
+		<order>36</order>
+		<!-- this template produces the HTML for the panel -->
+		<resource type="velocity" name="view"
+			location="templates/com/thed/zephyr/je/pdb/panel/traceabilitypanel.vm" />
+		<!-- this properties files contains i18n keys for the panel -->
+		<resource type="i18n" name="i18n" location="com.thed.zephyr.je.messages.Zephyr" />
+	</project-tabpanel>
+
+    <web-resource key="vanilla-grid" name="A grid writter in native javascript">
+      <resource type="download" name="vanilla-grid.css" location="includes/js/component/vanilla-grid/src/css/index.css">
+          <property key="content-type" value="text/css"/>
+        </resource>
+      <resource type="download" name="vanilla-grid-template.js" location="includes/js/component/vanilla-grid/src/js/template.js">
+          <property key="content-type" value="text/javascript" />
+      </resource>
+      <resource type="download" name="vanilla-grid-event.js" location="includes/js/component/vanilla-grid/src/js/event.js">
+          <property key="content-type" value="text/javascript" />
+      </resource>
+      <resource type="download" name="vanilla-grid-utils.js" location="includes/js/component/vanilla-grid/src/js/utils.js">
+          <property key="content-type" value="text/javascript" />
+      </resource>
+      <resource type="download" name="vanilla-grid-index.js" location="includes/js/component/vanilla-grid/src/js/index.js">
+          <property key="content-type" value="text/javascript" />
+      </resource>
+      <context>com.zephyr.je.vanilla-grid</context>
+      <context>jira.view.issue</context>
+  </web-resource>
+
+  <web-resource key="zephyr-project-dashboard-resources-tree" name="Zephyr Project Dashboard Resource With Tree">
+      <dependency>com.thed.zephyr.je:zephyr-je-common</dependency>
+      <dependency>com.atlassian.auiplugin:aui-flag</dependency>
+	  <dependency>com.thed.zephyr.je:walk-through-tour</dependency>
+      <transformation extension="js">
+          <transformer key="jsI18n"/>
+      </transformation>
+
+      <transformation extension="soy">
+          <transformer key="jiraSoyTransformer" />
+      </transformation>
+      <resource type="download" name="jquery.min.js" location="includes/js/component/jquery/jquery.min.js">
+          <property key="content-type" value="text/javascript" />
+      </resource>
+      <resource type="download" name="zephyr-je-bulk-status.soy.js" location="includes/js/zephyr/zql/zephyr-je-bulk-status.soy"/>
+      <resource type="download" name="jstree.js" location="includes/js/component/jstree/jstree.js">
+          <property key="content-type" value="text/javascript" />
+      </resource>
+
+      <resource type="download" name="plan-cycle-summary.js" location="includes/js/zephyr/project/planCycle/plan-cycle-summary.js"/>
+      <resource type="download" name="zephyr_common.js" location="includes/js/zephyr/zephyr_common.js" />
+      <resource type="download" name="throbber.gif" location="includes/css/zephyr/jstree/throbber.gif"/>
+      <resource type="download" name="32px.png" location="includes/css/zephyr/jstree/32px.png"/>
+      <resource type="download" name="style.min.css" location="includes/css/zephyr/jstree/style.min.css"/>
+      <resource type="download" name="tree.css" location="includes/css/zephyr/jstree/tree.css"/>
+      <dependency>com.thed.zephyr.je:zephyr-execution-workflow</dependency>
+  </web-resource>
+
+  <web-resource key="zephyr-in-app-message-resources" name="Zephyr In App Message Resources">
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <resource type="download" name="in_app_message.css" location="includes/css/zephyr/inappmessage/in_app_message.css"/>
+        <resource type="download" name="in_app_message.soy.js" location="includes/js/zephyr/in_app_message.soy"/>
+        <resource type="download" name="in_app_message.js" location="includes/js/zephyr/in_app_message.js">
+          <property key="content-type" value="text/javascript" />
+        </resource>
+  </web-resource>
+
+    <!-- Zephyr Project Dashboard resources -->
+    <web-resource key="zephyr-project-dashboard-resources" name="Zephyr Project Dashboard Resource">
+		<dependency>jira.webresources:select-pickers</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-common</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-defect-hover</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-execution-assignee</dependency>
+        <dependency>com.thed.zephyr.je:zephyr-je-execute-test</dependency>
+		<dependency>com.atlassian.auiplugin:jquery-ui-other</dependency>
+		<dependency>com.atlassian.auiplugin:dialog2</dependency>
+		<dependency>com.atlassian.auiplugin:aui-experimental-progress-indicator</dependency>
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <resource type="download" name="plan-cycle.soy.js" location="includes/js/zephyr/project/planCycle/plan-cycle.soy"/>
+        <resource type="download" name="plan-cycle-execution.js" location="includes/js/zephyr/project/planCycle/plan-cycle-execution.js">
+            <property key="content-type" value="text/javascript"/>
+        </resource>
+        <resource type="download" name="cycle-summary.soy.js" location="includes/js/zephyr/project/cycle-summary.soy"/>
+        <resource type="download" name="zephyr-je-schedule-delete.js" location="includes/js/zephyr/schedule/zephyr-je-schedule-delete.js" />
+        <resource type="download" name="zephyr-je-schedule.soy.js" location="includes/js/zephyr/schedule/zephyr-je-schedule.soy" />
+        <resource type="download" name="zephyr-add-tests-dialog.js" location="includes/js/zephyr/project/add-tests-dialog.js"/>
+        <resource type="download" name="zephyr-project-dashboard.js" location="includes/js/zephyr/project/zephyr-project-dashboard.js"/>
+
+        <resource type="download" name="zephyr_common.js" location="includes/js/zephyr/zephyr_common.js" />
+        <resource type="download" name="zephyr-project-dashboard.css" location="includes/css/zephyr/project/zephyr-project-dashboard.css"/>
+        <context>jira.browse.project</context>
+    </web-resource>
+
+
+	<!-- Zephyr Traceability Report -->
+	<web-resource key="zephyr-je-traceability" name="Zephyr Traceability Report">
+        <dependency>jira.webresources:jira-global</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-url</dependency>
+		<dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+        <resource type="download" name="zephyr_traceability.css" location="includes/css/zephyr/project/zephyr-traceability.css">
+            <property key="content-type" value="text/css"/>
+        </resource>
+		<resource type="download" name="dialog.soy.js" location="includes/js/zephyr/dialog.soy"/>
+		<resource type="download" name="zephyr-test-traceability.soy.js" location="includes/js/zephyr/project/traceability/zephyr-traceability.soy"/>
+		<resource type="download" name="zephyr-traceability.js" location="includes/js/zephyr/project/traceability/zephyr-traceability.js" />
+		<resource type="download" name="zephyr-traceability-report.js" location="includes/js/zephyr/project/traceability/zephyr-traceability-report.js" />
+		<context>jira.browse.project</context>
+	</web-resource>
+	<!-- Zephyr Traceability Report-->
+
+<!-- ======================================== PROJECT DASHBOARD END  =========================== -->
+<!-- =========================================================================================== -->
+
+<!-- ======================= PROJECT CENTRIC VIEW: JIRA 6.4 COMPATIBILITY  ===================== -->
+<!-- =========================================================================================== -->
+
+	<web-resource key="zephyr-project-sidebar" name="Zephyr Project Centric View">
+		<dependency>com.thed.zephyr.je:zephyr-project-dashboard-resources</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-traceability</dependency>
+		<resource type="download" name="zephyr-project-sidebar.css" location="includes/css/zephyr/project/sidebar.css"/>
+        <resource type="download" name="zephyr-project-sidebar-icon.png" location="includes/images/project/zephyr_feather_20x20.png" />
+        <resource type="download" name="zephyr-project-sidebar-customfields-icon.png" location="includes/images/project/zephyr_customfield_20x20.png" />
+        <context>jira.project.sidebar</context>
+	</web-resource>
+
+	<web-resource key="zephyr-project-sidebar-test" name="Zephyr Project Centric View Test Link">
+		<resource type="download" name="zephyr-project-sidebar.js" location="includes/js/zephyr/project/panel/project-sidebar.js"/>
+		<context>gh-rapid</context>
+		<context>jira.project.sidebar</context>
+	</web-resource>
+
+	<web-item key="zephyr-tests-page" i18n-name-key="com.thed.zephyr.je.topnav.tests.label" section="jira.project.sidebar.plugins.navigation" weight="700">
+		<label key="com.thed.zephyr.je.topnav.tests.label"/>
+		<link>/projects/$pathEncodedProjectKey?selectedItem=com.thed.zephyr.je:zephyr-tests-page</link>
+		<param name="iconClass" value="aui-icon-large icon-sidebar-test"/>
+		<condition class="com.thed.zephyr.je.conditions.IsTestManagementEnabledForUserCondition" />
+		<condition class="com.thed.zephyr.je.conditions.IsTestManagementEnabledForProjectCondition"/>
+	</web-item>
+
+
+	<web-panel key="tests-page-key" location="com.thed.zephyr.je:zephyr-tests-page">
+		<resource name="view" type="velocity" location="templates/com/thed/zephyr/je/pdb/panel/projectcentricview.vm"/>
+        <context-provider class="com.thed.zephyr.je.panel.ZephyrProjectNavContextProvider"/>
+		<condition class="com.thed.zephyr.je.conditions.IsTestManagementEnabledForProjectCondition"/>
+	</web-panel>
+
+
+  <!-- Custom Field section -->
+  <web-item key="zephyr-custom-field-project-sidebar" name="Zephyr Custom Fields Project Sidebar" section="jira.project.sidebar.plugins.navigation" i18n-name-key="zephyr.je.admin.plugin.test.section.item.zephyr.custom.name"  weight="700">
+    <label key="zephyr.je.admin.plugin.test.section.item.zephyr.custom.label"/>
+    <link>/projects/$pathEncodedProjectKey?selectedItem=com.thed.zephyr.je:zephyr-custom-field-project-sidebar</link>
+    <param name="iconClass" value="aui-icon-large icon-sidebar-test-customfields"/>
+    <condition class="com.thed.zephyr.je.conditions.IsTestManagementEnabledForUserCondition" />
+		<condition class="com.thed.zephyr.je.conditions.IsTestManagementEnabledForProjectCondition"/>
+  </web-item>
+
+  <web-panel key="zephyr-custom-field-key" location="com.thed.zephyr.je:zephyr-custom-field-project-sidebar">
+    <resource name="view" type="velocity" location="templates/com/thed/zephyr/je/pdb/panel/customfieldview.vm"/>
+    <context-provider class="com.thed.zephyr.je.panel.ZephyrProjectNavContextProviderCustomField"/>
+		<condition class="com.thed.zephyr.je.conditions.IsTestManagementEnabledForProjectCondition"/>
+  </web-panel>
+
+	<!-- Project reports section begins -->
+	<web-resource key="zephyr-reports-resources" name="Zephyr Report Style Resources">
+		<dependency>com.thed.zephyr.je:zephyr-je-url</dependency>
+		<transformation extension="js">
+			<transformer key="jsI18n"/>
+		</transformation>
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+		<dependency>com.thed.zephyr.je:zephyr-je-d3</dependency>
+		<resource type="download" name="test-reports.css" location="/css/reports.css"/>
+		<resource type="download" name="test-report.js" location="/includes/js/reports/test-report.js"/>
+		<resource type="download" name="test-execution-report.js" location="/includes/js/reports/test-execution-report.js"/>
+		<resource type="download" name="test-burndown-report.js" location="/includes/js/reports/test-burndown-report.js"/>
+		<resource type="download" name="top-defects-report.js" location="/includes/js/reports/top-defects-report.js"/>
+		<resource type="download" name="test-execution-parser.js" location="/includes/js/reports/test-execution-parser.js"/>
+		<context>com.atlassian.jira.project.reports.page</context>
+	</web-resource>
+
+   	<web-resource key="zephyr-je-tests-importer" name="Tests Importer Resources">
+		<dependency>com.atlassian.auiplugin:jquery-ui-other</dependency>
+		<dependency>com.atlassian.auiplugin:aui-select2</dependency>
+		<dependency>com.atlassian.auiplugin:aui-inline-dialog2</dependency>
+
+		<dependency>com.thed.zephyr.je:zephyr-je-traceability</dependency>
+		<dependency>com.atlassian.auiplugin:form-validation</dependency>
+		<transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+		<transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+
+        <resource type="download" name="zephyr-importer-xml-sample.xml" location="includes/files/Importer_Sample_Issues.xml">
+            <property key="content-type" value="application/xml" />
+        </resource>
+		<resource type="download" name="importer.soy.js" location="includes/js/zephyr/project/importer/importer.soy"/>
+		<resource type="download" name="cycle-summary.soy.js" location="includes/js/zephyr/project/cycle-summary.soy"/>
+         <resource type="download" name="importer.js" location="includes/js/zephyr/project/importer/importer.js"/>
+         <resource type="download" name="ico_zephyr_issuetype.png" location="includes/images/icons/ico_zephyr_issuetype.png"/>
+         <resource type="download" name="importer.css" location="includes/css/zephyr/project/importer/importer.css">
+            <property key="content-type" value="text/css" />
+        </resource>
+ 	</web-resource>
+	<report key="testcase-execution-report" name="Test Execution" i18n-name-key="je.gadget.testcase.execution.report.title"
+			class="com.thed.zephyr.je.reports.ZephyrTestReport">
+		<description key="je.gadget.testcase.execution.description">
+			Test execution for a given project and version
+		</description>
+		<category key="other"/>
+		<thumbnail cssClass="zreport icon-testcase-execution-report"/>
+		<label key="je.gadget.testcase.execution.report.title" />
+
+		<resource name="view" type="velocity" location="/templates/reports/zephyr-test-report.vm"/>
+
+		<properties>
+			<property>
+				<key>projectId</key>
+				<name>je.gadget.common.project.label</name>
+				<type>select</type>
+				<values class="com.thed.zephyr.je.reports.ZephyrProjectValuesGenerator"/>
+			</property>
+			<property>
+				<key>versionId</key>
+				<name>je.gadget.common.version.label</name>
+				<type>select</type>
+				<values class="com.thed.zephyr.je.reports.ZephyrVersionValuesGenerator"/>
+			</property>
+			<property>
+				<key>groupFld</key>
+				<name>je.gadget.common.groupFld.label</name>
+				<type>select</type>
+				<values>
+					<value>
+						<key>cycle</key>
+						<value>je.gadget.common.cycle.label</value>
+					</value>
+					<value>
+						<key>user</key>
+						<value>je.gadget.common.user.label</value>
+					</value>
+					<value>
+						<key>component</key>
+						<value>je.gadget.common.component.label</value>
+					</value>
+					<value>
+						<key>sprint-cycle</key>
+						<value>je.gadget.common.sprint.cycle.label</value>
+					</value>
+				</values>
+			</property>
+			<property>
+				<key>showOthers</key>
+				<name>je.gadget.common.showOthers.label</name>
+				<type>checkbox</type>
+				<values>
+					<value>
+						<key>showOthers</key>
+						<value>true</value>
+					</value>
+				</values>
+			</property>
+		</properties>
+	</report>
+
+    <!--Burndown Chart Report section starts-->
+    <report key="test-burndown-report" name="Test Execution Burndown" i18n-name-key="je.gadget.unexecuted.schedules.title"
+            class="com.thed.zephyr.je.reports.ZephyrTestReport">
+        <description key="je.gadget.unexecuted.schedules.description">
+            Displays rate of test execution, # of unexecuted tests and expected completion date
+        </description>
+        <category key="other"/>
+        <thumbnail cssClass="zreport icon-testcase-execution-burndown-report"/>
+        <label key="je.gadget.unexecuted.schedules.title" />
+
+        <resource name="view" type="velocity" location="/templates/reports/zephyr-test-report.vm"/>
+
+        <properties>
+			<property>
+				<key>projectId</key>
+				<name>je.gadget.common.project.label</name>
+				<type>select</type>
+				<values class="com.thed.zephyr.je.reports.ZephyrProjectValuesGenerator"/>
+			</property>
+            <property>
+                <key>versionId</key>
+                <name>je.gadget.common.version.label</name>
+                <type>select</type>
+                <values class="com.thed.zephyr.je.reports.ZephyrVersionValuesGenerator"/>
+            </property>
+            <property>
+                <key>sprintId</key>
+                <name>je.gadget.common.sprint.label</name>
+                <type>select</type>
+                <values class="com.thed.zephyr.je.reports.ZephyrSprintValuesGenerator"/>
+            </property>
+            <property>
+                <key>cycle</key>
+                <name>je.gadget.common.cycle.label</name>
+                <type>select</type>
+                <values class="com.thed.zephyr.je.reports.ZephyrCycleValuesGenerator"/>
+            </property>
+        </properties>
+    </report>
+    <!--Burndown Chart Report section ends-->
+
+    <!--Top Defects Report section starts-->
+    <report key="test-topdefects-report" name="Top Defects" i18n-name-key="je.gadget.top.defects.title"
+            class="com.thed.zephyr.je.reports.ZephyrTestReport">
+        <description key="je.gadget.top.defects.description">
+            Displays a list of defects that impact the most number of Zephyr tests
+        </description>
+        <category key="other"/>
+        <thumbnail cssClass="zreport icon-top-defects-report"/>
+        <label key="je.gadget.top.defects.title" />
+
+        <resource name="view" type="velocity" location="/templates/reports/zephyr-test-report.vm"/>
+
+        <properties>
+			<property>
+				<key>projectId</key>
+				<name>je.gadget.common.project.label</name>
+				<type>select</type>
+				<values class="com.thed.zephyr.je.reports.ZephyrProjectValuesGenerator"/>
+			</property>
+            <property>
+                <key>versionId</key>
+                <name>je.gadget.common.version.label</name>
+                <type>select</type>
+                <values class="com.thed.zephyr.je.reports.ZephyrVersionValuesGenerator"/>
+            </property>
+            <property>
+                <key>defectsCount</key>
+                <name>je.gadget.top.defects.dropDown.label</name>
+                <type>select</type>
+				<values>
+					<value>
+						<key>5</key>
+						<value>5</value>
+					</value>
+					<value>
+						<key>10</key>
+						<value>10</value>
+					</value>
+					<value>
+						<key>15</key>
+						<value>15</value>
+					</value>
+				</values>
+            </property>
+            <property>
+                <key>pickStatus</key>
+                <name>je.gadget.top.defects.testStatus.label</name>
+                <type>multiselect</type>
+                <values class="com.thed.zephyr.je.reports.ZephyrStatusValuesGenerator"/>
+                <default>1</default>
+            </property>
+        </properties>
+    </report>
+    <!--Top Defects Report section ends-->
+
+<!-- =================== PROJECT CENTRIC VIEW: JIRA 6.4 COMPATIBILITY ENDS ===================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- ======================================= VIEW ISSUE START ================================== -->
+	<web-section key="opsbar-zephyr-je-manage-top" name="Plan and Execute Cycle Section"
+		location="view.issue.opsbar" weight="50">
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+	</web-section>
+
+	<web-section key="opsbar-zephyr-je-manage-plan-top" name="Map and Assign Section"
+		location="view.issue.opsbar" weight="35">
+		<label key="opsbar-zephyr-je-manage-top.more.operations" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+	</web-section>
+
+	<web-section key="opsbar-zephyr-je-manage-plan" name="Map and Assign Section"
+		location="opsbar-zephyr-je-manage-plan-top" weight="15">
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+	</web-section>
+
+    <web-item key="clone-issue" i18n-name-key="webfragments.view.issue.opsbar.operations.ops.clone" name="Clone this issue"
+    	section="opsbar-zephyr-je-manage-plan" weight="20">
+           <label key="cloneissue.operation"/>
+           <tooltip key="admin.issue.operations.plugin.clone.issue.name"/>
+           <styleClass>issueaction-clone-issue</styleClass>
+           <link linkId="zfj-clone-issue">
+               /secure/CloneIssueDetails!default.jspa?id=${issueId}
+           </link>
+           <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition">
+               <param name="permission">create</param>
+           </condition>
+    </web-item>
+
+     <web-item key="link-issue" i18n-name-key="webfragments.view.issue.opsbar.operations.ops.link" name="Link this subtask"
+     	section="opsbar-zephyr-je-manage-plan" weight="30">
+         <label key="issue.field.link"/>
+         <tooltip key="admin.issue.operations.plugin.link.issue.name"/>
+         <styleClass>issueaction-link-issue</styleClass>
+         <context-provider class="com.thed.zephyr.je.ui.issue.IssueLinkURLJiraContextProvider" />
+         <link linkId="zfj-link-issue">
+             $linkURL
+         </link>
+         <condition class="com.atlassian.jira.plugin.webfragment.conditions.LinkingEnabledCondition"/>
+         <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasLinkTypesAvailableCondition"/>
+         <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition">
+             <param name="permission">link</param>
+         </condition>
+     </web-item>
+
+	<web-section key="zephyr-je-addtocycle.section" name="Zephyr Operations Add to Cycle Section"
+		location="opsbar-zephyr-je-manage-plan-top" i18n-name-key="webfragments.view.issue.opsbar.operations.addcycle"
+		weight="16">
+		<label key="opsbar.more.transitions" />
+	</web-section>
+
+	<web-item key="zephyr-je-add-to-cycle" name="Add this issue to Cycle"
+		section="zephyr-je-addtocycle.section" i18n-name-key="webfragments.view.issue.opsbar.operations.add.to.cycle"
+		weight="1">
+		<label key="zephyr-je.viewissue.addtocycle" />
+		<tooltip key="webfragments.view.issue.opsbar.operations.add.to.cycle" />
+		<styleClass>add-cycle-dialog</styleClass>
+		<link linkId="viewissue-add-cycle">
+			/secure/AddToCycle!AddToCycle.jspa?id=${issueId}
+		</link>
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsProjectPresentAndUserLoggedInCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+	</web-item>
+
+	<web-item key="create-subtask" name="Create Sub-Task"
+			  section="zephyr-je-addtocycle.section" i18n-name-key="createsubtaskissue.title"
+			  weight="2">
+		<label key="createsubtaskissue.operation" />
+		<tooltip key="createsubtaskissue.title" />
+		<styleClass>issueaction-create-subtask</styleClass>
+		<link linkId="zfj-create-subtask">
+			/secure/CreateSubTaskIssue!default.jspa?parentIssueId=${issueId}
+		</link>
+		<condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+	</web-item>
+
+    <web-section key="zephyr-je-delete-issue" name="Delete"
+        location="opsbar-zephyr-je-manage-plan-top" weight="19">
+		<condition class="com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition">
+			<param name="permission">delete</param>
+		</condition>
+		<condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+        <condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+    </web-section>
+
+    <web-item key="delete-issue" name="Delete Issue"
+        section="zephyr-je-delete-issue" i18n-name-key="deleteissue.submitname"
+        weight="1">
+        <label key="deleteissue.submitname" />
+        <tooltip key="admin.issue.operations.plugin.delete.issue.name" />
+        <styleClass>issueaction-delete-issue</styleClass>
+        <link linkId="zfj-delete-defect">
+            /secure/DeleteIssue!default.jspa?id=${issueId}
+        </link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition">
+			<param name="permission">delete</param>
+		</condition>
+        <condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+        <condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+    </web-item>
+
+    <web-section key="zephyr-je-copy-test-steps" name="Copy Zephyr Test Steps"
+        location="opsbar-zephyr-je-manage-plan-top" weight="19">
+		<condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+        <condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+    </web-section>
+
+    <web-item key="copy-test-steps" name="Copy Zephyr Test Steps"
+        section="zephyr-je-copy-test-steps" i18n-name-key="zephyr-je.copyteststeps.submitname"
+        weight="1">
+        <label key="zephyr-je.copyteststeps.submitname" />
+        <tooltip key="zephyr-je.copyteststeps.submitname" />
+        <styleClass>issueaction-copy-test-steps</styleClass>
+        <link linkId="zfj-copy-test-steps">
+            /secure/CopyTestStep!default.jspa?id=${issueId}
+        </link>
+        <condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+        <condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+    </web-item>
+
+	<web-section key="zephyr-je-attachments" name="Zephyr Operations Attachments Section"
+		location="opsbar-zephyr-je-manage-plan-top" i18n-name-key="webfragments.view.issue.opsbar.operations.attachments"
+		weight="17">
+		<label key="opsbar.more.transitions" />
+	</web-section>
+
+	<web-item key="attach-file" name="Attach file to this issue"
+		section="zephyr-je-attachments" i18n-name-key="webfragments.view.issue.opsbar.operations.attachments.file"
+		weight="1">
+		<label key="attachfile.title" />
+		<tooltip key="admin.issue.operations.plugin.attach.file.name" />
+		<styleClass>issueaction-attach-file</styleClass>
+		<link linkId="zfj-attach-file">
+			/secure/AttachFile!default.jspa?id=${issueId}
+		</link>
+		<condition
+			class="com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+	</web-item>
+
+	<web-item key="attach-screenshot-html5" name="Attach screenshot to this issue"
+		section="zephyr-je-attachments"
+		i18n-name-key="webfragments.view.issue.opsbar.operations.attachments.screenshot"
+		weight="2">
+		<label key="attachscreenshot.title" />
+		<tooltip key="admin.issue.operations.plugin.attach.screenshot.name" />
+		<styleClass>issueaction-attach-screenshot-html5</styleClass>
+		<link linkId="zfj-attach-screenshot-html5">
+			<![CDATA[/secure/ShowAttachScreenshotFormAction!default.jspa?id=${issueId}]]>
+		</link>
+
+		<condition
+			class="com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition" />
+		<context-provider
+			class="com.atlassian.jira.plugin.webfragment.contextproviders.SessionIdContextProvider" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+        <condition class="com.thed.zephyr.je.conditions.IsPriorToJiraVersion" invert="true">
+            <param name="majorVersion">6</param>
+            <param name="minorVersion">3</param>
+        </condition>
+	</web-item>
+
+    <web-item key="attach-screenshot-old" name="Attach screenshot to this issue"
+		section="zephyr-je-attachments"
+		i18n-name-key="webfragments.view.issue.opsbar.operations.attachments.screenshot"
+		weight="2">
+		<label key="attachscreenshot.title" />
+		<tooltip key="admin.issue.operations.plugin.attach.screenshot.name" />
+		<styleClass>issueaction-attach-screenshot</styleClass>
+		<link linkId="zfj-attach-screenshot-old">
+			/secure/AttachScreenshot!default.jspa?id=${issueId}
+		</link>
+		<condition
+			class="com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition" />
+		<context-provider
+			class="com.atlassian.jira.plugin.webfragment.contextproviders.SessionIdContextProvider" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+        <condition class="com.thed.zephyr.je.conditions.IsPriorToJiraVersion">
+            <param name="majorVersion">6</param>
+            <param name="minorVersion">3</param>
+        </condition>
+	</web-item>
+
+	<web-section key="zephyr-je-tests-comments" name="Zephyr Operations Comment Section"
+		location="opsbar-zephyr-je-manage-plan-top" i18n-name-key="webfragments.view.issue.opsbar.operations.attachments"
+		weight="18" />
+	<web-item key="comment-issue"
+		i18n-name-key="webfragments.view.issue.opsbar.operations.top.comment"
+		name="Comment on this issue" section="zephyr-je-tests-comments" weight="1">
+		<label key="comment.update.title" />
+		<tooltip key="admin.issue.operations.plugin.comment.issue.name" />
+		<styleClass>conjoined issueaction-comment-issue</styleClass>
+		<link linkId="comment-issue">
+			/secure/AddComment!default.jspa?id=${issueId}
+		</link>
+		<condition
+			class="com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition">
+			<param name="permission">comment</param>
+		</condition>
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+	</web-item>
+<!--
+    <web-section key="zephyr-je-opsbar-transitions" name="Ops Bar Transitions Section" location="view.issue.opsbar"
+      		i18n-name-key="webfragments.view.issue.opsbar.transitions.group" weight="40">
+        <label key="opsbar.more.transitions"/>
+        <condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+		<condition class="com.thed.zephyr.je.conditions.IsWorkFlowEnabledCondition" />
+    </web-section>
+
+
+    <web-section key="zephyr-je-transitions-all" name="Ops Bar All Transitions Section" location="zephyr-je-opsbar-transitions"
+    	i18n-name-key="webfragments.view.issue.opsbar.transitions.all" weight="70">
+    	<condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+    </web-section>
+
+
+   <simple-link-factory key="opsbar_transitions_factory" name="View Issue Ops Bar Transitions Factory"
+                             section="zephyr-je-transitions-all"
+                             i18n-name-key="webfragments.view.issue.opsbar.transitions.all.factory" weight="10"
+                             lazy="false"
+                             class="com.thed.zephyr.je.factory.ZTransitionLinkFactory"/>
+
+-->
+	<web-section key="zephyr-je-test-execute" name="Zephyr Execute Cycle Operations Section"
+		location="opsbar-zephyr-je-manage-top" i18n-name-key="webfragments.view.issue.opsbar.zephyr-je.test.execute"
+		weight="460" />
+	<web-item key="zephyr-je-test-execute-cycle" name="Execute Test Cycle Link"
+		section="zephyr-je-test-execute" weight="1">
+		<label key="zephyr-je.viewissue.execute" />
+		<tooltip key="zephyr-je.viewissue.execute.title"/>
+		<styleClass>viewissue-add-execute</styleClass>
+		<link linkId="zephyr-je-add-execute">
+			/secure/AddExecute!AddExecute.jspa?id=${issue.id}
+		</link>
+		<condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsProjectPresentAndUserLoggedInCondition" />
+		<condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition" />
+	</web-item>
+
+	<web-panel key="view_issue_steps_section" location="atl.jira.view.issue.left.context" weight="201">
+		<context-provider class="com.thed.zephyr.je.ui.issue.ZephyrTestDescriptionBlockContextProvider" />
+		<resource name="view" type="velocity" location="templates/zephyr/issue/testdetailsblock.vm" />
+		<label key="view.issue.steps.section.heading" />
+		<condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+	</web-panel>
+
+	<web-panel key="view_issue_execution_section" location="atl.jira.view.issue.left.context" weight="202">
+		<context-provider class="com.thed.zephyr.je.ui.issue.ZephyrTestSchedulesDescriptionContextProvider" />
+		<resource name="view" type="velocity" location="templates/zephyr/issue/testscheduleblock.vm" />
+		<label key="view.issue.execution.section.heading" />
+		<condition
+			class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" />
+	</web-panel>
+
+<!-- ======================================= VIEW ISSUE END ==================================== -->
+<!-- =========================================================================================== -->
+<!-- ======================================= VIEW ISSUE ZEPHYR TEST CREATE STARTS==================================== -->
+<!-- =========================================================================================== -->
+
+
+    <web-section key="opsbar-zephyr-je-create-test" name="Create Test"
+                 location="opsbar-operations" weight="25">
+        <condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" invert="true"/>
+        <condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition"/>
+        <condition class="com.thed.zephyr.je.conditions.IsShowZephyrTestToNonIssueTypeCondition" />
+        <resource type="download" name="zephyr_testcase.js" location="includes/js/zephyr/testcase/zephyr_testcase.js">
+            <property key="content-type" value="text/javascript"/>
+        </resource>
+    </web-section>
+
+    <web-item key="zephyr-je-create-test" name="Create Test case Link"
+              section="opsbar-zephyr-je-create-test" weight="1">
+        <label key="zephyr-je.createtest.label"/>
+        <tooltip key="zephyr-je.createtest.label"/>
+        <styleClass>create-issue</styleClass>
+        <param name="issueType">Test</param>
+        <param name="parentIssueId">${issue.id}</param>
+        <link linkId="zephyr-create-test">
+            /secure/CreateZephyrTest!default.jspa?parentIssueId=${issue.id}
+        </link>
+        <condition class="com.thed.zephyr.je.conditions.IsIssueTypeTestCondition" invert="true"/>
+        <condition
+                class="com.thed.zephyr.je.conditions.IsProjectPresentAndUserLoggedInCondition"/>
+        <condition class="com.thed.zephyr.je.conditions.IsLicenseValidCondition"/>
+    </web-item>
+
+<!-- ======================================= VIEW ISSUE ZEPHYR TEST CREATE ENDS==================================== -->
+<!-- =========================================================================================== -->
+
+
+<!-- ======================================= TOP NAV STARTS==================================== -->
+<!-- =========================================================================================== -->
+
+    <top-navigation key="zfj-navigation-top" i18n-name-key="reference.top.navigation"
+                    name="Top Navigation Bar for ZFJ"
+                    class="com.thed.zephyr.je.plugin.navigation.ZFJPluggableTopNavigation" state='enabled'>
+        <resource type="velocity" name="view" location="templates/zephyr/common/topnav.vm"/>
+        <order>5</order>
+    </top-navigation>
+
+	<web-resource key="zephyr-wallboard-resource" name="Zephyr Wallboard Resource">
+		<resource type="download" name="zephyr-wallboard.js" location="includes/js/zephyr/zephyr-wallboard.js"/>
+        <resource type="download" name="domparser.js" location="includes/js/component/polyfill/domparser.js"/>
+		<context>wallboard</context>
+	</web-resource>
+
+<!-- =========================================================================================== -->
+<!-- ======================================= TOP NAV END ==================================== -->
+
+
+<!-- =========================================================================================== -->
+<!-- ====================================== JIRA FOOTER END ==================================== -->
+	<jira-footer key="standard-footer" i18n-name-key="footer.plugin.standard.name" name="Standard Footer"
+            class="com.thed.zephyr.je.plugin.navigation.EvalFooter">
+        <resource type="velocity" name="view" location="templates/zephyr/footer/footer_trial.vm"/>
+        <order>7</order>
+    </jira-footer>
+<!-- ====================================== JIRA FOOTER END ==================================== -->
+<!-- =========================================================================================== -->
+
+
+<!-- =========================================================================================== -->
+<!-- ================================== EXECUTION NAVIGATOR START ============================== -->
+
+<!-- ================================== EXECUTION NAVIGATOR START ============================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- =================================== REST ENDPOINT START =================================== -->
+
+ 	<rest key="zephyr-je-rest" name="Zephyr Test Management" path="/zephyr" version="1.0">
+        <description>Provides the REST endPoints used in test management application.</description>
+    </rest>
+
+ 	<rest key="zephyr-je-zapi-rest" name="ZAPI API" path="/zapi" version="1.0">
+        <description>Provides the REST endPoints used in test management application.</description>
+    </rest>
+<!-- ==================================== REST ENDPOINT END ==================================== -->
+<!-- =========================================================================================== -->
+
+
+<!-- =========================================================================================== -->
+<!-- =================================== SERVLET DEFINITION START =================================== -->
+
+ <servlet name="View Schedule Attachment" key="viewServlet"
+             class="com.thed.zephyr.je.attachment.ViewAttachmentServlet">
+        <description>View Schedule Attachment</description>
+        <url-pattern>/schedule/viewAttachment</url-pattern>
+ </servlet>
+<servlet name="Export File Attachment" key="exportServlet"
+           class="com.thed.zephyr.servlet.ExportServlet">
+      <description>Export File Attachment</description>
+      <url-pattern>/export/exportAttachment</url-pattern>
+  </servlet>
+<servlet name="Export SupportFile Attachment" key="exportSupportServlet"
+           class="com.thed.zephyr.servlet.ExportSupportServlet">
+      <description>Export File Attachment</description>
+      <url-pattern>/export/exportSupportAttachment</url-pattern>
+  </servlet>
+<!-- ==================================== SERVLET DEFINITION END ==================================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- =================================== TRANSFORMATION START =================================== -->
+<web-resource-transformer key="zeph-key" class="com.thed.zephyr.je.transformer.ZephyrKeyTransformer" />
+<!-- ==================================== TRANSFORMATION END ==================================== -->
+<!-- =========================================================================================== -->
+
+
+<!-- =========================================================================================== -->
+<!-- ============================== ACTIVE OBJECTS AND SERVICES START=========================== -->
+
+	<!-- ==================== TransactionalAnnotationProcessor ==================== -->
+	<component key="tx-processor" name="Transactional Annotation Processor"
+	    class="com.atlassian.activeobjects.external.TransactionalAnnotationProcessor">
+	    <decription>Processes @Transactional annotations.</decription>
+	</component>
+	<component key="columnLayoutManager" name="Column Layout Manager" class="com.thed.zephyr.je.service.impl.ColumnLayoutItemManagerImpl" />
+	<component key="cycle-manager" name="Cycle Service" class="com.thed.zephyr.je.service.impl.CycleManagerImpl">
+		<interface>com.thed.zephyr.je.service.CycleManager</interface>
+	</component>
+	<!--<component key="my-manager" name="My Service" class="com.thed.zephyr.je.service.impl.MyManagerImpl">-->
+		<!--<interface>com.thed.zephyr.je.service.MyManager</interface>-->
+	<!--</component>-->
+	<component key="teststep-manager" name="Teststep Service" class="com.thed.zephyr.je.service.impl.TeststepManagerImpl" />
+	<component key="testcase-manager" name="Testcase Service" class="com.thed.zephyr.je.service.impl.TestcaseManagerImpl" />
+	<component key="indexSearchProvider" name="Index Search Provider" class="com.thed.zephyr.je.index.IndexSearchProviderImpl" />
+	<component key="schedule-manager" name="Schedule Service" class="com.thed.zephyr.je.service.impl.ScheduleManagerImpl" >
+		<interface>com.thed.zephyr.je.service.ScheduleManager</interface>
+	</component>
+	<component key="stepresult-manager" name="Step Result Service" class="com.thed.zephyr.je.service.impl.StepResultManagerImpl" >
+		<interface>com.thed.zephyr.je.service.StepResultManager</interface>
+	</component>
+	<component key="zattachment-manager" name="Attachment Service" class="com.thed.zephyr.je.service.impl.AttachmentManagerImpl" >
+		<interface>com.thed.zephyr.je.service.AttachmentManager</interface>
+	</component>
+	<component key="zattachmentManager" name="Attachment Manager" class="com.thed.zephyr.je.attachment.ZAttachmentManagerImpl" >
+		<interface>com.thed.zephyr.je.attachment.ZAttachmentManager</interface>
+	</component>
+	<component key="TemporaryAttachmentsMonitor-Locator" name="TemporaryAttachmentsMonitorLocator Service"  class="com.thed.zephyr.je.attachment.ZDefaultTemporaryAttachmentsMonitorLocator" />
+	<component key="ZTemporaryAttachmentsMonitor-1" name="ZTemporaryAttachmentsMonitor Service" class="com.thed.zephyr.je.attachment.ZTemporaryAttachmentsMonitor" />
+	<component key="MimeSniffingKit-1" name="MimeSniffingKit Service" class="com.thed.zephyr.je.attachment.MimeSniffingKit" />
+	<component key="ZWebAttachmentManager-1" name="ZDefaultWebAttachmentManager Service" class="com.thed.zephyr.je.attachment.ZDefaultWebAttachmentManager" />
+	<component key="ZAttachmentHelper-1" name="ZAttachmentHelper Service" class="com.thed.zephyr.je.attachment.ZAttachmentHelper" />
+	<component key="zephyr-component-accesor" name="Zephyr Component Accessor" class="com.thed.zephyr.util.ZephyrComponentAccessor" />
+	<component key="schedule-index-adapter" name="Schedule Index Adapter" class="com.thed.zephyr.je.index.ScheduleIndexPathAdapter">
+			<interface>com.thed.zephyr.je.index.ScheduleIndexDirectoryFactory</interface>
+	</component>
+	<component key="schedule-index-manager" name="Schedule Index Manager" class="com.thed.zephyr.je.index.ScheduleIndexManagerImpl" />
+	<component key="schedule-indexer" name="Schedule Indexer" class="com.thed.zephyr.je.index.ScheduleIndexerManager" />
+
+	<!-- ZAPI Module service Start -->
+	<component key="zapiModuleService" name="ZAPI Module Service" class="com.thed.zephyr.je.service.impl.ZAPIModuleServiceImpl" />
+	<!--  ZAPI Module service End -->
+
+	<!-- ZEPHYR LOGGER -->
+	<component key="zephyr-logger" name="Zephyr Logger" class="com.thed.zephyr.util.logger.ZephyrLogger" />
+
+	<component key="folder-manager" name="Folder Service" class="com.thed.zephyr.je.service.impl.FolderManagerImpl" >
+		<interface>com.thed.zephyr.je.service.FolderManager</interface>
+	</component>
+
+	<component key="datacenter-manager" name="Folder Service" class="com.thed.zephyr.je.service.impl.DatacenterManagerImpl" >
+		<interface>com.thed.zephyr.je.service.DatacenterManager</interface>
+	</component>
+
+    <component key="zephyrcf-manager" name="Zephyr Custom Field Service" class="com.thed.zephyr.je.service.impl.ZephyrCustomFieldManagerImpl" >
+        <interface>com.thed.zephyr.je.service.ZephyrCustomFieldManager</interface>
+    </component>
+
+	<!-- -->
+    <component key="customfield-value-manager" name="Zephyr Custom Field Value Service" class="com.thed.zephyr.je.service.impl.CustomFieldValueManagerImpl" >
+        <interface>com.thed.zephyr.je.service.CustomFieldValueManager</interface>
+    </component>
+
+	<!-- ZQL COMPONENT START -->
+	<component key="predicateRegistry" name="Predicate registry" class="com.thed.zephyr.je.zql.core.PredicateRegistryImpl" />
+	<component key="autocompleteJSONGenerator" name="AutoComplete JSON Generator" class="com.thed.zephyr.je.zql.core.AutoCompleteJsonGeneratorImpl" />
+	<component key="queryCache" name="Query Cache" class="com.thed.zephyr.je.zql.core.QueryCacheImpl" />
+	<component key="queryRegistry" name="Query Registry" class="com.thed.zephyr.je.zql.core.QueryRegistryImpl" />
+	<component key="validatorRegistry" name="Validator Registry" class="com.thed.zephyr.je.zql.core.DefaultValidatorRegistry" />
+	<component key="projectClauseContextFactory" name="Project Clause Context Factory" class="com.thed.zephyr.je.zql.factory.ProjectClauseContextFactory" />
+    <component key="executionStatusValidator" name="Execution Status Validator" class="com.thed.zephyr.je.zql.validator.ExecutionStatusValidator" />
+    <component key="executedByValidator" name="Executed By Validator" class="com.thed.zephyr.je.zql.validator.ExecutedByValidator" />
+    <component key="executionDateValidator" name="Execution Date Validator" class="com.thed.zephyr.je.zql.validator.ExecutionDateValidator" />
+    <component key="dateCreatedValidator" name="Execution Date Validator" class="com.thed.zephyr.je.zql.validator.DateCreatedValidator" />
+    <component key="scheduleValidator" name="Schedule Validator" class="com.thed.zephyr.je.zql.validator.ScheduleValidator" />
+    <component key="cycleValidator" name="Cycle Validator" class="com.thed.zephyr.je.zql.validator.CycleValidator" />
+    <component key="folderValidator" name="Folder Validator" class="com.thed.zephyr.je.zql.validator.FolderValidator" />
+    <component key="fixVersionValidator" name="Fix Version Validator" class="com.thed.zephyr.je.zql.validator.FixVersionValidator" />
+	<component key="summaryValidator" name="Test Summary Validator" class="com.thed.zephyr.je.zql.validator.SummaryValidator" />
+	<component key="labelValidator" name="Test Label Validator" class="com.thed.zephyr.je.zql.validator.LabelValidator" />
+	<component key="issueValidator" name="Issue/DefectKey Validator" class="com.thed.zephyr.je.zql.validator.IssueValidator" />
+	<component key="customFieldStringValidator" name="Zephyr Custom Field String Validator" class="com.thed.zephyr.je.zql.validator.CustomFieldStringValidator" />
+	<component key="customFieldNumberValidator" name="Zephyr Custom Field String Validator" class="com.thed.zephyr.je.zql.validator.CustomFieldNumberValidator" />
+	<component key="customFieldDateValidator" name="Custom Field Date Validator" class="com.thed.zephyr.je.zql.validator.CustomFieldDateValidator" />
+    <component key="customFieldDateTimeValidator" name="Custom Field Date Time Validator" class="com.thed.zephyr.je.zql.validator.CustomFieldDateTimeValidator" />
+	<component key="customFieldLargeTextValidator" name="Custom Field Large Text Validator" class="com.thed.zephyr.je.zql.validator.CustomFieldLargeTextValidator" />
+	<component key="estimationTimeValidator" name="Estimation Time Validator" class="com.thed.zephyr.je.zql.validator.EstimationTimeValidator" />
+	<component key="zephyrClauseHandlerFactory" name="Zephyr Clause Handler Factory" class="com.thed.zephyr.je.zql.core.ZephyrClauseHandlerFactoryImpl" />
+	<component key="customFieldOptionValidator" name="Custom Field Option Validator" class="com.thed.zephyr.je.zql.validator.CustomFieldOptionTextValidator" />
+	<component key="luceneQueryModifier" name="Lucene Query Modifier" class="com.thed.zephyr.je.zql.core.LuceneQueryModifierImpl" />
+	<component key="luceneQueryBuilder" name="Lucene Query Builder" class="com.thed.zephyr.je.zql.core.LuceneQueryBuilderImpl" />
+	<component key="luceneSearcherProvider" name="Lucene Search Provider" class="com.thed.zephyr.je.zql.core.LuceneSearchProviderImpl" />
+    <component key="zephyrPermissionsFilterGenerator" name="Permission Filter Generator" class="com.thed.zephyr.je.zql.permission.impl.ZephyrPermissionsFilterGeneratorImpl" />
+    <component key="zephyrPermissionQueryFactory" name="Zephyr Permission Query Factory" class="com.thed.zephyr.je.zql.permission.impl.ZephyrPermissionQueryFactoryImpl" />
+
+    <component key="executionStatusResolver" name="Execution Status Resolver" class="com.thed.zephyr.je.zql.resolver.ExecutionStatusResolver" />
+	<component key="cycleNameResolver" name="Cycle Name Resolver" class="com.thed.zephyr.je.zql.resolver.CycleNameResolver" />
+	<component key="folderNameResolver" name="Folder Name Resolver" class="com.thed.zephyr.je.zql.resolver.FolderNameResolver" />
+	<component key="labelResolver" name="Label Resolver" class="com.thed.zephyr.je.zql.resolver.LabelResolver" />
+	<component key="customFieldResolver" name="CustomField Resolver" class="com.thed.zephyr.je.zql.resolver.CustomFieldResolver" />
+
+	<component key="cycleIdResolver" name="Cycle ID Resolver" class="com.thed.zephyr.je.zql.resolver.CycleIdResolver" />
+	<component key="folderIdResolver" name="Folder ID Resolver" class="com.thed.zephyr.je.zql.resolver.FolderIdResolver" />
+    <component key="fixVersionResolver" name="Fix Version Resolver" class="com.thed.zephyr.je.zql.resolver.FixVersionResolver" />
+    <component key="cycleBuildResolver" name="Cycle Build Resolver" class="com.thed.zephyr.je.zql.resolver.CycleBuildResolver" />
+    <component key="issueClauseQueryFactory" name="Issue Clause Query Factory" class="com.thed.zephyr.je.zql.factory.IssueClauseQueryFactory" />
+    <component key="executedByClauseQueryFactory" name="Executed By Clause Query Factory" class="com.thed.zephyr.je.zql.factory.ExecutedByClauseQueryFactory" />
+    <component key="executionStatusClauseQueryFactory" name="Execution Status Clause Query Factory" class="com.thed.zephyr.je.zql.factory.ExecutionStatusClauseQueryFactory" />
+    <component key="executionDateClauseQueryFactory" name="Execution Date Clause Query Factory" class="com.thed.zephyr.je.zql.factory.ExecutionDateClauseQueryFactory" />
+    <component key="dateCreatedClauseQueryFactory" name="Schedule Date Created Clause Query Factory" class="com.thed.zephyr.je.zql.factory.DateCreatedClauseQueryFactory" />
+    <component key="scheduleClauseQueryFactory" name="Schedule Clause Query Factory" class="com.thed.zephyr.je.zql.factory.ScheduleClauseQueryFactory" />
+    <component key="cycleNameClauseQueryFactory" name="Cycle Name Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CycleNameClauseQueryFactory" />
+    <component key="cycleIdClauseQueryFactory" name="Cycle ID Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CycleIdClauseQueryFactory" />
+    <component key="folderNameClauseQueryFactory" name="Folder Name Clause Query Factory" class="com.thed.zephyr.je.zql.factory.FolderNameClauseQueryFactory" />
+    <component key="folderIdClauseQueryFactory" name="Folder ID Clause Query Factory" class="com.thed.zephyr.je.zql.factory.FolderIdClauseQueryFactory" />
+    <component key="cycleBuildClauseQueryFactory" name="Cycle Build Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CycleBuildClauseQueryFactory" />
+	<component key="componentClauseQueryFactory" name="Component Clause Query Factory" class="com.thed.zephyr.je.zql.factory.ComponentClauseQueryFactory" />
+	<component key="priorityClauseQueryFactory" name="Priority Clause Query Factory" class="com.thed.zephyr.je.zql.factory.PriorityClauseQueryFactory" />
+	<component key="projectClauseQueryFactory" name="Project Clause Query Factory" class="com.thed.zephyr.je.zql.factory.ProjectClauseQueryFactory" />
+	<component key="versionClauseQueryFactory" name="Version Clause Query Factory" class="com.thed.zephyr.je.zql.factory.VersionClauseQueryFactory" />
+	<component key="summaryClauseQueryFactory" name="Test Summary Clause Query Factory" class="com.thed.zephyr.je.zql.factory.SummaryClauseQueryFactory" />
+	<component key="labelClauseQueryFactory" name="Test Label Clause Query Factory" class="com.thed.zephyr.je.zql.factory.LabelClauseQueryFactory" />
+	<component key="executionDefectKeyClauseQueryFactory" name="Execution Defect Key Clause Query Factory" class="com.thed.zephyr.je.zql.factory.ExecutionDefectKeyClauseQueryFactory" />
+    <component key="assigneeClauseQueryFactory" name="Assignee Clause Query Factory" class="com.thed.zephyr.je.zql.factory.AssigneeClauseQueryFactory" />
+    <component key="customFieldStringClauseQueryFactory" name="Custom Field String Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CustomFieldStringClauseQueryFactory" />
+    <component key="customFieldNumberClauseQueryFactory" name="Custom Field String Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CustomFieldNumberClauseQueryFactory" />
+    <component key="customFieldLargeTextClauseQueryFactory" name="Custom Field Large Text Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CustomFieldLargeTextClauseQueryFactory" />
+	<component key="customFieldOptionClauseQueryFactory" name="Custom Field Option Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CustomFieldOptionClauseQueryFactory" />
+	<component key="customFieldDataClauseQueryFactory" name="Custom Field Data Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CustomFieldDateClauseQueryFactory" />
+    <component key="customFieldDataTimeClauseQueryFactory" name="Custom Field DataTime Clause Query Factory" class="com.thed.zephyr.je.zql.factory.CustomFieldDateTimeClauseQueryFactory" />
+	<component key="estimationTimeClauseQueryFactory" name="Estimation Time Clause Query Factory" class="com.thed.zephyr.je.zql.factory.EstimationTimeClauseQueryFactory" />
+	<component key="loggedTimeClauseQueryFactory" name="Logged Time Clause Query Factory" class="com.thed.zephyr.je.zql.factory.LoggedTimeClauseQueryFactory" />
+
+
+	<component key="manager" name="Search Handler Manager" class="com.thed.zephyr.je.zql.core.SearchHandlerManagerImpl" />
+	<component key="searchService" name="Zephyr Search Service" class="com.thed.zephyr.je.zql.core.SearchServiceImpl" />
+	<component key="orderByValidator" name="OrderBy Validator" class="com.thed.zephyr.je.zql.core.OrderByValidatorImpl" />
+	<component key="exportService" name="Execution Export Service" class="com.thed.zephyr.je.service.impl.ExportServiceImpl" />
+	<component key="analyticService" name="Analytic Service" class="com.thed.zephyr.je.service.impl.AnalyticServiceImpl" />
+	<component key="fileImportService" name="File Import Service" class="com.thed.zephyr.je.service.impl.FileImportServiceImpl" />
+	<component key="issueImporterService" name="Issue Importer Service" class="com.thed.zephyr.je.service.impl.IssueImporterServiceImpl" />
+	<component key="excelFileValidationService" name="Excel File Validation Service" class="com.thed.zephyr.je.service.impl.ExcelFileValidationServiceImpl" />
+
+	<component key="zqlfilter-manager" name="ZQL Filter Manager" class="com.thed.zephyr.je.zql.service.impl.ZQLFilterManagerImpl" >
+		<interface>com.thed.zephyr.je.zql.service.ZQLFilterManager</interface>
+	</component>
+	<component key="audit-manager" name="Audit Manager" class="com.thed.zephyr.je.audit.service.impl.AuditManagerImpl" >
+		<interface>com.thed.zephyr.je.audit.service.AuditManager</interface>
+	</component>
+
+	<component key="permissionConfigManager" name="PermissionConfigManager" class="com.thed.zephyr.je.permissions.service.impl.PermissionConfigManagerImpl" >
+		<interface>com.thed.zephyr.je.permissions.service.PermissionConfigManager</interface>
+	</component>
+
+    <component key="zephyrPermissionManager" name="Zephyr Permission Manager" class="com.thed.zephyr.je.permissions.service.impl.ZephyrPermissionManagerImpl">
+		<interface>com.thed.zephyr.je.permissions.service.ZephyrPermissionManager</interface>
+	</component>
+
+	<!-- ZFJ JIRA Bulk Test Components Start -->
+	<component key="zfjJiraBulkAddTestKey"
+    	class="com.thed.zephyr.je.action.ZephyrJiraBulkOperationAction">
+	</component>
+
+	<jql-function key="unexecuted-tests" name="Issue Function to return all tests with no execution" class="com.thed.zephyr.je.zql.function.UnExecutedTestFunction">
+  		<fname>testsWithoutExecution</fname>
+  		<description>Provides a JQL function to retrieve all Issues which does not have any executions.</description>
+  		<list>true</list>
+	</jql-function>
+	<!-- ZFJ JIRA Bulk Test Components End -->
+
+	<component key="chartServiceResource" name="ChartService" class="com.thed.zephyr.je.rest.delegate.impl.ChartResourceDelegateImpl">
+		<interface>com.thed.zephyr.je.rest.delegate.ChartResourceDelegate</interface>
+	</component>
+
+	<!-- ZQL COMPONENT END -->
+
+	<!-- ZFJCacheCluster -->
+	<component key="zfjCacheManager" name="ZFJ Cache Manager" class="com.thed.zephyr.je.service.impl.ZFJCacheServiceImpl" />
+
+	<component-import key="cacheManager" interface="com.atlassian.cache.CacheManager"/>
+
+	<!-- ZFJCacheCluster ends -->
+
+	<component key="jobProgressService" name="Job Progress Service" class="com.thed.zephyr.je.service.impl.JobProgressServiceImpl">
+		<interface>com.thed.zephyr.je.service.JobProgressService</interface>
+	</component>
+
+	<!-- Cluster based component START-->
+	<component key="nodeStateManager" name="Node State Manager" class="com.thed.zephyr.je.index.cluster.NodeStateManagerImpl" >
+		<interface>com.thed.zephyr.je.index.cluster.NodeStateManager</interface>
+	</component>
+
+	<component key="clusterProperties" name="Cluster Properties" class="com.thed.zephyr.je.index.cluster.ClusterPropertiesImpl" >
+		<interface>com.thed.zephyr.je.index.cluster.ClusterProperties</interface>
+	</component>
+
+	<component key="messageHandler" name="Cluster MessageHandler Service" class="com.thed.zephyr.je.index.cluster.ZFJMessageHandlerService" >
+		<interface>com.thed.zephyr.je.index.cluster.MessageHandler</interface>
+	</component>
+
+	<component key="zfjClusterNodeStore" name="ZFJClusterNodeStore"
+		class="com.thed.zephyr.je.index.cluster.ZFJClusterNodeStore" />
+
+	<component key="zfjClusterMessageStore" name="ZFJClusterMessageStore"
+		class="com.thed.zephyr.je.index.cluster.ZFJClusterMessageStore" />
+
+	<component key="execClusterIndexCleanService" name="ExecClusterIndexCleanService"
+			   class="com.thed.zephyr.je.index.cluster.ExecClusterIndexCleanServiceImpl" />
+
+    <!-- Components whose declarations are different when using the compat library -->
+    <component key="zfjJobRunner" class="com.thed.zephyr.je.job.ZFJJobRunnerImpl">
+        <description>The job runner for processing scheduled tasks</description>
+        <interface>com.thed.zephyr.je.job.ZFJJobRunner</interface>
+    </component>
+
+
+	<!-- Components whose declarations are different when using the compat library -->
+	<component key="clusterSchedulerService" class="com.thed.zephyr.je.index.cluster.ClusterSchedulerServiceImpl" public="true">
+		<description>The job runner for processing scheduled tasks</description>
+		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+		<interface>com.thed.zephyr.je.index.cluster.ClusterSchedulerService</interface>
+	</component>
+
+
+	<component key="cronSyncupSchedulerService" class="com.thed.zephyr.je.index.cluster.CronSyncupSchedulerServiceImpl" public="true">
+		<description>The job runner for processing scheduled tasks</description>
+		<interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+		<interface>com.thed.zephyr.je.index.cluster.CronSyncupSchedulerService</interface>
+	</component>
+
+
+	<component key="schedulerService" name="SchedulerService" class="com.atlassian.scheduler.SchedulerService"/>
+	<component key="cronExpressionValidator" name="CronExpressionValidator" class="com.atlassian.scheduler.cron.CronExpressionValidator"/>
+
+
+
+
+	<!-- Cluster based component END-->
+
+	<!--  ZAPI Validation Service START-->
+	<component key="zapiValidationService" name="ZAPI Validation Service" class="com.thed.zephyr.je.service.impl.ZAPIValidationServiceImpl" >
+		<interface>com.thed.zephyr.je.service.ZAPIValidationService</interface>
+	</component>
+	<!-- ZAPI Validation Service END -->
+	<component key="zephyrSprintService" name="ZAPI Validation Service" class="com.thed.zephyr.je.service.impl.ZephyrSprintServiceImpl" public="false">
+		<interface>com.thed.zephyr.je.service.ZephyrSprintService</interface>
+	</component>
+
+	<ao key="ao-module">
+		<description>The configuration of the Active Objects service
+		</description>
+		<!-- <entity>com.thed.jira.plugin.model.TestStep</entity> -->
+		<entity>com.thed.zephyr.je.model.Attachment</entity>
+		<entity>com.thed.zephyr.je.model.Cycle</entity>
+		<entity>com.thed.zephyr.je.model.Schedule</entity>
+		<entity>com.thed.zephyr.je.model.Teststep</entity>
+		<entity>com.thed.zephyr.je.model.ScheduleDefect</entity>
+		<entity>com.thed.zephyr.je.model.StepResult</entity>
+		<entity>com.thed.zephyr.je.model.StepDefect</entity>
+		<entity>com.thed.zephyr.je.zql.model.ZQLFilter</entity>
+		<entity>com.thed.zephyr.je.zql.model.ZQLFavoriteAsoc</entity>
+		<entity>com.thed.zephyr.je.zql.model.ZQLSharePermissions</entity>
+		<entity>com.thed.zephyr.je.audit.model.ChangeZJEGroup</entity>
+		<entity>com.thed.zephyr.je.audit.model.ChangeZJEItem</entity>
+		<entity>com.thed.zephyr.je.zql.model.ZFJColumnLayout</entity>
+		<entity>com.thed.zephyr.je.zql.model.ColumnLayoutItem</entity>
+		<entity>com.thed.zephyr.je.model.cluster.ExecClusterMessage</entity>
+		<entity>com.thed.zephyr.je.model.Folder</entity>
+		<entity>com.thed.zephyr.je.model.FolderCycleMapping</entity>
+		<entity>com.thed.zephyr.je.model.ReindexJobProgress</entity>
+		<entity>com.thed.zephyr.je.model.CustomField</entity>
+		<entity>com.thed.zephyr.je.model.TestStepCf</entity>
+		<entity>com.thed.zephyr.je.model.CustomFieldOption</entity>
+		<entity>com.thed.zephyr.je.model.ExecutionCf</entity>
+		<entity>com.thed.zephyr.je.model.CustomFieldsMeta</entity>
+		<entity>com.thed.zephyr.je.model.CustomFieldProject</entity>
+	</ao>
+<!-- ============================== ACTIVE OBJECTS AND SERVICES END============================= -->
+<!-- =========================================================================================== -->
+
+	<component-import key="pluginAccessor" interface="com.atlassian.plugin.PluginAccessor"/>
+	<component-import key="pluginController" interface="com.atlassian.plugin.PluginController"/>
+	<component-import key="txTemplate" interface="com.atlassian.sal.api.transaction.TransactionTemplate"/>
+	<component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+	<component-import key="templateRenderer" interface="com.atlassian.templaterenderer.TemplateRenderer"/>
+	<component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
+	<component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider"/>
+	<component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
+	<component-import key="pluginLicenseManager" interface="com.atlassian.upm.api.license.PluginLicenseManager"/>
+
+	<component key="treeManager" class="com.atlassian.jira.issue.context.manager.JiraContextTreeManager"/>
+
+	<!--Only for testing, Remove it from final release -->
+
+<!-- =========================================================================================== -->
+<!-- =================================== UPGRADE TASKS SECTION START =========================== -->
+	<component key="zephyrUpgradeTask1" name="Zephyr Upgrade Task1" class="com.thed.zephyr.je.config.upgrade.ZephyrUpgradeTask1" public="true">
+	     <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+	</component>
+	<component key="zephyrUpgradeTask2" name="Zephyr Upgrade To JIRA 6 Task" class="com.thed.zephyr.je.config.upgrade.ZFJUpgradeForJIRA6Task2" public="true">
+	     <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+	</component>
+	<component key="zephyrUpgradeTask4" name="Zephyr Upgrade Task 4 OrderID Task" class="com.thed.zephyr.je.config.upgrade.ZFJUpgrade2Dot5Task4" public="true">
+	     <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+	</component>
+    <component key="zephyrUpgradeVersionMigrationTask" name="Zephyr Upgrade Task: set execution's versionId=-1 for deleted versions" class="com.thed.zephyr.je.config.upgrade.ZephyrUpgradeVersionMigrationTask" public="true">
+        <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+    </component>
+	<component key="zephyrIssueLinksRelationUpgradeTask" name="Zephyr Upgrade Task: set default IssueLinkType Relation" class="com.thed.zephyr.je.config.upgrade.ZephyrIssueLinksRelationUpgradeTask" public="true">
+        <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+    </component>
+	<component key="zephyrCFTypeToIssueTypesUpgradeTask" name="Zephyr Upgrade Task: set default Custom Field to Issue Type Relation" class="com.thed.zephyr.je.config.upgrade.ZephyrCFTypeToIssueTypesUpgradeTask" public="true">
+		<interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+	</component>
+	<component key="ZephyrUpgrade3Dot1Task25" name="Zephyr Upgrade Task: Fix IssueLinkType" class="com.thed.zephyr.je.config.upgrade.ZephyrUpgrade3Dot1Task31" public="true">
+		<interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+	</component>
+	<component key="ZFJUpgradeCustomFieldMeta" name="Zephyr Upgrade Task" class="com.thed.zephyr.je.config.upgrade.ZFJUpgradeCustomFieldMeta" public="true">
+		<interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+	</component>
+	<!-- =================================== UPGRADE TASKS SECTION END =========================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- =================================== ISSUE TAB PANEL SECTION START =========================== -->
+    <web-resource key="testDetailsViewIssue" name="TestDetails Audit History JS">
+        <context>jira.view.issue</context>
+        <dependency>jira.webresources:viewissue</dependency>
+        <transformation extension="soy">
+            <transformer key="jiraSoyTransformer" />
+        </transformation>
+		<resource type="download" name="zephyr-zql-result.soy.js" location="includes/js/zephyr/testcase/testdetailspanel.soy"/>
+        <resource type="download" name="testdetailspanel.js" location="includes/js/zephyr/testcase/testdetailspanel.js"/>
+    </web-resource>
+
+    <issue-tabpanel key="je-audit-tabpanel" name="Zephyr Issue Audit History Tab Panel" id="je-audit-tabpanel"
+                    i18n-name-key="je-audit-tabpanel.label" class="com.thed.zephyr.je.panel.TestcaseAuditHistoryTabPanel">
+        <description key="je-audit-tabpanel.description">Show Audit History related to Test Details in an issue tab panel.</description>
+        <label key="je-audit-tabpanel.label">Test Details History</label>
+        <resource type="velocity" name="view" location="templates/com/thed/zephyr/je/pdb/panel/auditissuetabpanel.vm"/>
+        <resource type="i18n" name="i18n" location="com.thed.zephyr.je.messages.Zephyr" />
+        <supports-ajax-load>true</supports-ajax-load>
+    </issue-tabpanel>
+<!-- =================================== ISSUE TAB PANEL SECTION ENDS =========================== -->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- =================================== Optional Service Detector =========================== -->
+<component key="optionalServiceAccessor" class="com.thed.zephyr.util.optionalservice.ServiceAccessorImpl">
+    <interface>com.thed.zephyr.util.optionalservice.ServiceAccessor</interface>
+</component>
+<!-- =================================== Optional Service Detector ENDS =========================== -->
+<!-- =========================================================================================== -->
+</atlassian-plugin>

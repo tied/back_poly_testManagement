@@ -1,0 +1,330 @@
+{namespace ZEPHYR.Datacenter}
+
+/**
+ * Render the dialog as Job Scheduler Form
+ */
+/**
+ * Build Ceoms Scheduler
+ * @param formattedDate
+ */
+{template .cronSchedulerForm}
+<div id="edit-recovery-dialog">
+<h2 class="dialog-title" id="dialog-title">{getText('admin.index.recovery.edit.settings')}</h2>
+<form onsubmit="return false;" id="edit-recovery-popup" class="aui">
+  <fieldset>
+          <div class="dialog">
+              <fieldset class="group">
+                  <legend>{getText('admin.index.recovery.enable')}</legend>
+                  <div class="radio">
+                    <input class="radio" id="recovery-enabled" name="recoveryEnabled" type="radio" value="true">
+                      <label for="recovery-enabled">ON</label>
+                  </div>
+                  <div class="radio">
+                    <input class="radio" checked="checked" id="recovery-disabled" name="recoveryEnabled" type="radio" value="false">
+                      <label for="recovery-disabled">OFF</label>
+                    <div class="description">{getText('admin.index.recovery.enable.description')}</div>
+                  </div>
+              </fieldset>
+          </div>
+  </fieldset>
+  <fieldset class="group">
+      <legend><span>{getText('admin.index.recovery.snapshot.schedule')}</span></legend>
+      <div class="radio">
+          <input value="daily" id="syncUpDaily-option" class="radio" name="syncUpScheduleDailyWeeklyMonthly" type="radio" checked="">
+          <label for="syncUpDaily-option">Daily</label>
+      </div>
+      <div class="radio">
+          <input value="daysOfWeek" id="syncUpDaysOfWeek-option" class="radio" name="syncUpScheduleDailyWeeklyMonthly" type="radio">
+          <label for="syncUpDaysOfWeek-option">Days per Week</label>
+      </div>
+      <div class="radio">
+          <input value="daysOfMonth" id="syncUpDaysOfMonth-option" class="radio" name="syncUpScheduleDailyWeeklyMonthly" type="radio">
+          <label for="syncUpDaysOfMonth-option">Days per Month</label>
+      </div>
+      <div class="radio">
+          <input value="advanced" id="syncUpAdvanced-option" class="radio" name="syncUpScheduleDailyWeeklyMonthly" type="radio">
+          <label for="syncUpAdvanced-option">Advanced</label>
+      </div>
+  </fieldset>
+  <fieldset class="group">
+      <legend><span><label for="syncUp.schedule.interval">{getText('cron.editor.interval')}</label></span></legend>
+      <div class="cron-options-tab-panel" style="display: none;padding-bottom:8px;" id="syncUpDaysOfMonth">
+          <div class="radio">
+              <input value="dayOfMonth" name="syncUpDaysOfMonthOpt" id="syncUp.schedule.dayOfMonthRadio" class="radio" type="radio" checked="">
+              <select id="syncUpMonthDay" class="select short-field" name="syncUp.schedule.monthDay">
+                  <option value="1">1st</option>
+                  <option value="2">2nd</option>
+                  <option value="3">3rd</option>
+                  <option value="4">4th</option>
+                  <option value="5">5th</option>
+                  <option value="6">6th</option>
+                  <option value="7">7th</option>
+                  <option value="8">8th</option>
+                  <option value="9">9th</option>
+                  <option value="10">10th</option>
+                  <option value="11">11th</option>
+                  <option value="12">12th</option>
+                  <option value="13">13th</option>
+                  <option value="14">14th</option>
+                  <option value="15">15th</option>
+                  <option value="16">16th</option>
+                  <option value="17">17th</option>
+                  <option value="18">18th</option>
+                  <option value="19">19th</option>
+                  <option value="20">20th</option>
+                  <option value="21">21st</option>
+                  <option value="22">22nd</option>
+                  <option value="23">23rd</option>
+                  <option value="24">24th</option>
+                  <option value="25">25th</option>
+                  <option value="26">26th</option>
+                  <option value="27">27th</option>
+                  <option value="28">28th</option>
+                  <option value="29">29th</option>
+                  <option value="30">30th</option>
+                  <option value="31">31st</option>
+                  <option value="L">last</option>
+              </select>
+              <label>day of every month</label>
+          </div>
+          <div class="radio">
+              <input value="dayOfWeekOfMonth" name="syncUpDaysOfMonthOpt" id="syncUp.schedule.dayOfWeekOfMonthRadio" class="radio" type="radio">
+              <select name="syncUp.schedule.week" id="syncUpWeek" class="select short-field" onchange="document.getElementById('syncUp.schedule.dayOfWeekOfMonthRadio').checked = true;">
+                  <option value="1">first</option>
+                  <option value="2">second</option>
+                  <option value="3">third</option>
+                  <option value="4">fourth</option>
+                  <option value="L">last</option>
+              </select>
+              <select name="syncUp.schedule.day" id="syncUpDay" class="select medium-field" onchange="document.getElementById('syncUp.schedule.dayOfWeekOfMonthRadio').checked = true;">
+                  <option value="1">Sunday</option>
+                  <option value="2">Monday</option>
+                  <option value="3">Tuesday</option>
+                  <option value="4">Wednesday</option>
+                  <option value="5">Thursday</option>
+                  <option value="6">Friday</option>
+                  <option value="7">Saturday</option>
+              </select>
+              <label>of every month</label>
+          </div>
+      </div>
+      <div class="cron-options-tab-panel" id="syncUpFreqDiv">
+          <div class="field-group">
+              <span id="syncUpInnerFreqDiv">
+                  <select id="syncUpInterval" class="select medium-field" name="syncUp.schedule.interval">
+                      <option selected="" value="0">once per day</option>
+                      <option value="180">every 3 hours</option>
+                      <option value="120">every 2 hours</option>
+                      <option value="60">every hour</option>
+                      <option value="30">every 30 minutes</option>
+                      <option value="15">every 15 minutes</option>
+                  </select>
+              </span>
+              <span id="syncUpRunOnce">
+                  <label for="syncUpRunOnceHours">at</label>
+                  <select id="syncUpRunOnceHours" class="select short-field" name="syncUp.schedule.runOnceHours">
+                                              <option selected="" value="1">1</option>
+                                              <option value="2">2</option>
+                                              <option value="3">3</option>
+                                              <option value="4">4</option>
+                                              <option value="5">5</option>
+                                              <option value="6">6</option>
+                                              <option value="7">7</option>
+                                              <option value="8">8</option>
+                                              <option value="9">9</option>
+                                              <option value="10">10</option>
+                                              <option value="11">11</option>
+                                              <option value="12">12</option>
+                                      </select>
+                  <select id="syncUpRunOnceMinutes" class="select short-field" name="syncUp.schedule.runOnceMins">
+                      <option selected="" value="0">00</option>
+                      <option value="5">05</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
+                      <option value="25">25</option>
+                      <option value="30">30</option>
+                      <option value="35">35</option>
+                      <option value="40">40</option>
+                      <option value="45">45</option>
+                      <option value="50">50</option>
+                      <option value="55">55</option>
+                  </select>
+                  <select id="syncUpRunOnceMeridian" class="select short-field" name="syncUp.schedule.runOnceMeridian">
+                      <option selected="" value="am">am</option>
+                      <option value="pm">pm</option>
+                  </select>
+              </span>
+              <span style="display: none;" id="syncUpRunMany">
+                  <label for="syncUpRunFromHours">from</label>
+                  <select id="syncUpRunFromHours" class="select short-field" name="syncUp.schedule.runFromHours">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+                          <option value="8">8</option>
+                          <option value="9">9</option>
+                          <option value="10">10</option>
+                          <option value="11">11</option>
+                          <option value="12">12</option>
+                  </select>
+                  <select id="syncUpRunFromMeridian" class="select short-field" name="syncUp.schedule.runFromMeridian">
+                      <option value="am">am</option>
+                      <option value="pm">pm</option>
+                  </select>
+                  <label for="syncUpRunToHours">to</label>
+                  <select id="syncUpRunToHours" class="select short-field" name="syncUp.schedule.runToHours">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+                          <option value="8">8</option>
+                          <option value="9">9</option>
+                          <option value="10">10</option>
+                          <option value="11">11</option>
+                          <option value="12">12</option>
+                  </select>
+                  <select id="syncUpRunToMeridian" class="select short-field" name="syncUp.schedule.runToMeridian">
+                      <option value="am">am</option>
+                      <option value="pm">pm</option>
+                  </select>
+              </span>
+          </div>
+      </div>
+      <div class="description syncUpServerTime">{getText('cron.editor.current.server.time')} is {$formattedDate}</div>
+      <div class="cron-options-tab-panel" style="display: none;padding-top:8px;" id="syncUpDaysOfWeek">
+          <div class="checkbox">
+              <input id="syncUp.schedule.monday" class="syncUpWeekdayCheckbox checkbox" name="syncUpWeekdayCheckbox" value="MON" type="checkbox">
+              <label for="syncUp.schedule.monday">Monday</label>
+          </div>
+          <div class="checkbox">
+              <input id="syncUp.schedule.tuesday" class="syncUpWeekdayCheckbox checkbox" name="syncUpWeekdayCheckbox" value="TUE" type="checkbox">
+              <label for="syncUp.schedule.tuesday">Tuesday</label>
+          </div>
+          <div class="checkbox">
+              <input id="syncUp.schedule.wednesday" class="syncUpWeekdayCheckbox checkbox" name="syncUpWeekdayCheckbox" value="WED" type="checkbox">
+              <label for="syncUp.schedule.wednesday">Wednesday</label>
+          </div>
+          <div class="checkbox">
+              <input id="syncUp.schedule.thursday" class="syncUpWeekdayCheckbox checkbox" name="syncUpWeekdayCheckbox" value="THU" type="checkbox">
+              <label for="syncUp.schedule.thursday">Thursday</label>
+          </div>
+          <div class="checkbox">
+              <input id="syncUp.schedule.friday" class="syncUpWeekdayCheckbox checkbox" name="syncUpWeekdayCheckbox" value="FRI" type="checkbox">
+              <label for="syncUp.schedule.friday">Friday</label>
+          </div>
+          <div class="checkbox">
+              <input id="syncUp.schedule.saturday" class="syncUpWeekdayCheckbox checkbox" name="syncUpWeekdayCheckbox" value="SAT" type="checkbox">
+              <label for="syncUp.schedule.saturday">Saturday</label>
+          </div>
+          <div class="checkbox">
+              <input id="syncUp.schedule.sunday" class="syncUpWeekdayCheckbox checkbox" name="syncUpWeekdayCheckbox" value="SUN" type="checkbox">
+              <label for="syncUp.schedule.sunday">Sunday</label>
+          </div>
+      </div>
+      <div class="field-group cron-options-tab-panel" style="display: none;" id="syncUpAdvanced">
+          <input type="text" size="30" id="syncUpCronString" class="text" name="syncUp.schedule.cronString">
+                  <div class="description">Cron Expression</div>
+      </div>
+      <div class="error syncUpErrorDialog"></div>
+  </fieldset>
+  <div class="buttons-container">
+    <input class="aui-button zrunCronJob" type="submit" name="Update" value="Update">
+    <a id="zephyr-je-dlgclose" class="cancel" title="Cancel">
+      Cancel
+    </a>
+  </div>
+</form>
+<div class="overlay-icon icon loading hidden"></div>
+</div>
+{/template}
+
+
+/**
+* Render the pagination for integrity checker
+* @param currentIndex
+* @param totalCount
+* @param entriesCount
+* @param totalPages
+*/
+{template .integritycheckPaginationNew}
+<div class="integrityCheckerPaginationWrapper">
+  <div class="zql-list-view-pagination-container">
+    <div class="aui-group count-pagination navigator-results" id="pagination-zql-display-detail-id">
+      <div class="results-count aui-item pagination-zql-outer-container">
+        <div>
+          <span>
+            {if $currentIndex == 1}
+            <span title="Not available - this is the first page" class="disabled">
+              <span class="pageNumbers">
+                {($totalCount == 0) ? 0 : 1} - {($totalCount
+                < $entriesCount) ? $totalCount : $entriesCount} </span>
+                  <span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-page-pagination disabled">
+                    Prev
+                  </span>
+                  <span class="ellipsis">
+                    ...
+                  </span>
+              </span>
+              {else}
+              <span class="pageNumbers goToPage" data-offset=0>
+                {($totalCount == 0) ? 0 : 1} - {($totalCount < $entriesCount) ? $totalCount : $entriesCount}
+              </span>
+                  <span id="pagination-zql-prev-page-execution" data-currentpage="{$currentIndex}" class="prev-page-execution" type="button"
+                   title="Previous Execution">
+                    <span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-page-pagination" id="prev-page-pagination" style="cursor: pointer;">
+                      Prev
+                    </span>
+                    <span class="ellipsis" id="pagination-zql-prev-page-execution-dots" data-currentpage="{$currentIndex}">
+                      ...
+                    </span>
+                  </span>
+                  {/if}
+              </span>
+              <span>
+                <span class="selected pageNumbers">
+                  {($totalCount == 0) ? 0 : $entriesCount*($currentIndex) - ($entriesCount - 1)} - {($totalCount
+                  < $entriesCount*($currentIndex))
+                   ? $totalCount : $entriesCount*($currentIndex)} </span>
+                </span>
+                <span>
+                  {if $currentIndex == $totalPages}
+                  <span title="Not available - this is the first page" class="disabled">
+                    <span class="ellipsis">
+                      ...
+                    </span>
+                    <span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow next-page-pagination disabled">
+                      Next
+                    </span>
+                    <span class="pageNumbers">
+                      {($totalCount == 0) ? 0 : $entriesCount*$totalPages - ($entriesCount - 1)} - {$totalCount}
+                    </span>
+                  </span>
+                  {else}
+
+                  <span id="pagination-zql-next-page-execution" data-currentpage="{$currentIndex}" class="next-page-execution" type="button"
+                   title="Next Execution">
+                    <span class="ellipsis" id="pagination-zql-next-page-execution-dots" data-currentpage="{$currentIndex}">
+                      ...
+                    </span>
+                    <span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow next-page-pagination" id="next-page-pagination">
+                      Next
+                    </span>
+                  </span>
+                  <span class="pageNumbers goToPage" data-offset={$totalPages}>
+                    {($totalCount == 0) ? 0 : $entriesCount*$totalPages - ($entriesCount - 1)} - {$totalCount}
+                  </span>
+                  {/if}
+                </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{/template}

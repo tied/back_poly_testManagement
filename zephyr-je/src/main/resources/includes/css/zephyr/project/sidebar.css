@@ -1,0 +1,10 @@
+.icon-sidebar-test {
+    background-image: url("zephyr-project-sidebar-icon.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.icon-sidebar-test-customfields {
+	background-image: url("zephyr-project-sidebar-customfields-icon.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+}

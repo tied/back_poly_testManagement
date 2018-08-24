@@ -1,0 +1,211 @@
+<dom-module id="custom-text">
+    <template>
+      <custom-style>
+        <style>
+          .custom-text input {
+            width: 100px;
+          }
+
+          /*.custom-text .editable-field.empty {
+            box-shadow: 0 0 0 1px #CCCCCC;
+          }*/
+
+          .custom-text .editable-field {
+            box-sizing: border-box;
+            box-shadow: none;
+            display: inline-block;
+            max-width: 100%;
+            padding: 2px 5px 2px 5px;
+            position: relative;
+            transition: box-shadow 150ms ease-in 0ms;
+            vertical-align: top;
+            min-height: 26px;
+            min-width: 80px;
+            width: 100%;
+          }
+
+          .custom-text .editable-field:hover {
+            background-color: #FFFFFF;
+          }
+
+          .custom-text .editable-field .overlay-icon {
+            box-sizing: border-box;
+            background-color: #F0F0F0;
+            background-position: 4px 4px;
+            background-repeat: no-repeat;
+            border-left: 1px solid #CCCCCC;
+            bottom: 0;
+            height: auto;
+            margin: 0;
+            opacity: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 24px;
+            z-index: -1;
+          }
+
+          .custom-text .editable-field:hover .overlay-icon {
+            transition: opacity 150ms ease-in 0ms;
+            opacity: 1;
+            z-index: auto;
+          }
+
+          .custom-text .overlay-icon .icon-pencil {
+            padding: 5px;
+            vertical-align: sub;
+          }
+
+          .custom-text .editable-cell-container .cell-editMode {
+            position: relative;
+          }
+
+          .custom-text .editable-cell-container #editMode {
+            outline: none;
+          }
+
+          .custom-text .editable-cell-container .noInlineEdit .cell-editMode {
+            padding: 0px;
+          }
+
+          .custom-text .update-cancel-buttons {
+            background-color: #F0F0F0;
+            border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+            border-image: none;
+            border-radius: 0 0 3px 3px;
+            border-width: medium 1px 1px;
+            box-shadow: 0 3px 6px rgba(111, 111, 111, 0.2);
+            outline: medium none;
+            padding: 3px;
+            position: absolute;
+            right: 31px;
+            z-index: 1;
+          }
+
+          .custom-text .update-cancel-buttons button {
+            width: 20px;
+            height: 20px;
+            padding: 0;
+          }
+
+          .custom-text .update-cancel-buttons button i {
+            font-size: 12px;
+            vertical-align: text-top;
+          }
+
+          .custom-text .sortable {
+            margin-left: 5px;
+            cursor: pointer;
+          }
+
+          .custom-text input,
+          .custom-text textarea {
+            width: 100%;
+            height: 30px;
+            box-sizing: border-box;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            outline: none;
+            resize: none;
+            font-size: 12px;
+            font: inherit;
+            color: inherit;
+          }
+
+          .custom-text input {
+            box-shadow: none;
+          }
+
+          .custom-text input:-moz-placeholder {
+            box-shadow: none !important;
+          }
+
+          .custom-text input[type=checkbox],
+          .custom-text input[type=radio] {
+            width: 20px;
+
+          }
+
+          .custom-text.isStandAlone textarea,
+          .custom-text.isStandAlone input {
+            height: 30px;
+            width: 100%;
+            resize: none;
+            font: inherit;
+            color: inherit;
+          }
+
+          .table-columns.htmlComment .custom-text.isStandAlone textarea {
+            height: 100px;
+          }
+
+          .custom-text .cell-readMode.editMode {
+            display: none;
+          }
+
+        .custom-text p,
+        .custom-text h1,
+        .custom-text h2,
+        .custom-text h3,
+        .custom-text h4,
+        .custom-text h5 {
+          word-break: normal;
+          word-wrap: break-word;
+          margin: 0;
+        }
+        .custom-text.isStandAlone .cell-readMode.readMode {
+          overflow: auto;
+          max-height: 100px;
+	        padding: 1px;
+          border-radius: 2.01px;
+          box-shadow: 0 0 0 1px #CCCCCC;
+        }
+        .custom-text.isStandAlone .cell-readMode.readMode .editable-field.empty #renderHTML {
+          display: inline-block;
+          min-height: 10px;
+        }
+        .readValues a {
+          color: #4C9AFF;
+          cursor: pointer;
+        }
+        #renderHTML:empty:after {
+            content: attr(data-content);
+        }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance:textfield;
+            -webkit-appearance: textfield;
+        }
+        </style>
+      </custom-style>
+
+      <div class$="cell-wrapper {{_checkIsGrid(isgrid)}} custom-text" data-columnid="status">
+        <div class="editable-cell-container">
+          <div class$="cell-readMode {{_checkRender(readMode)}}">
+            <div id="editableField" class="editable-field" on-click="_changeMode">
+              <div>
+                <span id="renderHTML" class="readValues" data-content="$i18n.getText('zephyr.customfield.textarea.placeholder')"></span>
+              </div>
+            </div>
+          </div>
+          <div id="editMode" tabindex="-1">
+            <template is="dom-if" if="{{editMode}}">
+              <div class="cell-editMode">
+                <template is="dom-if" if="[[isInputType(type)]]">
+                  <input tabindex="-1" placeholder="$i18n.getText('zephyr.customfield.textarea.placeholder')" type="{{typeLowerCase}}" value="{{editValue}}" title="{{editValue}}" on-keydown="keyDown" on-keypress="handleChange1" on-change="handleChange" maxlength="255" on-focusout="_checkblur">
+                </template>
+                <template is="dom-if" if="[[!isInputType(type)]]">
+                  <textarea tabindex="-1" maxlength="750" placeholder="$i18n.getText('zephyr.customfield.textarea.placeholder')" title="{{editValue}}" on-keypress="handleChange1" on-keydown="keyDown" on-change="handleChange" on-focusout="_checkblur">{{editValue}}</textarea>
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </template>
+</dom-module>

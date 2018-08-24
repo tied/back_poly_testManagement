@@ -1,0 +1,188 @@
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-copy-teststeps")
+
+#set ($issueKey = $req.getAttribute("issueKey"))
+#set ($isJIRAGreaterThan710 = $req.getAttribute("isJIRAGreaterThan710"))
+
+<html lang="en">
+	<head>
+		<title>$i18n.getText("zephyr-je.copyteststeps.submitname")</title>
+		<script>
+	        AJS.$(document).ready(function(){
+	            ZEPHYR.TESTSTEPS.COPY.init("$issueKey", "");
+	        });
+	    </script>
+	</head>
+	<body>
+		<section id="content" role="main">
+            <div data-versionStatus="$isJIRAGreaterThan710" id="jiraVersionGreaterThan7-10" style="visibility:hidden">
+                $isJIRAGreaterThan710
+            </div>
+			<header class="aui-page-header">
+                <div class="aui-page-header-inner">
+                    <div class="aui-page-header-main">
+                        <h1>$i18n.getText("zephyr-je.copyteststeps.submitname")</h1>
+                    </div>
+                </div>
+            </header>
+            <div class="aui-page-panel">
+                <div class="aui-page-panel-inner">
+                    <div class="aui-page-panel-nav">
+                        <ol class="steps">
+                            <li id="step-DEFINE_SOURCE" class="current">$i18n.getText("zephyr.je.copyteststeps.testcase.source.label", "Define Source")</li>
+                            <li id="step-DEFINE_DESTINATION" class="todo">$i18n.getText("zephyr.je.copyteststeps.testcase.destination.label", "Define Destination")</li>
+                            <li id="step-PROCESSING" class="todo">$i18n.getText("zephyr.je.copyteststeps.testcase.processing.label", "Processing")</li>
+                        </ol>
+                    </div>
+                    <section class="aui-page-panel-content">
+                        <div id="DEFINE_SOURCE" class="step-content">
+                            <table class="aui">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <h3><strong>$i18n.getText("zephyr.copy.teststeps.sources")</strong></h3>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="copy-form-header">$i18n.getText("zephyr.copy.teststeps.label")</td>
+                                        <td><a target="_parent" href="${requestContext.baseUrl}/browse/$issueKey" id="issueKey">$issueKey</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="copy-form-header">
+                                            $i18n.getText("zephyr.copy.teststeps.choose.teststeps")
+                                        </td>
+                                        <td><input id="chooseAll" class="checkbox" type="checkbox" checked disabled><span style="color: #707070">$i18n.getText("cycle.chooseall.label")</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="copy-form-header">
+                                            $i18n.getText("zephyr.copy.teststeps.ifPresent.label")
+                                        </td>
+                                        <td><input class="checkbox" id="copyCustomFieldId" type="checkbox"><span style="color: #707070">$i18n.getText("zephyr.je.yes.button.title")</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="buttons">
+                                <button id="source-next-btn" class="aui-button">$i18n.getText("zephyr.je.admin.plugin.test.section.item.zephyr.custom.next") &gt;&gt;</button>
+                                <a target="_parent" href="${requestContext.baseUrl}/browse/$issueKey" class="aui-button aui-button-link">$i18n.getText("zephyr.je.admin.plugin.test.section.item.zephyr.custom.cancel")</a>
+                            </div>
+                            <div style="padding-top:50px">
+                                <h6>**** $i18n.getText("zephyr.je.copyteststeps.label.description","Copying of Test Steps can take longer depending on number of Test(s).")</h6>
+                                <h6>**** $i18n.getText("zephyr.je.copyteststeps.label.attachment.description","Copying of TestSteps will not copy teststep level attachments.")</h6>
+                            </div>
+                        </div>
+                        <div id="DEFINE_DESTINATION" class="step-content">
+                            <table class="aui">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <h3><strong>$i18n.getText("zephyr.copy.teststeps.destination")</strong></h3>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="copy-form-header dest">
+                                            <button id="ISSUE_PICKER-btn" class="item-button dest-source-btn">
+                                                $i18n.getText("zephyr.copy.teststeps.individually")
+                                            </button>
+                                        </td>
+                                        <td rowspan="2" class="picker-tab-cell">
+                                            <div id="ISSUE_PICKER-container" class="picker-container">
+                                                <form class="aui">
+                                                    <div class="field-group add-test-individually-field-group">
+														  <select name="zephyr-je-testkey" id="zephyr-je-testkey" multiple="multiple"
+																class="aui-field-tescasepickers hidden" style="width:500px;" size="4"
+																		data-ajax-options.data.current_jql="type=Test"
+																        data-remove-on-un-select="true"
+																		data-ajax-options.query="true"
+																		data-ajax-options.data.current-issue-key="$!{issueKey}"
+																		data-ajax-options.url="$req.getContextPath()/rest/zephyr/latest/issues">
+										            	  </select>
+										            	  <div class="description">
+                                                              $i18n.getText("zephyr.copy.teststeps.dropdown.info.tooltips")
+                                                          </div>
+													</div>
+                                                </form>
+                                            </div>
+                                            <div id="FILTER_PICKER-container" class="picker-container">
+                                                <form class="aui">
+									                  <div class="field-group aui-field-filterpicker frother-control-renderer">
+													  	  <select name="addTestsSavedSearch" id="addTestsSavedSearch"
+																class="hidden" style="width:580px;" size="4">
+										                  </select>
+										                  <div class="description">
+                                                              $i18n.getText("zephyr.copy.teststeps.dropdown.info.tooltips")
+                                                          </div>
+													</div>
+                                                </form>
+                                                <div id="filter-details">
+                                                    <div>
+                                                        <span class="filter-details-header">JQL:</span><pre></pre>
+                                                    </div>
+                                                    <div id="filter-test-found">
+                                                        <span class="filter-details-header">Tests found:</span>
+                                                        <div class="button-spinner"></div>
+                                                        <span id="found-tests"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="copy-form-header dest">
+                                            <button id="FILTER_PICKER-btn" class="item-button dest-source-btn">
+                                                $i18n.getText("cycle.add.tests.filter.label")
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="buttons">
+                                <div class="error">$i18n.getText("zephyr.copy.teststeps.error.heading")</div>
+                                <button id="dest-back-btn" class="aui-button">&lt;&lt; $i18n.getText("zephyr.je.admin.plugin.test.section.item.zephyr.custom.back")</button>
+                                <button id="dest-submit-btn" class="aui-button">$i18n.getText("zephyr.je.submit.form.Submit")</button>
+                                <a target="_parent" class="aui-button aui-button-link" href="${requestContext.baseUrl}/browse/$issueKey">
+                                    $i18n.getText("zephyr.je.submit.form.cancel")
+                                </a>
+                            </div>
+                            <div style="padding-top:50px;float: left">
+                                <h6>**** $i18n.getText("zephyr.je.copyteststeps.label.description","Copying of TestSteps can take longer depending on number of Test(s).")</h6>
+                                <h6>**** $i18n.getText("zephyr.je.copyteststeps.label.attachment.description","Copying of Test Steps will not copy teststep level attachments.")</h6>
+                            </div>
+                        </div>
+                        <div id="PROCESSING" class="step-content">
+                            <div id="error-message"></div>
+                            <table class="aui">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <h3><strong>$i18n.getText("zephyr.copy.teststeps.copying.teststeps")</strong></h3>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td id="copy-teststeps-progress">
+                                            <div data-value="0.0" class="aui-progress-indicator app-loading-progress-bar">
+					                            <span style="width:0%" class="aui-progress-indicator-value"></span>
+					                        </div>
+					                        <div class="timeTaken"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div id="timer"></div>
+                            <div id="result"></div>
+                            <div class="buttons">
+                                <a id="done-btn" target="_parent" class="aui-button disabled-link" href="${requestContext.baseUrl}/browse/$issueKey" aria-disabled="true" disabled>
+                                    $i18n.getText("zephyr.je.done.button.label")
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+		</section>
+	</body>
+</html>

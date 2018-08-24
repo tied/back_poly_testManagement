@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="12px" viewBox="0 0 17 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>Take-a-feature-tour_hover_icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="T-A-04" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-1573.000000, -160.000000)">
+        <g id="Group-16" transform="translate(1563.000000, 145.000000)" stroke="#4C9AFF">
+            <g id="Take-a-feature-tour_hover_icon" transform="translate(11.000000, 16.000000)">
+                <g id="take-a-feature-tour_icon">
+                    <path d="M2.5,3.5 L5.5,7.5" id="Line" stroke-linecap="square"></path>
+                    <path d="M8.5,8.5 L11.5,7.5" id="Line" stroke-linecap="square"></path>
+                    <circle id="Oval-4" cx="1.5" cy="1.5" r="1.5"></circle>
+                    <circle id="Oval-4" cx="6.5" cy="9" r="1.5"></circle>
+                    <circle id="Oval-4" cx="13.5" cy="6.5" r="1.5"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

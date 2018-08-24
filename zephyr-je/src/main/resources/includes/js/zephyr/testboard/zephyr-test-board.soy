@@ -1,0 +1,231 @@
+{namespace ZEPHYR.Templates.TestBoard}
+
+/**
+ * Test board Layout
+ * @param page
+ */
+{template .testBoardLayout}
+<div id="zephyr-tb-plan-group" class="zephyr-tb-plan-group">
+	<div id="zephyr-tb-classification-menu-column" class="zephyr-tb-ide-menu zephyr-tb-classification-menu"/>
+	{if $page == 'sprint'}
+		<div id="zephyr-tb-version-column" class="zephyr-tb-version-column zephyr-tb-classification-column"/>
+	{/if}
+	<div id="zephyr-tb-sprints-column" class="zephyr-tb-sprints-column"/>
+	<div id="zephyr-tb-detail-column" class="zephyr-tb-detail-view" />
+</div>
+{/template}
+
+/**
+ * Test board classification menu column
+ */
+{template .classificationMenuHTML}
+<ul id="zephyr-tb-classification-menu" class="zephyr-tb-ide-menu zephyr-tb-classification-menu">
+	<li role="button" id="zephyr-tb-version-toggle" data-target-id="zephyr-tb-version-column" class="js-version-toggle zephyr-tb-version-toggle zephyr-tb-active" title="{getText('zephyr-je.testboard.versions.show.title')}">
+		<span class="zephyr-tb-inner" data-target-id="zephyr-tb-version-column">{getText('zephyr-je.testboard.versions.label')}</span>
+	</li>
+</ul>
+{/template}
+
+/**
+ * Versions
+ * @param versions
+ * @param allVersionIds
+ * @param allProjectIds
+ * @param showProjectName
+ */
+{template .versionsHTML}
+<div class="zephyr-tb-classification-group">
+	<div class="zephyr-tb-classification-header">
+		<div class="zephyr-tb-actions">
+			<div class="zephyr-tb-close js-release-toggle zephyr-tb-version-close" title="{getText('zephyr-je.testboard.versions.hide.title')}">
+				<span class="zephyr-tb-iconfont aui-icon aui-icon-small aui-iconfont-remove-label"></span>
+			</div>
+		</div>
+		<h2>{getText('zephyr-je.testboard.versions.label')}</h2>
+	</div>
+	<div class="zephyr-tb-classification-scrollview">
+		<div class="zephyr-tb-classification-item zephyr-tb-classification-all" data-version-id="{$allVersionIds}" data-project-id="{$allProjectIds}">
+			<div class="zephyr-tb-inner">
+				<div class="zephyr-tb-header">
+					<h3 class="zephyr-tb-name">
+						<span class="js-version-name" role="button">{getText('zephyr-je.testboard.versions.all.label')}</span>
+					</h3>
+				</div>
+			</div>
+		</div>
+		<div class="zephyr-tb-classification-cards">
+		{foreach $version in $versions}
+			{if $version.released == false}
+		    	<div class="zephyr-tb-classification-item zephyr-tb-closed" data-project-id="{$version.projectId}" data-version-id="{$version.versionId}">
+					<div class="zephyr-tb-inner">
+						<div class="zephyr-tb-header">
+							<h3 class="zephyr-tb-name">
+								{if $showProjectName}
+									<span class="zephyr-tb-project-key" title="{$version.projectId}">{$version.projectName}</span>
+								{/if}
+								<span class="js-version-name" role="button">
+									<span class="field-value js-editable-field js-edit-versionName-trigger" data-fieldname="{$version.name}" data-project-id="{$version.projectId}" data-fieldvalue="{$version.id}">{$version.name}</span>
+								</span>
+							</h3>
+						</div>
+					</div>
+				</div>
+		    {/if}
+	    {/foreach}
+	</div>
+</div>
+{/template}
+
+/**
+ * Render the Back to boards button
+ * @param boardName
+ * @param page
+ */
+{template .backToBoardsHTML}
+<div id="zephyr-tb-header">
+	<div id="ghx-modes-tools">
+		<span id="ghx-view-pluggable">
+			<div class="ghx-view-section">
+				<div id="zephyr-tb-back-to-boards-wrapper" class="ghx-view-section">
+						<button id="zephyr-tb-testboard-toggle-button" disabled="disabled" data-page="{if $page == 'sprint'}issues{elseif $page == 'issues'}sprint{/if}" class="aui-button">
+							{if $page == 'sprint'}
+								{getText('webfragments.navigation.com.thed.zephyr.je.testboard.section')}&nbsp;-&nbsp;{getText('com.thed.zephyr.je.testboard.issues.label')}
+							{elseif $page == 'issues'}
+								{getText('webfragments.navigation.com.thed.zephyr.je.testboard.section')}&nbsp;-&nbsp;{getText('com.thed.zephyr.je.testboard.sprint.label')}
+							{/if}
+					</button>
+					<button id="zephyr-tb-back-to-boards-button" class="aui-button">{getText('zephyr-je.testboard.back.to.boards.label')}</button>
+				</div>
+			</div>
+		</span>
+		<div id="ghx-view-presentation">
+			<button id="zephyr-tb-compact-toggle" class="aui-button zephyr-tb-compact-toggle js-compact-toggle" title="{getText('zephyr-je.testboard.board.compact.title')}">
+				<span class="aui-icon ghx-iconfont aui-icon-small aui-iconfont-arrows-up"></span>
+			</button>
+		</div>
+	</div>
+	<div id="ghx-view-selector">
+		<h1>
+			<span id="zephyr-tb-board-name" class="subnav-page-header">{$boardName}</span>
+			<span class="subnav-container">
+				<span id="subnav-title">
+					<span class="subnavigator-title" title="{getText('zephyr-je.testboard.backlog.label')}&nbsp;{if $page == 'sprint'}({getText('com.thed.zephyr.je.testboard.sprint.label')}){elseif $page == 'issues'}({getText('com.thed.zephyr.je.testboard.issues.label')}){/if}">
+						{getText('zephyr-je.testboard.backlog.label')}&nbsp;{if $page == 'sprint'}({getText('com.thed.zephyr.je.testboard.sprint.label')}){elseif $page == 'issues'}({getText('com.thed.zephyr.je.testboard.issues.label')}){/if}
+					</span>
+					<form onsubmit="return false;" id="zephyr-tb-sprint-search" class="aui">
+						{if $page == 'sprint'}
+							<div class="zephyr-tb-sprint-search">
+								<input class="text zephyr-tb-search" title="{getText('zephyr-je.testboard.operations.filter.by.cycle.title')}" type="text" id="zephyr-tb-sprint-search-input" />
+								<span title="{getText('zephyr-je.testboard.operations.filter.by.cycle.title')}" id="zephyr-tb-filter-cycle-icon" class="js-search-trigger zephyr-tb-iconfont aui-icon aui-icon-small aui-iconfont-search-small"></span>
+							</div>
+						{elseif $page == 'issues'}
+							<div class="zephyr-tb-issues-search">
+								<input class="text zephyr-tb-search" title="{getText('zephyr-je.testboard.operations.filter.by.issue.title')}" type="text" id="zephyr-tb-issue-search-input" />
+								<span title="{getText('zephyr-je.testboard.operations.filter.by.issue.title')}" id="zephyr-tb-filter-issue-icon" class="js-search-trigger zephyr-tb-iconfont aui-icon aui-icon-small aui-iconfont-search-small"></span>
+							</div>
+						{/if}
+					</form>
+				</span>
+			</span>
+		</h1>
+	</div>
+	<div class="active zfj-permission-test-view" id="zfj-permission-message-bar-test-view"/>
+	<div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" class="zephyr-tb-message-bar">
+</div>
+{/template}
+
+/**
+ * Render the testboard operation tools
+ */
+{template .testboardOperationsHTML}
+<div id="zephyr-tb-operations">
+	<div id="zephyr-tb-controls">
+		<div id="zephyr-tb-controls-plan" class="zephyr-tb-controls-plan zephyr-tb-controls-list">
+			<button class="aui-button zephyr-tb-compact-toggle js-compact-toggle" title="{getText('zephyr-je.testboard.board.compact.title')}">
+				<span class="aui-icon zephyr-tb-iconfont aui-icon-small aui-iconfont-arrows-down"></span>
+			</button>
+		</div>
+	</div>
+</div>
+{/template}
+
+/**
+ * Renders response from ZQL Search
+ * @param totalCount
+ * @param currentIndex
+ * @param maxAllowed
+ * @param linksNew
+ */
+{template .addZQLPaginationFooterHTML}
+<div class="aui-group count-pagination navigator-results" id="displayDetailId">
+	<div class="results-count aui-item">
+		{if ($currentIndex * $maxAllowed) < $totalCount}
+			 <span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span><span>-</span><span class="results-count-end">{$currentIndex * $maxAllowed}</span><span> of </span><span class="results-count-total results-count-link"> {$totalCount} </span>
+		{else}
+			 <span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span><span>-</span><span class="results-count-end">{$totalCount}</span><span> of </span><span class="results-count-total results-count-link"> {$totalCount} </span>
+		{/if}
+		<a href="#" id='refreshZQLId' class="refresh-table" title="Refresh results">
+			<span class="aui-icon aui-icon-small aui-iconfont-build"/>
+		</a>
+	</div>
+	{if $linksNew.length > 0}
+		<div class="pagination aui-item" id="zqlPageId">
+			{if $currentIndex > 1}
+				<a href='#' id='zql-pagination-{$currentIndex-2} * {$maxAllowed}' page-id='{$currentIndex-2}*{$maxAllowed}' class='icon icon-previous push-state'><span>Previous &gt;&gt;</span></a>
+			{/if}
+			{foreach $link in $linksNew}
+				{if $link == $currentIndex}
+        			<strong>{$link}&nbsp;</strong>
+				{else}
+					<a href='#' id='zql-pagination-{$link-1}*{$maxAllowed}' page-id='{$link-1}*{$maxAllowed}'>{$link}&nbsp;</a>
+				{/if}
+			{/foreach}
+			{if $currentIndex * $maxAllowed < $totalCount}
+				<a href='#' id='zql-pagination-{$currentIndex} * {$maxAllowed}' page-id='{$currentIndex} * {$maxAllowed}' class='icon icon-next'><span>Next &gt;&gt;</span></a>
+			{/if}
+		</div>
+	{/if}
+</div>
+{/template}
+
+
+/**
+* generate schedule defect list
+* @param? defects
+*/
+{template .defectColumnValue}
+	{if $defects and $defects.length}
+		{foreach $defect in $defects}
+			{let $defectStatus}{call convertToLowerCase data="[$defect.defectStatus]" /}{/let}
+			{if $defect.defectKey == 'XXXXX'}
+                <span {if $defect.defectResolutionId} style="text-decoration:line-through;"{/if} data-defect-resolution="{$defect.defectResolutionId}" data-issueKey="{$defect.defectKey}" data-status="{$defect.defectStatus}" data-summary="{$defect.defectSummary}">{$defect.defectKey}</span>
+			{else}
+			    <a {if $defect.defectResolutionId} style="text-decoration:line-through;"{/if} href="{contextPath}/browse/{$defect.defectKey}" data-defect-resolution="{$defect.defectResolutionId}" data-issueKey="{$defect.defectKey}" data-status="{$defect.defectStatus}" data-summary="{$defect.defectSummary}">{$defect.defectKey}</a>
+			{/if}
+		 	{if not isLast($defect)}, {/if}
+		{/foreach}
+	{else}
+		{getText('zephyr.je.defects.none')}
+	{/if}
+{/template}
+
+/**
+* Render chart image
+* @param summaryList
+* @param totalExecutions
+*/
+{template .versionProgressHTML}
+{if $summaryList and $summaryList.executionSummary}
+<div class="zephyr-tb-versions-table-progress">
+	<div class="zephyr-tb-progressbar-container">
+		<div class="zephyr-tb-progressbar zephyr-tb-progressbar-full">
+			{foreach $summary in $summaryList.executionSummary}
+				{if $summary.count > 0}
+					<div statusKey={$summary.statusKey} statusCount={{$summary.count}} class="zephyr-tb-progressbar-entry" title="{$summary.statusName} {$summary.count} / {round(($summary.count / $totalExecutions) * 100, 2)}%" style="background: {$summary.statusColor}; width:{$summary.count * 160 / $totalExecutions}px;"></div>
+				{/if}
+			{/foreach}
+		</div>
+	</div>
+</div>
+{/if}
+{/template}

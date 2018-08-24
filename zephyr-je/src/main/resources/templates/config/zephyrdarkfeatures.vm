@@ -1,0 +1,64 @@
+<html lang="en">
+<head>
+    $webResourceManager.requireResource("com.thed.zephyr.je:zephyr-admin-config")
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_dark_features"/>
+    <title>$i18n.getText("zephyr.je.admin.darkfeatures.manage.heading")</title>
+</head>
+<body>
+<div class="aui-group">
+    <div id="site-dark-features" class="aui-item">
+        <h2>$i18n.getText("zephyr.je.admin.plugin.test.section.item.zephyr.darkfeatures.name")</h2>
+        #if($action.getSiteEnabledFeatures().size() > 0)
+            <div class="aui-message info"><span class="aui-icon icon-info"></span>
+                <p>$i18n.getText("zephyr.je.admin.darkfeatures.site.property.warning", "<strong>", "</strong>")</p>
+            </div>
+            <ul id="site-enabled-features">
+                #foreach ($option in $action.getSiteEnabledFeatures())
+                    <li>
+                        $option (<a
+                            href="ZephyrLabFeatures!remove.jspa?featureKey=$option&atl_token=${atl_token}">$i18n.getText(
+                        "admin.common.words.disable")</a>)
+                    </li>
+                #end
+            </ul>
+        #end
+
+        <form action="ZephyrLabFeatures.jspa" class="aui xtop-label" id="dark-features" method="post">
+            <div class="form-body">
+                <fieldset class=" inline">
+                    <label for="dark-features-featureKey">$i18n.getText('zephyr.je.admin.darkfeatures.enable')</label>
+                    <input class="text" id="dark-features-featureKey" maxlength="255" name="featureKey" type="text">
+                    <input accesskey="s" class="aui-button" id="enable-dark-feature" name="Add"
+                           title="Press Ctrl+Alt+s to submit this form" type="submit"
+                           value="$i18n.getText('common.forms.add')">
+                </fieldset>
+            </div>
+            <div class="hidden">
+                <input name="atl_token" type="hidden" value="$atl_token">
+            </div>
+        </form>
+
+    </div>
+    <div id="system-dark-features" class="aui-item">
+        <h2>$i18n.getText("zephyr.je.admin.darkfeatures.system.property")</h2>
+        #if($action.getSystemEnabledFeatures().size() > 0)
+            <div class="aui-message info"><span class="aui-icon icon-info"></span>
+
+                <p>$i18n.getText("zephyr.je.admin.darkfeatures.system.property.warning", "<strong>", "</strong>")</p>
+            </div>
+            <ul>
+                #foreach ($option in $action.getSystemEnabledFeatures())
+                    <li>
+                        $option
+                    </li>
+                #end
+            </ul>
+        #else
+            <p>$i18n.getText("admin.darkfeatures.no.system")</p>
+        #end
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{namespace JIRA.RestfulTable.Templates}
+
+/**
+* @param update
+*/
+{template .editOperations}
+<td class="jira-restfultable-operations">
+	<div class="restfultable-operations-wrapper">
+        <input class="aui-button" type="submit" accesskey="s" value="{if $update}{getText('common.forms.update')}{else}{getText('common.forms.add')}{/if}" />
+    {if $update}
+        <a class="aui-button-cancel" accesskey="`" name="{getText('common.forms.cancel')}">{getText('common.forms.cancel')}</a>
+    {/if}
+    </div>
+</td>
+
+{/template}
+
+/**
+ *
+ */
+{template .dragHandle}
+<td class="jira-restfultable-order">
+    <span class="jira-restfultable-draghandle"></span>
+</td>
+{/template}

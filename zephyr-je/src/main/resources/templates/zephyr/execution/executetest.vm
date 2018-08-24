@@ -1,0 +1,68 @@
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-execute-test")
+#set ($versionName = $req.getAttribute("versionName"))
+#set ($versionId = $req.getAttribute("versionId"))
+#set ($project = $req.getAttribute("project"))
+#set ($cycleName = $req.getAttribute("cycleName"))
+#set ($issue = $req.getAttribute("issue"))
+#if ($req.getAttribute("issues"))
+	#set ($issues = $req.getAttribute("issues"))
+#else
+	#set($issues="")
+#end	
+#set ($issueDescAsHtml = $req.getAttribute("issueDesc"))
+#set ($execs = $req.getAttribute("execs"))
+#set ($schedule = $req.getAttribute("schedule"))
+#if ($req.getAttribute("executedBy"))
+	#set ($executedBy = $req.getAttribute("executedBy"))
+	#set ($executedByUser = $req.getAttribute("executedByUser"))
+	#set ($executedByDisplay = $req.getAttribute("executedByDisplay"))
+	#set ($executedOn = $req.getAttribute("executedOn"))
+#end	
+#set ($scheduleId = $req.getParameter("scheduleId"))
+#set($currentExecutionStatus = $req.getAttribute("currentExecutionStatus"))
+#if($req.getAttribute("attachments"))
+	#set($attachments = $req.getAttribute("attachments"))
+#else
+	#set($attachments = "")
+#end
+#if ($req.getAttribute("errors"))
+	#set ($errors =  $req.getAttribute("errors"))
+#else
+	#set ($errors =  "")
+#end
+
+## Its important to have Html in end of var, so that it doesnt get escaped out. 
+#set($commentAsHtml = $req.getAttribute("htmlComment"))
+#*
+##set ($teststepBeans = $req.getAttribute("teststepBeans"))
+##set ($teststepResultsMap = $req.getAttribute("stepResultsMap"))
+##set ($stepExecutionStatuses = $req.getAttribute("stepExecutionStatuses"))
+*#
+
+//JIRA 5.1 onwards
+#enable_html_escaping()
+<html>
+<head>
+	<title>$i18n.getText("com.thed.zephyr.je.topnav.tests.plan.execute.label")</title>
+	<content tag="section">zephyr_je.topnav.tests</content>
+</head>
+<body>
+    <section id="content">
+		<input type="hidden" id="zerrors" value="$textutils.htmlEncode($!errors)"/>
+		<input type="hidden" id="zScheduleId" value="$scheduleId"/>
+		<input type="hidden" id="pid" value="$project.getId()"/>
+		<input type="hidden" id="issueKey" value="$issue.key"/>
+		<input type="hidden" id="projectKey" value="$project.key"/>
+		<input type="hidden" id="projectName" value="$project.name"/>
+		<input type="hidden" id="projectAvatarId" value="$project.avatar.id"/>
+		<input type="hidden" id="issueDescAsHtml" value="$!issueDescAsHtml"/>
+		<input type="hidden" id="issue-id-for-selected-schedule" value="$issue.id"/>
+		<input type="hidden" id="schedule-comment" value="$!schedule.comment"/>
+		 #if($!errors && $!errors.length() > 0)
+			<div class="execute-error-message">
+				#parse("/templates/zephyr/common/licenseerror.vm")
+			</div>	
+		#end	
+    </section>
+</body>
+</html>

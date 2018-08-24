@@ -1,0 +1,10 @@
+#set ($encKeyFld = $req.getAttribute("encKeyFld"))
+#set ($encKeyVal = $req.getAttribute("encKeyVal"))
+#set ($showwf = $req.getAttribute("showWF"))
+
+<input type="hidden" id="zEncKeyFld" value="$encKeyFld">
+<input type="hidden" id="zEncKeyVal" value="$encKeyVal">
+<input type="hidden" id="zshowWF" value="$showwf">
+
+#set ($encKeyFld = '')
+#set ($encKeyVal = '')

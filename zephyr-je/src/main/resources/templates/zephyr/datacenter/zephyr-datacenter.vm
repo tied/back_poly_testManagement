@@ -1,0 +1,261 @@
+$webResourceManager.requireResourcesForContext("com.thed.zephyr.je:zephyr-datacenter")
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_datacenter_configuration"/>
+    <meta name="decorator" content="admin"/>
+    <title>$i18n.getText("zephyr.je.admin.plugin.test.section.item.zephyr.datacenter.name")</title>
+</head>
+<body>
+<div class="module">
+	<div id="general-config-aui-message-bar"> </div>
+	<div id="general-config-aui-message-bar1"> </div>
+	<div id="general-config-aui-message-bar2"> </div>
+	<div id="general-config-aui-message-bar3"> </div>
+	<div id="general-config-aui-message-bar4"> </div>
+	<div id="general-config-aui-message-bar5"> </div>
+	<div id="general-config-aui-message-bar6"> </div>
+	<div id="general-config-aui-message-bar7"> </div>
+	<form class="aui aui-form">
+		<div class="aui-tabs horizontal-tabs">
+			<ul class="tabs-menu">
+	            <li class="menu-item active-tab">
+	                <a href="#support-tool-tab">$action.getText(
+	                    'zephyr.je.admin.plugin.test.section.item.zephyr.support.tool.name')</a>
+	            </li>
+	            <li class="menu-item">
+	                <a href="#integrity-checker-tab">$action.getText(
+	                    'zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.name')</a>
+	            </li>
+							<li class="menu-item">
+				           <a href="#cron-schedule-tab">Index Recovery</a>
+				      </li>
+	        </ul>
+	        <div class="tabs-pane active-pane" id="support-tool-tab">
+				<table class="aui aui-table-rowhover" id="zSupportToolTable">
+					<thead>
+						<tr>
+							<th width="2%">
+								<input class="checkbox" type="checkbox" id="zSupporToolSelectAll"/>
+							</th>
+							<th width="98%">
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.select.name')</label>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td width="2%">
+								<input type="checkbox" class="checkbox" id="zephyr-je-zfjlog">
+				            </td>
+							<td width="98%">
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.supporttool.zfjlog.id.name')</label>
+								<div class="description">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.supporttool.zfjlog.id.description')</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="2%">
+								<input type="checkbox" class="checkbox" id="zephyr-je-zfjshared">
+				            </td>
+							<td width="98%">
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.supporttool.zfjshared.zfjdb.id.name')</label>
+								<div class="description">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.supporttool.zfjshared.zfjdb.id.description')</div>
+							</td>
+						</tr>
+						<tr>
+							<td width="2%">
+								<input type="checkbox" class="checkbox" id="zephyr-je-zfjserverlog">
+				            </td>
+							<td width="98%">
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.supporttool.zfjserverlog.id.name')</label>
+								<div class="description">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.supporttool.zfjserverlog.id.description')</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<br/>
+				<input id="downloadzfjlogs" class="aui-button zdownloadzfjlogs" type="button" value="$action.getText('zephyr.je.admin.supporttool.view.button.label')"/>
+				<input id="downloadzfjlogsusingJIRA" class="aui-button zdownloadzfjlogsUsingJIRA" type="button" value="$action.getText('zephyr.je.admin.supporttool.view.jira.button.label')" style="display: none" />
+				<div id="redirecttoJIRASupport"  style="display: none">$action.getText('zephyr-je.supporttool.select.zipfile.redirect.jirasupporttool')</div>
+
+				<div class="overlay-icon icon loading hidden"></div>
+	        </div>
+	        <div class="tabs-pane" id="integrity-checker-tab">
+	        	<table class="aui aui-table-rowhover" id="zintegrityCheckerTable">
+					<thead>
+						<tr>
+							<th width="1%">
+								<input class="checkbox" type="checkbox" name="zintegrityCheckerSelectAll" id="zintegrityCheckerSelectAll"/>
+							</th>
+							<th width="1%">
+								<label>No.</label>
+							</th>
+							<th>
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.select.name')</label>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<input class="checkbox" type="checkbox" name="zicTotalExecutionCount" id="zicTotalExecutionCount"/>
+							</td>
+							<td>
+								<label>1</label>
+							</td>
+							<td>
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.option1.name')</label>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input class="checkbox" type="checkbox" name="zicTotalCycleCount" id="zicTotalCycleCount"/>
+							</td>
+							<td>
+								<label>2</label>
+							</td>
+							<td>
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.option2.name')</label>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input class="checkbox" type="checkbox" name="zicExecutionCountByCycle" id="zicExecutionCountByCycle"/>
+							</td>
+							<td>
+								<label>3</label>
+							</td>
+							<td>
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.option3.name')</label>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input class="checkbox" type="checkbox" name="zicExecutionCountByFolder" id="zicExecutionCountByFolder"/>
+							</td>
+							<td>
+								<label>4</label>
+							</td>
+							<td>
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.option4.name')</label>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input class="checkbox" type="checkbox" name="zicIssueCountByProject" id="zicIssueCountByProject"/>
+							</td>
+							<td>
+								<label>5</label>
+							</td>
+							<td>
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.option5.name')</label>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input class="checkbox" type="checkbox" name="zicTeststepResultCountByExecution" id="zicTeststepResultCountByExecution"/>
+							</td>
+							<td>
+								<label>6</label>
+							</td>
+							<td>
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.option6.name')</label>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input class="checkbox" type="checkbox" name="zicTeststepCountByIssue" id="zicTeststepCountByIssue"/>
+							</td>
+							<td>
+								<label>7</label>
+							</td>
+							<td>
+								<label>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.option7.name')</label>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<br/>
+				<input id="checkIntegrityChecker" class="aui-button zcheckIntegrityChecker" type="button" value="$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.integrity.checker.button.label')"/>
+				<div class="overlay-icon icon loading hidden"></div>
+				<button id="zexportIntegrityChecker" class="aui-button zexportIntegrityChecker hidden" style="float: right">
+					<span class="aui-icon aui-icon-small aui-iconfont-export" style="padding-top: 5px;padding-right: 5px;"></span>$action.getText('enav.export.label')
+				</button>
+				<div class="aui-tabs horizontal-tabs">
+					<ul class="tabs-menu"></ul>
+				</div>
+	        </div>
+				<div class="tabs-pane" id="cron-schedule-tab">
+					<form onsubmit="return false;" class="aui" id="zephyr-index-recovery">
+					    <div class="form-body">
+					      <header class="aui-page-header">
+					        <div class="aui-page-header-inner">
+					          <div class="aui-page-header-main">
+					            <h2>Index Recovery</h2>
+					          </div>
+					          <div class="aui-page-header-actions">
+					            <div class="aui-buttons">
+					              <a id="edit-recovery-settings" class="aui-button">
+					              <span class="aui-icon aui-icon-small aui-iconfont-edit"></span>
+					                Edit Settings
+					              </a>
+					            </div>
+					          </div>
+					        </div>
+					      </header>
+					      <table class="aui aui-table-rowhover" id="table-AttachmentSettings">
+					        <tbody>
+					          <tr id="cronScheduleStatus" data-attachment-setting="allow-attachment">
+					            <td width="40%" data-cell-type="label">
+					              <strong>Enable index recovery</strong>
+					            </td>
+					            <td width="60%" data-cell-type="value">
+					              <strong class="status-inactive">OFF</strong>
+					            </td>
+					          </tr>
+										<tr id="cronScheduleDescription" class="scheduleInfo" style="display:none;">
+                			<td width="40%" data-cell-type="label">
+                  			<strong>Schedule</strong>
+                			</td>
+                			<td width="60%" data-cell-type="value">
+                			</td>
+              			</tr>
+										<tr id="cronScheduleDirectory" class="scheduleInfo" style="display:none;">
+                			<td width="40%" data-cell-type="label">
+                  			<strong>Snapshot directory</strong>
+                			</td>
+                			<td width="60%" data-cell-type="value">
+                			</td>
+              			</tr>
+					        </tbody>
+					      </table>
+					      <div class="aui-message info"><span class="aui-icon icon-info"></span>
+					      	$action.getText('zephyr.je.admin.plugin.index.backup.recovery.info')
+					      </div>
+					      <fieldset>
+					        <fieldset>
+					          <div class="field-group">
+					              <label for="index-recovery-file-name">File name</label>
+					              <input class="text long-field" id="index-recovery-file-name" name="recoveryFilename" type="text">
+					            <div class="description">Name of zip file containing a previously saved index. </div>
+					          </div>
+
+					        </fieldset>
+
+					      </fieldset>
+					    </div>
+							<div class="error syncUpError"></div>
+					    <div class="buttons-container form-footer">
+					        <div class="buttons">
+					          <input class="aui-button" id="index-recovery-submit" title="Press Alt+s to submit this form" type="button" value="Recover">
+					        </div>
+					    </div>
+					</form>
+				</div>
+
+	    </div>
+	</form>
+</div>
+</body>
+</html>

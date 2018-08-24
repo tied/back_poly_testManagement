@@ -1,0 +1,115 @@
+$webResourceManager.requireResource('com.thed.zephyr.je:zephyr-je-test-summary')
+
+#if ($req.getAttribute("errors"))
+	#set ($errors =  $req.getAttribute("errors"))
+#else
+	#set ($errors =  "")
+#end
+#macro (testcaseCountByProperty $groupCollection $type)
+	#foreach($item in $groupCollection)
+		<div class="$type ">
+    		<span class="stat">$item.tcCnt</span>
+    		<!-- Adding inline style because there is no stylesheet inherited by this page -->
+    		<a style="word-break: break-all; word-wrap: break-word;" href="${requestContext.baseUrl}$item.url" title="$item.name">$item.name</a>
+		</div>
+    #end
+#end	
+
+
+<div class="aui-group">
+	<input type="hidden" id="zerrors" value="$textutils.htmlEncode($!errors)"/>
+	<input type="hidden" id="projKey" value="${pKey}"/>
+	<input type="hidden" id="projId" value="${pid}"/>
+	<input type="hidden" id="zephyr-proj-tab" value="summary-tab"/>
+
+	 #if($!errors && $!errors.length() > 0)
+		<div style="opacity:0.9;">
+			#parse("/templates/zephyr/common/licenseerror.vm")
+		</div>	
+	 #else
+    	<div id="primary" class="aui-item">
+    	    <div class="content">
+    	        <div class="module">
+    	         	<div class="mod-header">
+    	                <h3>$i18n.getText('zephyr-je.pdb.test.summary.label')</h3>
+    	            </div>
+    	            <div class="mod-content">
+    					<div class="version">
+    						<span class="stat">${totalTestsByProjCnt}</span>
+    						<a href="${requestContext.baseUrl}${totalTestsByProjectUrl}" title="$i18n.getText('project.testcase.summary.section.total.tests')">$i18n.getText('project.testcase.summary.section.total.tests')</a>
+    					</div>
+    					<div class="version">
+    						<span class="stat">${totalExecutionsByProjCnt}</span>
+                            <a href="${requestContext.baseUrl}${totalExecutionsByProjCntUrl}" title="$i18n.getText('project.testcase.summary.section.total.executed')">$i18n.getText('project.testcase.summary.section.total.executed')</a>
+    					</div>
+    					<div class="version">
+    						#if(($totalTestsByProjCnt.intValue() - $totalExecutionsByProjCnt.intValue()) > 0)          
+    							#set ($totalTestcaseRemainingByProjCnt = ($totalTestsByProjCnt.intValue() - $totalExecutionsByProjCnt.intValue()))
+							#else
+    							#set($totalTestcaseRemainingByProjCnt = 0)
+							#end
+    						<span class="stat">$totalTestcaseRemainingByProjCnt</span>
+    						$i18n.getText('project.testcase.summary.section.total.remaining')
+    					</div>
+    					<div class="version">
+    						<span class="stat">${totalDistinctRemainingTestsCnt}</span>
+    						$i18n.getText('project.testcase.summary.section.total.distinct.remaining')
+                        </div>
+    	            </div>
+    	        </div>
+    	        <div class="module">
+    	        	<div class="mod-header">
+    					<h3>$i18n.getText('project.testcase.by.version.section.label')</h3>
+    	            </div>
+    	            <div class="mod-content">
+                		#testcaseCountByProperty($versions "version")
+                	</div>
+    	        </div>
+    	        <div class="module">
+    	        	<div class="mod-header">
+    	                <h3>$i18n.getText('project.testcase.by.component.section.label')</h3>
+    	            </div>
+    	            <div class="mod-content">
+    					#testcaseCountByProperty($components "version")
+    	            </div>
+    	        </div>
+    	        <div class="module">
+    	        	<div class="mod-header">
+    	                <h3>$i18n.getText("project.testcase.by.label.section.label")</h3>
+    	            </div>
+    	            <div class="mod-content">
+    					#testcaseCountByProperty($labels "version")
+    	            </div>
+    	        </div>
+    	    </div>
+    	</div>
+    	<div id="secondary" class="aui-item">
+    	    <div class="content">
+    	        <div class="module">
+    	         	<div class="mod-header">
+    	                <h3>$i18n.getText("project.testcase.summary.section.testcases.chart",30)</h3>
+    	            </div>
+    	            <div class="mod-content zephyr-chart">
+					   <div id="testcases-creation-chart-id" class="loading">
+					   <span class="icon loading"></span>
+					   </div>
+					   <p id="chart-details-id" style="text-align:left;"/>
+    	            </div>
+    	        </div>
+    		</div>
+    	    <div class="content">
+    	        <div class="module">
+    	         	<div class="mod-header">
+    	                <h3>$i18n.getText("project.testcase.summary.section.execution.chart", 30)</h3>
+    	            </div>
+    	            <div class="mod-content zephyr-chart">
+					   <div id="execution-creation-chart-id">
+					   	<span class="icon loading"></span>
+					   </div>
+					   <p id="execution-details-id" style="text-align:left;"/>
+    	            </div>
+    	        </div>
+    		</div>
+    	</div>  
+	#end	
+</div>

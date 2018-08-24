@@ -1,0 +1,26 @@
+table.tablesorter .thStyle {
+	border:0;
+	background-color: #f7f7f7;
+	font-weight:normal;
+	color:#999999;
+}
+	
+table.tablesorter .headerSortUp {
+    background: #bbbbbb url(../../../images/icons/icon_ascending.png) no-repeat scroll 100% 50%;
+	padding-right:20px;
+	color: #fff;
+}
+table.tablesorter .headerSortDown {
+	background: #bbbbbb url(../../../images/icons/icon_descending.png) no-repeat scroll 100% 50%;
+	padding-right:20px;
+	color: #fff;
+}
+
+table.tablesorter .tdOrdering { 
+	vertical-align:top; 
+	border:0 solid #BBBBBB;
+}
+
+table.tablesorter tbody tr:hover { background-color: #F0F0F0;}
+
+table.tablesorter tbody tr { height:29px;}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-7"?>
+<testcases>
+	<testcase name="Testcase Test Name Here1"> <!--Testcase Name -->
+		<Description>This is some summary data. Use CDATA if necessary.</Description> <!--Testcase Description-->
+		<Priority>4</Priority> <!--Priority-->
+		<component>c1</component> <!-- Component-->
+		<version>v1</version> <!--Version-->
+		<steps>
+			<step>
+				<step_number>1</step_number>
+				<TestStep>Test Step1</TestStep> <!--Test Step-->
+				<Testdata>Test Data1</Testdata> <!--Test Data-->
+				<Expectedresults>Result Data1</Expectedresults> <!--Execpted Result-->
+			</step>
+			<step>
+				<step_number>2</step_number>
+				<TestStep>Test Step2</TestStep>
+				<Testdata>Test Data2</Testdata>
+				<Expectedresults>Result Data2</Expectedresults>
+			</step>
+			<step>
+				<step_number>3</step_number>
+				<TestStep>Test Step3</TestStep>
+				<Testdata>Test Data3</Testdata>
+				<Expectedresults>Result Data3</Expectedresults>
+			</step>
+		</steps>
+	
+<custom_fields>
+	<custom_field>
+		<name><![CDATA[Multi user picker]]></name> <!-- Custom field name-->
+		<value><![CDATA[jira-administrators,jira-users]]></value><!-- Custom field value-->
+	</custom_field>
+	<custom_field>
+		<name><![CDATA[Date Time Picker]]></name> <!-- Custom field name-->
+		<value><![CDATA[2015-06-02T11:30:29.908+1100]]></value><!-- Custom field value-->
+	</custom_field>
+</custom_fields>
+</testcase>		
+</testcases>

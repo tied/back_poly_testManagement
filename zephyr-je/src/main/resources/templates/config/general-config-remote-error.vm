@@ -1,0 +1,7 @@
+#if(!$action.errors.isEmpty())
+	<ul>
+	#foreach($error in $action.errors.keySet())
+		<li><span class="errMsg">$i18n.getText($action.errors.get($error))</span></li>
+	#end
+	</ul>
+#end

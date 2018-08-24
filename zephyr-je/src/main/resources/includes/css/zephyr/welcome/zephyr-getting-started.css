@@ -1,0 +1,55 @@
+h1.zephyr-gs-header { height: 61px; padding: 5px 0 0 78px; background: url(images/icons/zephyr_mark_64X64.png) no-repeat 0% 0%; }
+h1.zephyr-gs-header span { display: block; font-size: 15px; font-weight: normal; padding: 7px 0 0 2px; }
+.zephyr-gs-intro { margin-top: 18px; padding-bottom: 35px; border-bottom: 1px solid #ccc; }
+
+.aui-group { margin-top: 15px; }
+.aui-group .aui-item { width: auto; padding-left: 8px; }
+.aui-group .aui-item.zephyr-gs-sidebar { width: 341px; padding: 15px; border: 1px solid #eff6fa; border-radius: 5px; background-color: #dcecf5; }
+
+.aui-group .aui-item .zephyr-gs-item { width: 98%; padding-bottom: 35px; margin-bottom: 25px; border-bottom: 1px solid #ccc; }
+.aui-group .aui-item .zephyr-gs-item.last { border-bottom: none; }
+
+.aui-group .aui-item .zephyr-gs-item h2 { line-height: 36px; color: #7ca60a; padding-left: 52px; }
+.aui-group .aui-item .zephyr-gs-item h2.start { background-position: 0% -36px; }
+.aui-group .aui-item .zephyr-gs-item h2.share { background-position: 0% -72px; }
+
+.aui-group .aui-item .zephyr-gs-item ol li { margin-bottom: 15px; }
+.aui-group .aui-item .zephyr-gs-item ol h3 { font-size: 14px; margin-bottom: 5px; }
+
+.aui-group .aui-item .zephyr-gs-item ul { list-style: none; }
+.aui-group .aui-item .zephyr-gs-item ul li { margin-bottom: 5px; padding-left: 15px; }
+
+.aui-group .aui-item.zephyr-gs-sidebar .section { float: left; width: 309px; clear: left; margin-bottom: 35px; }
+.aui-group .aui-item.zephyr-gs-sidebar .section h3 { line-height: 24px; color: #636363; font-weight: normal; padding-left: 40px; margin-bottom: 15px; }
+.aui-group .aui-item.zephyr-gs-sidebar .section h3.ss { background-position: 0% -24px; }
+.aui-group .aui-item.zephyr-gs-sidebar .section h3.rn { background-position: 0% -48px; }
+.aui-group .aui-item.zephyr-gs-sidebar .section h3.lnk { background-position: 0% -72px; }
+
+.aui-group .aui-item.zephyr-gs-sidebar .section .videoWrapper {
+  display: block;
+  position: relative;
+  width: 309px;
+  height: 182px;
+  background: url(images/welcome/bg-gs-video.jpg) no-repeat 0% 0%;
+}
+
+.aui-group .aui-item.zephyr-gs-sidebar .section .videoWrapper .playButton {
+  display: block;
+  position: absolute;
+  top: 51px;
+  left: 114px;
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  background: url("images/welcome/videoPlayButton.png") no-repeat scroll 0 0 transparent;
+}
+
+.aui-group .aui-item.zephyr-gs-sidebar .section .videoWrapper .playButton:hover { background-position: 0% -80px; }
+
+.aui-group .aui-item.zephyr-gs-sidebar .section dl { float: left; width: 309px; color: #636363; }
+.aui-group .aui-item.zephyr-gs-sidebar .section dl dt { float: left; width: 55px; }
+.aui-group .aui-item.zephyr-gs-sidebar .section dl dd { float: left; width: 254px; margin-bottom: 15px; }
+.aui-group .aui-item.zephyr-gs-sidebar .section dl dd a.cm { padding-left: 18px; background: url(img/checkmark.png) no-repeat 0% 50%; }
+
+.aui-group .aui-item.zephyr-gs-sidebar .section ul { list-style: none; padding: 0; }
+.aui-group .aui-item.zephyr-gs-sidebar .section ul li { margin-bottom: 5px; padding-left: 15px; }

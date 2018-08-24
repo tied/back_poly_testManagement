@@ -1,0 +1,10 @@
+#set ($encKeyFld = $req.getAttribute("encKeyFld"))
+#set ($encKeyVal = $req.getAttribute("encKeyVal"))
+#set ($showwf = $req.getAttribute("showWF"))
+<script type="text/javascript">
+		var zEncKeyFld = "$encKeyFld";
+		var zEncKeyVal = "$encKeyVal";
+        var zshowWF = $showwf
+		#set ($encKeyFld = '')
+		#set ($encKeyVal = '')
+</script>		

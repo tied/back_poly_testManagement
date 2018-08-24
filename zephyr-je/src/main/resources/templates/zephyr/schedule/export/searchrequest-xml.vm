@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+###macro (esc $text)$xmlutils.escape($text)#end
+<executions>
+    #if ($schedules && $schedules.size() > 0)
+		#foreach($schedule in $schedules)
+        	<execution>
+				<$i18n.getText('enav.schedule.element.name')>$schedule.id</$i18n.getText('enav.schedule.element.name')>	
+				<$i18n.getText('je.gadget.common.cycle.label')>$schedule.cycleName</$i18n.getText('je.gadget.common.cycle.label')>	
+				<$i18n.getText('enav.issueKey.element.name')>$schedule.issueKey</$i18n.getText('enav.issueKey.element.name')>
+                <testSummary><![CDATA[$schedule.issueSummary]]></testSummary>
+				<labels> #foreach($label in $schedule.labels) $label #if($velocityCount != $schedule.labels.size()) , #end #end </labels>
+				<$i18n.getText('common.concepts.project')>$schedule.project</$i18n.getText('common.concepts.project')>	
+				<versions>
+				#if ($schedule.versionName)
+					#if ($schedule.versionName.indexOf(',') != -1)
+        				#foreach ($version in $schedule.versionName.split(","))
+        					<$i18n.getText('enav.version.element.name')>$version</$i18n.getText('enav.version.element.name')>	
+						#end
+					#else
+						<$i18n.getText('enav.version.element.name')>$schedule.versionName</$i18n.getText('enav.version.element.name')>
+					#end	
+				#end	
+				</versions>	
+				<components>
+				#foreach($component in $schedule.components)
+					<$i18n.getText('common.concepts.component')>$textutils.htmlEncode($!component.name)</$i18n.getText('common.concepts.component')>  					
+				#end
+				</components>
+				<$i18n.getText('issue.field.priority')>$schedule.priority</$i18n.getText('issue.field.priority')>
+				#if($schedule.canViewIssue)
+               	 	<$i18n.getText('enav.executionStatus.element.name')>$schedule.status.name</$i18n.getText('enav.executionStatus.element.name')>
+				#else
+                	<$i18n.getText('enav.executionStatus.element.name')>XXXXX</$i18n.getText('enav.executionStatus.element.name')>
+				#end
+				<$i18n.getText('execute.test.comment.label')><![CDATA[$schedule.htmlComment]]></$i18n.getText('execute.test.comment.label')>
+				<$i18n.getText('enav.assigned.to.element.name')>$schedule.assignee</$i18n.getText('enav.assigned.to.element.name')>
+				<$i18n.getText('enav.executed.by.element.name')>$schedule.executedBy</$i18n.getText('enav.executed.by.element.name')>	
+				<$i18n.getText('enav.executed.on.element.name')>$schedule.executedOn</$i18n.getText('enav.executed.on.element.name')>
+                #set($defectsAsString = '')
+                #foreach( $executionDefect in $schedule.executionDefects )
+					#set($defectsAsString = $defectsAsString + $executionDefect.defectKey)
+					#if($velocityCount != $schedule.executionDefects.size())
+						#set($defectsAsString = $defectsAsString + ', ')
+					#end
+				#end
+				#if($schedule.stepDefects && $schedule.stepDefects.size() > 0)
+					#set($defectsAsString = $defectsAsString + " | ")
+					#foreach( $stepDefect in $schedule.stepDefects )
+						#set($defectsAsString = $defectsAsString + $stepDefect)
+						#if($velocityCount != $schedule.stepDefects.size())
+							#set($defectsAsString = $defectsAsString + ', ')
+						#end
+					#end
+				#end	
+				<$i18n.getText('enav.exectionDefects.element.name')>$defectsAsString</$i18n.getText('enav.exectionDefects.element.name')>
+				<$i18n.getText('enav.creationDate.element.name')>$schedule.creationDate</$i18n.getText('enav.creationDate.element.name')>
+                <folderName>
+                    #if($schedule.folderName)
+                        $schedule.folderName
+                    #end
+                </folderName>
+                #if ($schedule.customFieldsValueMap.size()>0)
+                <customfields>
+                #foreach ($entry in $schedule.customFieldsValueMap.entrySet())
+                    #set($customFieldName = $customFieldNameMapping.get($entry.key))
+                    <$customFieldName>$entry.value</$customFieldName>
+                #end
+				</customfields>				
+				#end				
+				<teststeps>
+					#if ($schedule.testStepBean) 
+						#foreach ($testStepBean in $schedule.testStepBean)
+							<teststep>
+                                <$i18n.getText('enav.xml.step.id.element.name')>$testStepBean.id</$i18n.getText('enav.xml.step.id.element.name')>
+								<$i18n.getText('enav.xml.order.id.element.name')>$testStepBean.orderId</$i18n.getText('enav.xml.order.id.element.name')>
+								<$i18n.getText('enav.xml.step.element.name')><![CDATA[$testStepBean.step]]></$i18n.getText('enav.xml.step.element.name')>
+								<$i18n.getText('enav.xml.test.data.element.name')><![CDATA[$testStepBean.data]]></$i18n.getText('enav.xml.test.data.element.name')>
+								<$i18n.getText('enav.xml.step.expected.result.element.name')><![CDATA[$testStepBean.result]]></$i18n.getText('enav.xml.step.expected.result.element.name')>
+								<$i18n.getText('enav.xml.step.result.element.name')>$testStepBean.stepExecutionStatus</$i18n.getText('enav.xml.step.result.element.name')>
+								<$i18n.getText('enav.xml.step.comment.element.name')><![CDATA[$testStepBean.stepComment]]></$i18n.getText('enav.xml.step.comment.element.name')>
+								  #if ($testStepBean.customFieldValuesMap.size()>0)
+								  <testStepCustomFields>
+										#foreach ($entry in $testStepBean.customFieldValuesMap.entrySet())
+										<$entry.key>$entry.value</$entry.key>
+										#end
+								 </testStepCustomFields>
+								 #end		
+							</teststep>
+						#end
+					#end			
+				</teststeps>
+			</execution>	
+    	#end
+    #end
+</executions>

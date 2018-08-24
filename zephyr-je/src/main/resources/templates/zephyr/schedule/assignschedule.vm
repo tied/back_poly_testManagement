@@ -1,0 +1,128 @@
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-schedule");
+#set ($assigneeOptions = $req.getAttribute("assigneeOptions"))
+#set ($scheduleId = $req.getAttribute("scheduleId"))
+
+#* @vtlvariable name="currentAssignee" type="java.lang.String" *#
+#* @vtlvariable name="soyRenderData" type="java.util.Map<java.lang.String, java.lang.Object>" *#
+#* @vtlvariable name="currentUserInList" type="boolean" *#
+#* @vtlvariable name="optGroupOpen" type="boolean" *#
+#* @vtlvariable name="field" type="com.atlassian.jira.issue.fields.AssigneeSystemField" *#
+#* @vtlvariable name="assigneeOptions" type="java.util.Collection<com.atlassian.jira.issue.fields.option.AssigneeOption>" *#
+<head>
+<h2 class="aui-popup-heading">Assign<span style="display:none" class="header-separator">:&nbsp;</span>
+        <a class="header-issue-key" style="display:none" title="Jira Bug 1" href="/jira/browse/IC-8">IC-8</a>
+</h2>
+</head>
+<body>
+<div class="aui-popup-content">
+	<fieldset class="hidden parameters">
+		<input type="hidden" value="Close" id="closelink">
+	</fieldset>
+	<div class="aui-dialog-content">
+		<form action="#" method="post" id="zephyr-je-assign" class="aui">
+			<div class="form-body" style="max-height: 250px;">	
+				<fieldset>
+    				<legend><span>Assign details</span></legend>
+					<div class="field-group">
+                     	<label for="assignee">Assignee</label>
+						<select name="assignee" id="assignee" class="select">
+							#foreach ($assigneeOption in $assigneeOptions)
+                                #if ($assigneeOption.getOptionName().equals($authcontext.user.name))
+                                    #set ($currentUserInList = true)
+                                #end
+                                #if ($assigneeOption && $assigneeOption.isOptionEnabled() == false)
+                                    ## we will never reach here but we should never have two open option groups
+                                    #if($optGroupOpen)
+                                      </optgroup>
+                                    #end
+                                    <optgroup label="$textutils.htmlEncode($assigneeOption.getDisplayName())">
+                                    #set ($optGroupOpen = true)
+                                #else
+                                    <option #if ($assigneeOption.getOptionName().equals($authcontext.user.name))class="current-user"#end
+                                            #if ($currentAssignee && $assigneeOption.getOptionName() && $currentAssignee == $assigneeOption.getOptionName()) selected="selected"#end
+                                            value="$textutils.htmlEncode($!assigneeOption.getOptionName())">$textutils.htmlEncode($assigneeOption.getDisplayName())</option>
+                                #end
+                            #end
+                            #if ($optGroupOpen)
+                                </optgroup>
+                                #set ($optGroupOpen = false)
+                            #end
+                        </select>    			
+						#if ($currentUserInList)
+							<a href="#" onclick="assign('$scheduleId','$authcontext.user.name');" id="zephyr-je-assign_to_me" title="$i18n.getText('issue.operations.assign', ['', '']) $i18n.getText('issue.operations.assign.tome')">$i18n.getText('issue.operations.assign.tome.short')</a>
+						#end
+    				</div>
+        			<br/>
+					<div class="field-group aui-field-wikiedit comment-input">
+                    	<label for="comment">Comment</label>
+						<div class="wiki-edit">
+							<div class="wiki-edit-content" id="comment-wiki-edit">
+                             	<textarea wrap="virtual" rows="10" name="comment" id="comment" cols="60" class="textarea long-field wiki-textfield"></textarea>
+            					<div class="content-inner"/>            
+							</div>
+						</div>
+						<div class="field-tools">
+    						<a title="preview" id="comment-preview_link" href="#" class="wiki-renderer fullscreen">preview</a>
+    						<a title="wiki markup help" onclick="window.open('/jira/secure/WikiRendererHelpAction.jspa?section=texteffects', 'wiki_renderer_notation_help', 'width=780, height=575, resizable, scrollbars=yes'); return false;" id="viewHelp" href="/jira/secure/WikiRendererHelpAction.jspa?section=texteffects" class="wiki-renderer help-icon">wiki markup help</a>
+						</div>
+						<div class="security-level">
+        					<fieldset class="hidden parameters">
+            					<input type="hidden" value="Viewable by All Users" title="securityLevelViewableByAll">
+            					<input type="hidden" value="Restricted to &lt;span class='redText'&gt;{0}&lt;/span&gt;" title="securityLevelViewableRestrictedTo">
+        					</fieldset>
+        					<div id="commentLevel-multi-select" class="select-menu">
+            					<a href="#" class="drop">
+            						<span class="icon  icon-unlocked"></span>
+            						<span class="icon drop-menu"></span>
+            					</a>
+            					<div class="ajs-layer-placeholder">
+            						<div class="ajs-layer  select-menu box-shadow" style="display: none; width: 200px; position: fixed; left: 549.5px; top: 291.033px; max-height: 104.967px;">
+                						<div tabindex="-1" id="commentLevel-suggestions" class="aui-list aui-list-checked" style="white-space: nowrap; width: auto; display: block;">
+                							<ul>
+                								<li class="aui-list-item aui-list-item-li-all-users aui-checked active">
+                									<a class="aui-list-item-link" href="#" title="All Users" style="overflow: hidden;">All Users</a>
+                								</li>
+                							</ul>
+                							<h5>Project Roles</h5>
+                							<ul class="aui-list-section aui-last" id="project-roles">
+                								<li class="aui-list-item aui-list-item-li-administrators">
+                									<a class="aui-list-item-link" href="#" title="Administrators" style="overflow: hidden;">Administrators</a>
+                								</li>
+                								<li class="aui-list-item aui-list-item-li-developers">
+                									<a class="aui-list-item-link" href="#" title="Developers" style="overflow: hidden;">Developers</a>
+                								</li>
+                								<li class="aui-list-item aui-list-item-li-users">
+                									<a class="aui-list-item-link" href="#" title="Users" style="overflow: hidden;">Users</a>
+                								</li>
+                							</ul>
+										</div>
+            						</div>
+            					</div>
+							</div>	
+        				</div>
+            			<select id="commentLevel" name="commentLevel" multiple="" style="display: none;">
+                			<option value="">All Users</option>
+                                <optgroup label="Project Roles">
+                                <option value="role:10002">Administrators</option>
+                                <option value="role:10001">Developers</option>
+                            	<option value="role:10000">Users</option>
+                        	</optgroup>
+                        </select>
+						<span class="current-level">Viewable by All Users</span>
+				    </div>
+                    <div class="buttons-container form-footer">
+                    	<p id="assign-issue-hint" class="hint-container overflow-ellipsis" title="Pressing a also opens this dialog box">
+                        	<a title="Click to view all shortcuts" href="#" class="shortcut-tip-trigger" tabindex="-1">Shortcut tip:</a> Pressing <strong>a</strong> also opens this dialog box
+                    	</p>
+                		<div class="buttons"><span class="icon throbber"></span>
+                			<a href="#" class="aui-button" onclick="assign('$scheduleId',AJS.$('#assignee').val());" title="Press Ctrl+s to submit this form" name="Assign" id="assign-issue-submit" accesskey="s">Assign</a>
+                			<a title="Press Ctrl+` to cancel" id="assign-schedule-cancel" href="/jira/browse/IC-1" class="cancel" accesskey="`">Cancel</a>
+                        </div>
+                    </div>
+				</fieldset>
+				</div>	
+		</form>
+	</div>
+</div>
+#customControlFooter ($action $field.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams)
+</body>	

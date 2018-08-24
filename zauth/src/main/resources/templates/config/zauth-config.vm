@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="admin.active.section" content="admin_plugins_menu/zauth_admin_section/zephyr_general_configuration"/>
+	<meta name="decorator" content="admin"/>
+	<title>ZAuth</title>
+</head>	
+<body>
+<div class="module">
+	<form action="ZAuthConfigEdit.jspa" method="post" class="aui">
+		<h2>IP Address white list</h2>
+		<div class="field-group">
+			<label for="selectedIP">Current List</label>
+		  	<select size="10" class="multi-select" type="text" id="zauthSelectedIP" name="zauthSelectedIP" title="Selected IP Addresses">
+		  		#foreach( $whiteListIp in $action.getWhiteList())
+					<option value="$whiteListIp" rel="" title="$whiteListIp">$whiteListIp</option>
+				#end
+			</select>
+			<div class="description">
+				<input class="button" type="submit" id="zdelete" name="zEdit" value="Remove">
+			</div>	
+		</div>
+		
+		<br/>
+		
+		<hr style="width: 30%; float: left;"/>
+		<h4>Add new IP Address</h4>
+		<div class="field-group">
+			<label for="fname">IP Address </label>
+		  	<input class="text" type="text" id="ipToAdd" name="ipToAdd" title="IP Address">
+		  	<div class="description">
+		  		<input class="button" type="submit" id="zadd" name="zEdit" value="Add">
+			</div>		  		
+	  	</div>
+	</form>
+</div>
+</body>
+</html>

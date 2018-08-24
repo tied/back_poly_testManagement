@@ -1,0 +1,193 @@
+	#set ($message =  $req.getAttribute("query"))
+	#set ($zqlFieldZ =  $req.getAttribute("jqlFieldZ"))
+	#set ($reservedWords =  $req.getAttribute("reservedWords"))
+	#set ($functionZ =  $req.getAttribute("functionZ"))
+	#set ($ctxPath =  $req.getContextPath())
+	#set ($zephyrBaseUrl =  $req.getAttribute("zephyrBaseUrl"))
+	#set ($inAppMessageUrl =  $req.getAttribute("inAppMessageUrl"))
+    #set ($isIE =  $req.getAttribute("isIE"))
+	#set ($analyticUrl =  $req.getAttribute("analyticUrl"))
+	#set ($analyticsEnabled =  $req.getAttribute("analyticsEnabled"))
+#macro (paginationLabel $start $end $total $entityName)
+	<div class="aui-group count-pagination">
+    	<div class="results-count aui-item">Displaying $entityName <span class="results-count-start">$start</span> to $end of
+    		<span class="results-count-link"><strong class="results-count-total">$total</strong> matching $entityName.</span>
+    	</div>
+    	<div class="pagination aui-item"></div>
+	</div>
+#end
+	$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-zql")
+	$webResourceManager.requireResource("jira.webresources:autocomplete")
+	#if(!${isIE})
+	    $webResourceManager.requireResourcesForContext("com.zephyr.je.grid-context-adapter")
+	#else
+	    $webResourceManager.requireResourcesForContext("com.zephyr.je.grid-context")
+	#end
+	$webResourceManager.requireResourcesForContext("com.zephyr.je.vanilla-grid")
+	<div class="customFieldsPolymerDiv">
+				#parse("templates/velocity/single-select.vm")
+				#parse("templates/velocity/custom-checkbox.vm")
+				#parse("templates/velocity/custom-radio.vm")
+				#parse("templates/velocity/custom-textarea.vm")
+				#parse("templates/velocity/custom-text.vm")
+				#parse("templates/velocity/drop-down.vm")
+				#parse("templates/velocity/drop-downdate.vm")
+				#parse("templates/velocity/drop-downCheckbox.vm")
+				#parse("templates/velocity/drop-downRadio.vm")
+				#parse("templates/velocity/drop-downmultiselect.vm")
+			</div>
+<html>
+    <head>
+		#set ($title = ${i18n.getText('enav.page.heading')})
+		#set ($schedules = $req.getAttribute("schedules"))
+        <title>$title</title>
+		$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-aboutus")
+    </head>
+    <body class="aui-layout aui-theme-default ka page-type-navigator">
+## ####### FILTER SECTION #####################
+		<div class="content-container">
+			<div id="zfj-sidebar-menu-column" style="display: none;">
+				<ul class="zfj-sidebar-menu" id="zfj-sidebar-menu">
+					<li class="zfj-sidebar-dock-button" role="button" title="${i18n.getText('je.gadget.zql.filter.sidebar.dock.title')}">
+						<a title="${i18n.getText('je.gadget.zql.filter.sidebar.dock.title')}" href="#" class="toggle-filter-panel"></a>
+						<span class="zfj-sidebar-menu-inner">Filters</span>
+					</li>
+				</ul>
+			</div>
+			<div class="content-related" id="contentRelatedId">
+					<h4 class="filter-title">${i18n.getText('zql.filter.label')}
+						<div class="filter-actions">
+							<a title="${i18n.getText('je.gadget.zql.filter.sidebar.undock.title')}" class="aui-button aui-button-subtle ui-undock zfj-sidebar-undock" href="#"><span class="icon"></span></a>
+							<a title="${i18n.getText('je.gadget.zql.filter.sidebar.dock.title')}" style="display:none;" class="aui-button aui-button-subtle ui-dock zfj-sidebar-dock" href="#"><span class="icon"></span></a>
+						</div>
+					</h4>
+					<div class="filter-panel-section predefinedFilters-wrapper">
+						<h4 class="filter-title">${i18n.getText('zql.filter.predefined.label')}</h4>
+    					<ul id="predefinedFilters" class="saved-filter filter-list system-filters">
+    						<li><a class="filter-link" href="#?filter=-1" title="${i18n.getText('zql.filter.system.1')}">${i18n.getText('zql.filter.system.1')}</a></li>
+    						<li><a class="filter-link" href="#?filter=-2" title="${i18n.getText('zql.filter.system.2')}">${i18n.getText('zql.filter.system.2')}</a></li>
+    						<li><a class="filter-link" href="#?filter=-3" title="${i18n.getText('zql.filter.system.3')}">${i18n.getText('zql.filter.system.3')}</a></li>
+    						<li><a class="filter-link" href="#?filter=-4" title="${i18n.getText('zql.filter.system.4')}">${i18n.getText('zql.filter.system.4')}</a></li>
+    						<li><a class="filter-link" href="#?filter=-5" title="${i18n.getText('zql.filter.system.5')}">${i18n.getText('zql.filter.system.5')}</a></li>
+    						<li><a class="filter-link" href="#?filter=-6" title="${i18n.getText('zql.filter.system.6')}">${i18n.getText('zql.filter.system.6')}</a></li>
+    					</ul>
+					</div>
+					<div class="filter-panel-section">
+						<h4 class="filter-title">${i18n.getText('webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters')}</h4>
+						<ul class="saved-filter filter-list system-filters">
+							<li>
+								<a class="filter-link" href="$ctxPath/secure/ZQLManageFilters.jspa" title="${i18n.getText('webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters')}">
+								${i18n.getText('webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters')}</a>
+							</li>
+                        </ul>
+						<div class="filter-panel-section">
+    						<h4 class="filter-title">${i18n.getText('zql.filter.quick.srh.label')}</h4>
+    						<div class="field-group aui-field-filterpicker frother-control-renderer search-zql-filter-name-wrapper">
+        					  	<select name="searchZQLFilterName" id="searchZQLFilterName" data-query="" filterId="" class="hidden" type="single" size="4">
+        					  	</select>
+    							<div class="search-zql-arrow-right-img-wrapper">
+        							<a href="#" id="zql-quick-srh-id">
+										<img title="${i18n.getText('webfragments.view.issue.opsbar.zephyr-je.test.execute')}"
+											alt="${i18n.getText('webfragments.view.issue.opsbar.zephyr-je.test.execute')}"
+											src="$ctxPath/images/icons/arrow_right_small.gif" height="16" border="0" hspace="0"
+											width="16"/>
+									</a>
+        						</div>
+    						</div>
+    						<br/>
+							<div class="description search-zql-filter-description">${i18n.getText('filters.search.text.desc')}</div>
+						</div>
+					</div>
+					<div class="filter-panel-section">
+						<h4 class="filter-title">${i18n.getText('zql.filter.favorite.label')}</h4>
+					</div>
+	        </div>
+## ####### SEARCH RESULT SECTION #####################
+	        <div class="navigator-body" id="jqlcomponent">
+				<div class="contained-content" style="">
+            		<header id="zqlHeader" class="saved-search-selector"></header>
+					<div class ="navigator-search">
+						<div class="notifications zfj-permissions-active" id="zfj-permission-message-bar-execution-list"></div>
+						<div class="search-container">
+								<div class="advanced-search-container">
+									<div class="aui-group">
+			                			<div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar"></div>
+    									<div class="aui-item atlassian-autocomplete" style="width:100%">
+    										<label for="advanced-search">
+    											<span id="jqlerrormsg" class="icon jqlgood" title="">
+    												<span>${i18n.getText('execute.test.parse.label')}</span>
+    											</span>
+    											<span class="jql-label">${i18n.getText('execute.test.query.label')} <span id="jqlcolrowcount">${i18n.getText('execute.test.line.label')}:<span id="jqlrownum">1</span>${i18n.getText('execute.test.character.label')}:<span id="jqlcolumnnum">25</span></span></span>
+    										</label>
+    										<textarea id="zqltext" filterId="" data-query="" class="search-entry advanced-search ajs-dirty-warning-exempt" name="zqltext" maxlength="2000" style="overflow: hidden; height: 33px;" autocomplete="off"></textarea>
+
+    										<div class="suggestions" style="top: 30px; display: none;"></div>
+    	                                    <div class="jqlundertext">
+    	                            			<input type="hidden" name="runQuery" value="true"/>
+    	                                    </div>
+    									</div>
+    									<div class="aui-item search-button-container">
+        									<button id="zephyr-transform-all" class="aui-item aui-button aui-button-subtle search-button" type="submit">
+        										<span class="icon aui-icon aui-icon-small aui-iconfont-search" title="Search">${i18n.getText('zql.search.label')}</span>
+        									</button>
+        									<span class="switcher" style="display:none">
+        										<a href="#" class="switcher-item" data-id="basic">${i18n.getText('execute.test.advanced.label')}</a>
+        										<a href="#" class="switcher-item active" data-id="advanced">${i18n.getText('execute.test.basic.label')}</a>
+        									</span>
+        								</div>
+        								<div id="layout-switcher-toggle" class="aui-item view-selector">
+                            <div id="view-btn-container" class="layout-switcher-item">
+                                <a id="list-view" class="aui-button view-btn active-view list-view">
+
+                                    <div></div>
+                                    ${i18n.getText('cycle.list.view.label')}
+
+                                </a>
+                                <a id="split-view" class="aui-button view-btn detail-view">
+
+                                    <div></div>
+                                    ${i18n.getText('cycle.detail.view.label')}
+                                </a>
+                            </div>
+			            					<!-- <div class="aui-buttons">
+			            						<button type="button" class="aui-button drop-arrow js-default-dropdown" id="layout-switcher-button" title='Change view (Type "t")'>
+			            							<span class="aui-icon aui-icon-small icon-view-split" id="view-button-icon"></span>
+			            						</button>
+			            						<div class="aui-list hidden">
+
+			            							<h5>${i18n.getText('enav.executions.layout.switcher.views.title')}</h5>
+			            							<ul class="aui-list-section aui-first aui-last">
+			            								<li class="aui-list-item layout-switcher-item"><a data-layout-key="split-view" class="aui-list-item-link" id="split-view" href="#"><span class="aui-icon aui-icon-small icon"></span>${i18n.getText('enav.executions.layout.switcher.views.detail.label')}</a></li>
+			            								<li class="aui-list-item layout-switcher-item"><a data-layout-key="list-view" class="aui-list-item-link" id="list-view" href="#"><span class="aui-icon aui-icon-small icon"></span>${i18n.getText('enav.executions.layout.switcher.views.list.label')}</a></li>
+			            							</ul>
+			            						</div>
+			            					</div> -->
+			            				</div>
+    								</div>
+								</div>
+							</div>
+							<div class="notifications" id="zql-message-bar"/>
+		            	</div>
+                    </div>
+					<div class="navigator-group">
+						 <div class="results-panel navigator-item">
+							<div class="content-body">
+								<div id="zqlResponse"></div>
+							</div>
+							<div class="navigator-content"></div>
+						</div>
+					</div>
+				</div>
+            	<fieldset class="zql-autocomplete-params hidden" ></fieldset>
+            	<div style="display:none;" id="zqlFieldz">$zqlFieldZ</div>
+            	<div style="display:none;" id="zqlFunctionNamez">$functionZ</div>
+            	<div style="display:none;" id="zqlReservedWordz">$reservedWords</div>
+		   </div>
+      </div>
+	  <iframe id="execDownloadFrame" style="visibility:hidden;height:0px;width:0px;"></iframe>
+	  <input type="hidden" id="zephyrBaseUrl" value=${zephyrBaseUrl} />
+	  <input type="hidden" id="inAppMessageUrlField" value=${inAppMessageUrl} />
+	  <input type="hidden" id="analyticUrlField" value=${analyticUrl} />
+	  <input type="hidden" id="analyticsEnabled" value=${analyticsEnabled} />
+    </body>
+</html>

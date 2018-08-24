@@ -1,0 +1,643 @@
+{namespace ZEPHYR.Bulk}
+
+/**
+ * Render the dialog for bulk status change
+ * @param executionStatuses
+ * @param stepExecutionStatuses
+ */
+{template .bulkStatusChange}
+	<h2 class="dialog-title">{getText('enav.bulk.status.change')}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+    		<div id="bulk-field-change-status">
+    			<span>{getText('enav.bulk.status.change.label')}</span>&nbsp;&nbsp;
+    			<select id="exec_status-bulk_change" class="select" style="width:150px;">
+	    			//Following loop goes through all keys available in associative array where key = statusid. , allStatusList:allStatusesMap
+					{foreach $exec in $executionStatuses}
+						<option value="{$exec.id}" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+					{/foreach}
+				</select>
+			</div>
+			<div id="exec-clear-defectmapping-div" style="margin-top:15px;display:none;">
+				<span>{getText('enav.bulk.status.cleardefect.label')}</span>&nbsp;&nbsp;
+				<input type="checkbox" class="checkbox" name="defectMapping" id="exec-clear-defectmapping-id"/>
+			</div>
+			<div style="margin-top:15px;display:none" id="stepStatusChangeId">
+				<span>{getText('enav.bulk.status.step.change.label')}</span>&nbsp;&nbsp;
+				<select id="exec_step_status_bulk_change" class="select" style="width:150px;">
+	    			//Following loop goes through all keys available in associative array where key = statusid. , allStatusList:allStatusesMap
+					{foreach $exec in $stepExecutionStatuses}
+						<option value="{$exec.id}" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+					{/foreach}
+				</select>
+			</div>
+			<div style="margin-top:15px;">
+				<span>{getText('enav.bulk.step.status.change.label')}</span>&nbsp;&nbsp;
+				<input type="checkbox" class="checkbox" name= "stepStatus" id="exec_status_step_bulk_change"/>
+			</div>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="bulk-update-status-form-submit" value="{getText('zephyr.je.save.button.title')}" />
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+/**
+ * Render the dialog for edit Custom Field change
+ * @param customFields
+ */
+{template .bulkEditCustomField}
+	<div>
+		<div class="form-body" id="buld-edit-custom-field-form-body">
+    {foreach $customField in $customFields}
+        <fieldset>
+          <div id="custom-field-bulkEdit-row-{$customField.customFieldId}" class="field-group">
+            <label for="custom-field-{$customField.customFieldId}">
+              {$customField.customFieldName}
+            </label>
+            <div class="editing-mode-inner-container edit-mode-container execution-details-customFields" data-customFieldId="{$customField.customFieldId}" data-customFieldType="{$customField.customFieldType}">
+              {if $customField.customFieldType == 'MULTI_SELECT'}
+              <div class="type-multiselect">
+                <select class="multi-select" multiple="multiple" id="multiselect-{$customField.customFieldId}" name="multiselect">
+                  {foreach $option in $customField.options}
+                    <option {$option.selected ? 'selected' : ''}>
+                      {$option.value}
+                    </option>
+                  {/foreach}
+                </select>
+              </div>
+              {elseif $customField.customFieldType == 'CHECKBOX'}
+              <div class="type-multicheckboxes">
+                <fieldset>
+                  {foreach $checkboxOption in $customField.options}
+                    <div class="checkbox">
+                      <input {$checkboxOption.selected ? 'checked' : ''} name="checkbox-{$customField.customFieldId}" data-value="{$checkboxOption.value}" class="checkbox" id="customfield-{$customField.customFieldId}-{$checkboxOption.value}" type="checkbox">
+                      <label for="customfield-{$customField.customFieldId}-{$checkboxOption.value}">{$checkboxOption.value}</label>
+                    </div>
+                  {/foreach}
+                </fieldset>
+              </div>
+            {elseif $customField.customFieldType == 'NUMBER'}
+              <div class="type-number">
+                <fieldset>
+                  <input class="text" type="number" id="text-input-{$customField.customFieldId}" name="text-input" title="Text input" value={$customField.value ? $customField.value : ''}>
+                </fieldset>
+              </div>
+            {elseif $customField.customFieldType == 'RADIO_BUTTON'}
+              <div class="type-radiobuttons">
+                <fieldset>
+                  {foreach $radioButtonOption in $customField.options}
+                  <div class="radio">
+                    <input {$radioButtonOption.selected ? 'checked' : ''} name="radiobutton-{$customField.customFieldId}" data-value="{$radioButtonOption.value}" class="radio" id="customfield-{$customField.customFieldId}" type="radio">
+                    <label>{$radioButtonOption.value}</label>
+                  </div>
+                  {/foreach}
+                </fieldset>
+              </div>
+            {elseif $customField.customFieldType == 'SINGLE_SELECT'}
+              <div class="type-select">
+                <fieldset>
+                  <select class="select" id="select-{$customField.customFieldId}" name="select-example">
+                    {foreach $singleSelectOption in $customField.options}
+                      <option>{$singleSelectOption}</option>
+                    {/foreach}
+                  </select>
+                </fieldset>
+              </div>
+            {elseif $customField.customFieldType == 'LARGE_TEXT'}
+              <div class="type-largeText">
+                <fieldset>
+                  <textarea name="step" rows="4" id="large-text-{$customField.customFieldId}" class="textarea ztextarea noresize ztextarea-step">{$customField.value ? $customField.value : ''}</textarea>
+                </fieldset>
+              </div>
+            {elseif $customField.customFieldType == 'TEXT'}
+              <div class="type-text">
+                <fieldset>
+                  <input class="text" type="text" id="text-input-{$customField.customFieldId}" name="text-input" title="Text input" value={$customField.value ? $customField.value : ''}>
+                </fieldset>
+              </div>
+            {elseif $customField.customFieldType == 'DATE'}
+              <div class="type-date">
+                <fieldset>
+                  <input class="text" type="text" id="bulk-date-{$customField.customFieldId}" name="text-input" title="Text input" value="{call convertDate}
+                      {param value: $customField.value ? $customField.value : null /}
+                      {param isDateTime : false /}
+                      {/call}">
+                </fieldset>
+              </div>
+            {elseif $customField.customFieldType == 'DATE_TIME'}
+              <div class="type-dateTime">
+                <fieldset>
+                  <input class="text" type="text" id="bulk-dateTime-{$customField.customFieldId}" name="text-input" title="Text input" value="{call convertDate}
+                      {param value: $customField.value ? $customField.value : null /}
+                      {param isDateTime : true /}
+                      {/call}">
+                </fieldset>
+              </div>
+            {/if}
+          </div>
+          </div>
+        </fieldset>
+    {/foreach}
+		</div>
+	</div>
+{/template}
+
+
+/**
+* Render the dialog for custom fields
+* @param customFields
+* @param mode
+* @param? title
+* @param? className
+*/
+{template .renderBulkCustomFields}
+  <fieldset class='{$className ? $className : ''}'>
+    {if $title}
+      <h5>{$title}</h5>
+    {/if}
+    <div>
+      {if $customFields.length == 0}
+        <span>{getText('zephyr.customfield.not.exist')}</span>
+      {/if}
+      {foreach $customField in $customFields}
+        <div class="field-group">
+          <label title="{$customField.customFieldName}">{$customField.customFieldName}</label>
+          <div class="custom-field-value">
+            {if $customField.customFieldType == 'CHECKBOX'}
+              <drop-downcheckbox cellkey='{$customField.customFieldId}' data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}"></drop-downcheckbox>
+            {elseif $customField.customFieldType == 'RADIO_BUTTON'}
+              <drop-downradio cellkey='{$customField.customFieldId}' data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}"></drop-downradio>
+            {elseif $customField.customFieldType == 'DATE' or $customField.customFieldType == 'DATE_TIME'}
+              <drop-downdate data-type="{$customField.customFieldType}" data-customFieldValueId="{$customField.customFieldValueId}" data-entityId="{$customField.entityId}" data-customFieldId="{$customField.customFieldId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}"></drop-downdate>
+            {elseif $customField.customFieldType == 'SINGLE_SELECT'}
+              <drop-down data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}"></drop-down>
+            {elseif $customField.customFieldType == 'MULTI_SELECT'}
+              <drop-downmultiselect  data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}">
+              </drop-downmultiselect>
+            {elseif $customField.customFieldType == 'TEXT' or $customField.customFieldType == 'NUMBER' or $customField.customFieldType == 'LARGE_TEXT' }
+              <custom-text  data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}"  type="{$customField.customFieldType}" mode="{$mode}" options="{$customField.options}"></custom-text>
+            {/if}
+          </div>
+        </div>
+      {/foreach}
+    </div>
+  </fieldset>
+{/template}
+
+
+/**
+ * Render the dialog for edit Custom Field change
+* @param projectList
+* @param selectedProjectId
+* @param? isChecked
+*/
+{template .renderProjectDropdown}
+<fieldset id='select-project-dropdown'>
+  <div class='custom-field-checkbox-wrapper'>
+    {if $isChecked}
+      <input type='checkbox' id='enable-project-custom-fields' checked/>
+    {else}
+      <input type='checkbox' id='enable-project-custom-fields'/>
+    {/if}
+    <label for='enable-project-custom-fields'>Enable to Update Project Custom Fields</label>
+  </div>
+  <div class="field-group select-group {$isChecked ? '' : 'hide'}">
+    <label for="select-project-label">
+       {getText('zephyr-je.testboard.select.project.label')}
+    </label>
+    <select class="select" id="select-project" name="select-example">
+      {if $selectedProjectId == null}
+        <option value="-1" selected>-</option>
+      {/if}
+      {foreach $project in $projectList}
+        {if $selectedProjectId == $project.id}
+          <option value="{$project.id}" selected title="{$project.name}" key="{$project.key}">
+            {$project.name}
+          </option>
+        {else}
+          <option value="{$project.id}" title="{$project.name}" key="{$project.key}">
+            {$project.name}
+          </option>
+        {/if}
+      {/foreach}
+    </select>
+  </div>
+</fieldset>
+{/template}
+
+
+/**
+ * Render the dialog for edit Custom Field change
+* @param customfieldsData
+* @param? mode
+ */
+{template .bulkEditCustomFieldProjectSelection}
+	<h2 class="dialog-title">{getText('enav.associate.customField.bulkEditHeading')}</h2>
+	{call ZEPHYR.About.evalMessage /}
+  <div id="custom-warning"></div>
+	<form class="aui" action="#" method="post" novalidate>
+		<div class="form-body" id="bulk-edit-custom-fiels-project-selection-form-body">
+			<div id="custom-fields-outer-container" class="bulkEditCustomField">
+        <input type="text" id="date-pickerCustomField">
+
+        {if $customfieldsData.global and $customfieldsData.global.length != 0}
+          {call ZEPHYR.Bulk.renderBulkCustomFields}
+            {param customFields: $customfieldsData.global /}
+            {param mode:  $mode /}
+            {param title:  'Custom Fields'/}
+          {/call}
+        {/if}
+
+			</div>
+		</div>
+		<div class="form-footer buttons-container">
+			<div class="buttons">
+				<input class="button" type="submit" id="bulk-update-status-form-submit" value="{getText('zephyr.je.save.button.title')}"/>
+				<a href="#" id="bulk-custom-fields-update-cancle-button" class="cancel">{getText('common.forms.cancel')}</a>
+			</div>
+		</div>
+	</form>
+{/template}
+
+/**
+ * Render the dialog for bulk move to cycle change
+ * @param projects
+ * @param label
+ * @param? action
+ */
+{template .bulkCopyMoveToExistingCycle}
+	<h2 class="dialog-title">{$label}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+    		<div id="bulk-field-move-cycle">
+    			<div id="projectdropdown" class="field-group" style="padding-left:20px;">
+    				<span>{getText('je.gadget.common.project.label')}</span>&nbsp;&nbsp;
+	    			<select id="execProjectId" class="select" style="width:150px;">
+						<option value="-1" selected:"selected">{getText('zephyr.je.defects.none')}</option>
+						{foreach $project in $projects}
+							<option value="{$project.id}" title="{$project.name}" key="{$project.key}">{$project.name}</option>
+						{/foreach}
+					</select>
+				</div>
+				<div id="versiondropdown" class="field-group" style="padding-left:20px;display:none;">
+	    			<span>{getText('project.cycle.version.selection.label')}</span>&nbsp;&nbsp;
+					   <select id="projectVersionId" class="select" style="max-width:425px"/>
+				</div>
+
+				<div id="cycledropdown" class="field-group" style="padding-left:20px;display:none;">
+	    			<span>{getText('execute.dialog.execute.cycle.label')}</span>&nbsp;&nbsp;
+					   <select id="versionCycleId" class="select" style="max-width:425px"/>
+				</div>
+				<div id="newCycleId" class="field-group" style="padding-left`105px;display:none;">
+        			<label for="cycle_name">{getText('enav.newcycle.name.label')}<span class="aui-icon icon-required required"></span></label>
+        			<input class="text large-field" type="text" id="cycle_name" name="cycle_name" title="{getText('zephyr.je.maxChar.tooltip', 255)}" value="" maxlength="255"/>
+        			<input type="hidden" id="cycleId" value=""/>
+    			</div>
+
+        <div id="folderdropdown" class="field-group" style="padding-left:20px;display:none;">
+            <span>{getText('execute.dialog.execute.folder.label')}</span>&nbsp;&nbsp;
+             <select id="cycleFolderId" class="select" style="max-width:425px"/>
+        </div>
+
+        <div id="newFolderId" class="field-group" style="padding-left:105px;display:none;">
+              <label for="folder_name">{getText('enav.newfolder.name.label')}<span class="aui-icon icon-required required"></span></label>
+              <input class="text large-field" type="text" id="folder_name" name="folder_name" title="{getText('zephyr.je.maxChar.tooltip', 255)}" value="" maxlength="255"/>
+              <input type="hidden" id="folderId" value=""/>
+          </div>
+
+
+				<div id="execstatus-clear-defectmapping-div" style="margin-top:15px;">
+					<span>{getText('enav.bulk.status.cleardefect.label')}</span>&nbsp;&nbsp;
+					<input type="checkbox" class="checkbox" name="defectMapping" id="exec-clear-defectmapping-id" checked/>
+				</div>
+				<div style="margin-top:15px;">
+					<span>{getText('enav.bulk.status.clearstatus.label')}</span>&nbsp;&nbsp;
+					<input type="checkbox" class="checkbox" name= "clearExecStatusId" id="exec-clear-execstatus-id" checked/>
+				</div>
+				<div style="margin-top:15px;">
+					<span>{getText('enav.bulk.status.clearassignment.label')}</span>&nbsp;&nbsp;
+          {if $action == 'move'}
+					 <input type="checkbox" class="checkbox" disabled name= "clearExecAssignmentId" id="exec-clear-execassignee-id"/>
+          {else}
+            <input type="checkbox" class="checkbox" name= "clearExecAssignmentId" id="exec-clear-execassignee-id"/>
+          {/if}
+				</div>
+        <div style="margin-top:15px;">
+					<span>{getText('enav.bulk.status.clearCustomFields.label')}</span>&nbsp;&nbsp;
+          {if $action == 'move'}
+					 <input type="checkbox" class="checkbox" disabled name= "clearCustomFieldsId" id="clear-Custom-Fields-id"/>
+          {else}
+           <input type="checkbox" class="checkbox" name= "clearCustomFieldsId" id="clear-Custom-Fields-id"/>
+          {/if}
+				</div>
+			</div>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="bulk-move-cycle-form-submit" value="{getText('zephyr.je.save.button.title')}" disabled/>
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+
+/**
+ * Render the dialog for bulk move to cycle change
+ * @param contextPath
+ */
+{template .bulkAssociateDefects}
+<h2 class="dialog-title">{getText('enav.bulk.associate.defect.label')}</h2>
+{call ZEPHYR.About.evalMessage /}
+<div id="zephyr-je-add-tests" class="aui" style="padding-top:20px">
+    <form action="#" method="post" id="addTests" class="aui">
+       <div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" class="form-body"></div>
+       <fieldset>
+			<div class="field-group" style="padding-left:50px;">
+                  <label for="defects">{getText('zephyr.issuetype.testcase')}</label>
+				  <select name="zephyr-je-testkey" id="zephyr-je-testkey" multiple="multiple"
+						class="aui-field-tescasepickers hidden" style="width:500px;" size="4"
+								data-ajax-options.data.current_jql="type=Test"
+						        data-remove-on-un-select="true"
+								data-ajax-options.query="true"
+								data-ajax-options.data.current-issue-key=""
+								data-ajax-options.url="{$contextPath}/rest/api/1.0/issues/picker"
+								data-ajax-options.data.current-project-id="">
+            	  </select>
+            	  <div class="description" style="width:350px">{getText('cycle.add.test.tooltip.label')}</div>
+			</div>
+			<div class="form-footer buttons-container">
+		        <div class="buttons">
+		            <input class="button" type="submit" id="bulk-move-cycle-form-submit" value="{getText('zephyr.je.save.button.title')}"/>
+		            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+		        </div>
+	    	</div>
+	  </fieldset>
+</form>
+</div>
+{/template}
+
+/**
+ * Render the dialog for bulk move to cycle change
+ */
+{template .bulkAssignUser}
+<h2 class="dialog-title">{getText('enav.bulk.assign.user.label')}</h2>
+{call ZEPHYR.About.evalMessage /}
+<div id="zephyr-je-add-tests" class="aui" style="padding-top:20px">
+    <form action="#" method="post" id="addTests" class="aui">
+       <fieldset>
+       		<div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" />
+
+      <div class='bulk-assign-execution'>
+        <label for="exec-assignee-wrapper">{getText('enav.assigned.to.searcher.name')} &nbsp;</label>
+        <div id='exec-assignee-wrapper'></div>
+      </div>
+      <div class='description'>{getText('enav.bulk.assign.user.warn.label')}</div>
+			<div class="form-footer buttons-container">
+		        <div class="buttons">
+		            <input class="button" type="submit" id="bulk-assign-user-form-submit" value="{getText('zephyr.je.save.button.title')}"/>
+		            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+		        </div>
+	    	</div>
+	  </fieldset>
+</form>
+</div>
+{/template}
+
+/**
+ * Render the dialog for releasing the done column as a version
+ */
+{template .deleteExecutionConfirmationDialog}
+	<h2 class="dialog-title">{getText('schedule.operation.delete.label')}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message warning" id="">
+                	<span class="aui-icon icon-warning"></span>
+                	{getText('schedule.operation.delete.warning')}
+            	</div>
+            </div>
+            <label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="execution-delete-form-submit" value="{getText('common.words.delete')}" />
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+
+
+/**
+ * Render the dialog for releasing the done column as a version
+ * @param linked
+ * @param alreadylinked
+ * @param invalid
+ * @param noPermission
+ * @param noIssuePermission
+ * @param scheduleId
+ */
+{template .bulkAssociateDefectResult}
+{if $linked or $alreadylinked or $invalid or $noPermission or $noIssuePermission}
+			<div>
+            	<span class="aui-icon icon-info"></span>
+            		{if $linked}
+            			<p><span>{getText('enav.bulk.associatedefect.linked',$linked,$scheduleId)}</span></p>
+            		{/if}
+            		{if $alreadylinked}
+            			<p><span>{getText('enav.bulk.associatedefect.alreadylinked',$alreadylinked,$scheduleId)}</span></p>
+            		{/if}
+            		{if $invalid}
+            			<p><span>{getText('enav.bulk.associatedefect.invalid',$invalid,$scheduleId)}</span></p>
+            		{/if}
+            		{if $noPermission}
+            			<p><span>{getText('enav.bulk.associatedefect.noPermission','Edit Execution',$noPermission,$scheduleId)}</span></p>
+            		{/if}
+                    {if $noIssuePermission}
+                        <p><span>{getText('enav.bulk.associatedefect.noIssuePermission',$noIssuePermission)}</span></p>
+                    {/if}
+            </div>
+{/if}
+{/template}
+
+
+/**
+ * Bulk Status dialog
+ * @param warningMsg
+ * @param progress
+ * @param percent
+ * @param timeTaken
+ */
+{template .warningBulkStatusDialogContent autoescape="false"}
+	<h2 class="dialog-title">{getText('enav.bulk.status.change')}</h2>
+	<form class="aui" action="#" method="post">
+		{call ZEPHYR.About.evalMessage /}
+		<div class="form-body">
+            <div data-value="{$progress}" class="aui-progress-indicator app-loading-progress-bar">
+                <span style="width:{$percent}%" class="aui-progress-indicator-value"></span>
+            </div>
+            <div class="timeTaken">
+             Time Taken: {$timeTaken}
+            </div>
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message info" id="">
+                	<span class="aui-icon icon-info"></span>
+                		{$warningMsg}
+            	</div>
+            </div>
+		</div>
+	</form>
+{/template}
+
+
+/**
+ * Bulk Status dialog
+ * @param warningMsg
+ * @param progress
+ * @param percent
+ * @param timeTaken
+ */
+{template .warningBulkCustomFieldsDialogContent autoescape="false"}
+	<h2 class="dialog-title">{getText('enav.associate.customField.bulkEditHeading')}</h2>
+	<form class="aui" action="#" method="post">
+		{call ZEPHYR.About.evalMessage /}
+		<div class="form-body">
+            <div data-value="{$progress}" class="aui-progress-indicator app-loading-progress-bar">
+                <span style="width:{$percent}%" class="aui-progress-indicator-value"></span>
+            </div>
+            <div class="timeTaken">
+             Time Taken: {$timeTaken}
+            </div>
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message info" id="">
+                	<span class="aui-icon icon-info"></span>
+                		{$warningMsg}
+            	</div>
+            </div>
+		</div>
+	</form>
+{/template}
+
+
+/**
+ * Bulk Delete Executions dialog
+* @param warningMsg
+ * @param progress
+ * @param percent
+ * @param timeTaken
+ */
+{template .warningBulkDeleteDialogContent autoescape="false"}
+	<h2 class="dialog-title">{getText('enav.bulk.delete.execution.status')}</h2>
+	<form class="aui" action="#" method="post">
+		{call ZEPHYR.About.evalMessage /}
+		<div class="form-body">
+            <div data-value="{$progress}" class="aui-progress-indicator app-loading-progress-bar">
+                <span style="width:{$percent}%" class="aui-progress-indicator-value"></span>
+            </div>
+            <div class="timeTaken">
+             Time Taken: {$timeTaken}
+            </div>
+            <div id="execs-delete-aui-message-bar">
+                <div class="aui-message info" id="">
+                    <span class="aui-icon icon-info"></span>
+                        {$warningMsg}
+                </div>
+            </div>
+		</div>
+	</form>
+{/template}
+
+/**
+ * Bulk associate dialog status
+ * @param html
+ * @param progress
+ * @param percent
+ * @param timeTaken
+ */
+{template .warningBulkAssociateDefectDialogContent autoescape="false"}
+	<h2 class="dialog-title">{getText('enav.bulk.associate.defect.status')}</h2>
+	<form class="aui" action="#" method="post">
+		{call ZEPHYR.About.evalMessage /}
+		<div class="form-body">
+            <div data-value="{$progress}" class="aui-progress-indicator app-loading-progress-bar">
+                <span style="width:{$percent}%" class="aui-progress-indicator-value"></span>
+            </div>
+            <div class="timeTaken">
+             Time Taken: {$timeTaken}
+            </div>
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message info" id="">
+                	<span class="aui-icon icon-info"></span>
+                		{$html}
+            	</div>
+            </div>
+		</div>
+	</form>
+{/template}
+
+
+/**
+ * Move/copy Bulk dialog status
+ * @param progress
+ * @param statusMessage
+ * @param percent
+ * @param timeTaken
+ * @param warningMsg
+  */
+{template .warningBulkMoveCopyDialogContent autoescape="false"}
+	<h2 class="dialog-title">{$statusMessage}</h2>
+	<form class="aui" action="#" method="post">
+		{call ZEPHYR.About.evalMessage /}
+		<div class="form-body">
+            <div data-value="{$progress}" class="aui-progress-indicator app-loading-progress-bar">
+                <span style="width:{$percent}%" class="aui-progress-indicator-value"></span>
+            </div>
+            <div class="timeTaken">
+             Time Taken: {$timeTaken}
+            </div>
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message info" id="">
+                	<span class="aui-icon icon-info"></span>
+                	    {$warningMsg}
+            	</div>
+            </div>
+		</div>
+	</form>
+{/template}
+
+/**
+ * Bulk assign user success dialog
+ * @param progress
+ * @param percent
+ * @param timeTaken
+ * @param warningMsg
+ */
+{template .warningBulkAssignUserDialogContent autoescape="false"}
+	<h2 class="dialog-title">{getText('enav.bulk.assign.user.status')}</h2>
+	<form class="aui" action="#" method="post">
+		{call ZEPHYR.About.evalMessage /}
+		<div class="form-body">
+            <div data-value="{$progress}" class="aui-progress-indicator app-loading-progress-bar">
+                <span style="width:{$percent}%" class="aui-progress-indicator-value"></span>
+            </div>
+            <div class="timeTaken">
+             Time Taken: {$timeTaken}
+            </div>
+			<div id="bulk-aui-message-bar">
+				<div class="aui-message info" id="">
+                	<span class="aui-icon icon-info"></span>
+                	    {$warningMsg}
+            	</div>
+            </div>
+		</div>
+	</form>
+{/template}

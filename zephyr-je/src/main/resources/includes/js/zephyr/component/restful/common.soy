@@ -1,0 +1,18 @@
+{namespace Zephyr.Templates.Common}
+
+/**
+ * @param message
+ */
+{template .serverErrorDialog autoescape="false"}
+<h2 class="dialog-title">{getText('admin.common.words.error')}</h2>
+<div class="form-body">
+    <div class="aui-message error">
+        <span class="aui-icon icon-error"></span> {$message}
+    </div>
+</div>
+<div class="buttons-container form-footer">
+    <div class="buttons">
+        <a href="#" class="aui-button aui-button-link cancel">{getText('common.words.close')}</a>
+    </div>
+</div>
+{/template}

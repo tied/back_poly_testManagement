@@ -1,0 +1,389 @@
+{namespace ZEPHYR.Execution.Templates.ExecutionCustomField}
+
+/**
+* Render the dialog for reorder executions
+* @param? showMoreStatus
+*/
+{template .customFieldsDisplayTemplate}
+<div id="custom-fields-display-outer-container">
+	<div id="custom-fidld-display-area">
+
+	</div>
+	<div>
+		{if $showMoreStatus}
+			<div class="show-more-container audit-history-show-more-container">
+				<span id="custom-fields-show-more">
+					{getText('cycle.showmore.label')}...
+				</span>
+			</div>
+		{/if}
+	</div>
+	<div id="show-more-custom-fields">
+
+	</div>
+</div>
+{/template}
+
+
+/**
+ * Renders test details history with show more option
+ */
+{template .executionDetailsCustomFieldsCollapsingTemplate}
+<div>
+	<div>
+		<div class="module toggle-wrap">
+			<div class="mod-header">
+				<h3 class="toggle-title" >
+					{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.label')}
+				</h3>
+
+			</div>
+			<div class="mod-content field-group more" id="custom-field-collapsing-container">
+
+			</div>
+			<!--<div id="edit-more-icon-container">
+					<button  id="edit-button" class="aui-button add-custom-btn">
+						<span>{getText('zephyr.executionCustoomField.addCustomField')}</span>
+						<span class="aui-icon aui-icon-small aui-iconfont-add edit-button-execution-details" />
+						<span class="edit-button-execution-details" />
+					</button>
+				</div>-->
+		</div>
+	</div>
+</div>
+{/template}
+
+/**
+* Renders test details history with show more option
+*/
+{template .hasExistingCustomFieldsFalse}
+<span class="aui-icon aui-icon-small aui-iconfont-edit edit-button-execution-details" id="edit-button" />
+{/template}
+
+/**
+ * Renders test details history with show more option
+ * @param customFields
+ */
+{template .executionDetailsCustomFieldsReadMode}
+<form class="aui">
+	<div class="custom-field-wrapper">
+		{foreach $customField in $customFields}
+			{if $customField.value != ''}
+				<div id="custom-field-row-{$customField.customFieldId}" class="field-group">
+					<label for="custom-field-{$customField.customFieldId}">
+						{$customField.customFieldName}<span>:</span>
+					</label>
+					<div id="custom-field-{$customField.customFieldId}" class="custom-field-displaying-value">
+						<span data-field-name={$customField.customFieldName}>
+							{if $customField.customFieldType == 'DATE'}
+								{$customField.displayDate}
+							{elseif $customField.customFieldType == 'DATE_TIME'}
+								{$customField.displayDateTime}
+							{else}
+								{$customField.value}
+							{/if}
+						</span>
+					</div>
+				</div>
+			{/if}
+		{/foreach}
+	</div>
+</form>
+
+{/template}
+
+
+/**
+ * Renders test details history with show more option
+ * @param customFields
+ */
+{template .executionDetailsCustomFieldsWriteMode}
+<form id="execution-details-form" class="aui">
+	<fieldset>
+		{foreach $customField in $customFields}
+			<div id="custom-field-row-{$customField.customFieldId}" class="field-group">
+				<label for="custom-field-{$customField.customFieldId}">
+					{$customField.customFieldName}
+				</label>
+				<div id="custom-field-edit-{$customField.customFieldId}" class="edit-mode-container">
+					<div class="type-multiselect">
+						<fieldset>
+							{if $customField.customFieldValueId and $customField.entityId}
+								<div class="editing-mode-inner-container execution-details-customFields" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" data-entityId="{$customField.entityId}" data-customFieldType="{$customField.customFieldType}">
+							{else}
+								<div class="editing-mode-inner-container execution-details-customFields" data-customFieldId="{$customField.customFieldId}" data-customFieldType="{$customField.customFieldType}">
+							{/if}
+								{if $customField.customFieldType == 'MULTI_SELECT'}
+									<select class="multi-select" multiple="multiple" id="multiselect-{$customField.customFieldId}" name="multiselect">
+										{foreach $option in $customField.options}
+											<option {$option.selected ? 'selected' : ''}>
+												{$option.value}
+											</option>
+										{/foreach}
+									</select>
+									{elseif $customField.customFieldType == 'CHECKBOX'}
+									<div class="type-multicheckboxes">
+										<fieldset>
+											{foreach $checkboxOption in $customField.options}
+												<div class="checkbox">
+													<input {$checkboxOption.selected ? 'checked' : ''} name="checkbox-{$customField.customFieldId}" data-value="{$checkboxOption.value}" class="checkbox" id="customfield-{$customField.customFieldId}-{$checkboxOption.value}" type="checkbox">
+													<label>{$checkboxOption.value}</label>
+												</div>
+											{/foreach}
+										</fieldset>
+									</div>
+								{elseif $customField.customFieldType == 'NUMBER'}
+									<div class="type-number">
+										<fieldset>
+											<input class="text" type="number" id="text-input-{$customField.customFieldId}" name="text-input" title="Text input" value={$customField.value ? $customField.value : ''}>
+										</fieldset>
+									</div>
+								{elseif $customField.customFieldType == 'RADIO_BUTTON'}
+									<div class="type-radiobuttons">
+										<fieldset>
+											{foreach $radioButtonOption in $customField.options}
+											<div class="radio">
+												<input {$radioButtonOption.selected ? 'checked' : ''} name="radiobutton-{$customField.customFieldId}" data-value="{$radioButtonOption.value}" class="radio" id="customfield-{$customField.customFieldId}" type="radio">
+												<label>{$radioButtonOption.value}</label>
+											</div>
+											{/foreach}
+										</fieldset>
+									</div>
+								{elseif $customField.customFieldType == 'SINGLE_SELECT'}
+									<div class="type-select">
+										<fieldset>
+											<select class="select" id="select-{$customField.customFieldId}" name="select-example">
+												{foreach $singleSelectOption in $customField.options}
+													<option>{$singleSelectOption}</option>
+												{/foreach}
+											</select>
+										</fieldset>
+									</div>
+								{elseif $customField.customFieldType == 'LARGE_TEXT'}
+									<div class="type-largeText">
+										<fieldset>
+											<textarea name="step" rows="4" id="large-text-{$customField.customFieldId}" class="textarea ztextarea noresize ztextarea-step">{$customField.value ? $customField.value : ''}</textarea>
+										</fieldset>
+									</div>
+								{elseif $customField.customFieldType == 'TEXT'}
+									<div class="type-text">
+										<fieldset>
+											<input class="text" type="text" id="text-input-{$customField.customFieldId}" name="text-input" title="Text input" value={$customField.value ? $customField.value : ''}>
+										</fieldset>
+									</div>
+								{elseif $customField.customFieldType == 'DATE'}
+									<div class="type-date">
+										<fieldset>
+											<input class="text" type="text" id="date-{$customField.customFieldId}" name="text-input" title="Text input" value="{call convertDate}
+													{param value: $customField.value ? $customField.value : null /}
+													{param isDateTime : false /}
+													{/call}">
+										</fieldset>
+									</div>
+								{elseif $customField.customFieldType == 'DATE_TIME'}
+									<div class="type-dateTime">
+										<fieldset>
+											<input class="text" type="text" id="dateTime-{$customField.customFieldId}" name="text-input" title="Text input" value="{call convertDate}
+													{param value: $customField.value ? $customField.value : null /}
+													{param isDateTime : true /}
+													{/call}">
+										</fieldset>
+									</div>
+								{/if}
+							</div>
+						</fieldset>
+					</div>
+				</div>
+			</div>
+		{/foreach}
+	</fieldset>
+</form>
+{/template}
+
+/**
+* Renders a table of selected Projects.
+* @param mode
+* @param customFields
+* @param length
+*/
+{template .showMoreCustomFieldsModel autoescape="true"}
+<div class="tableOuterContainer">
+	{if $mode == 'read'}
+		<section role="dialog" data-aui-modal="true" id="customFieldModel" class="zephyr-dialog2 aui-layer aui-dialog2 aui-dialog2-medium" style="max-width: 500px;" data-aui-remove-on-hide="true" aria-hidden="true">
+	{elseif $mode == 'write'}
+		<section role="dialog" data-aui-modal="true" id="customFieldModel" class="zephyr-dialog2 aui-layer aui-dialog2 aui-dialog2-large" data-aui-modal="true" data-aui-remove-on-hide="true" aria-hidden="true">
+	{/if}
+		<!-- Dialog header -->
+		<header class="aui-dialog2-header">
+			<!-- The dialogs title -->
+			<h2 class="aui-dialog2-header-main">{getText('zephyr.je.admin.plugin.test.section.item.zephyr.custom.label')}</h2>
+			<!-- Actions to render on the right of the header -->
+			<div class="aui-dialog2-header-secondary" id="customFieldSearchInput">
+				{if $mode == 'write'}
+					<button class="aui-button" id="custom-field-configeration-options">
+						<span class="aui-icon aui-icon-small aui-iconfont-configure customize-options-icon">
+						</span>
+						{getText('cycle.configurefields.label')}
+					</button>
+				{/if}
+			</div>
+			<!-- Close icon -->
+			<a class="aui-dialog2-header-close" id="custom-field-footer-container">
+				<span class="aui-icon aui-icon-small aui-iconfont-close-dialog">{getText('zephyr-je.close.link.title')}</span>
+			</a>
+		</header>
+		<!-- Main dialog content -->
+		<div id="all-custom-fields" class="aui-dialog2-content customFieldDataCountainer">
+			{if $mode == 'read'}
+				{call .executionDetailsCustomFieldsReadMode}
+					{param customFields: $customFields /}
+				{/call}
+			{elseif $mode == 'write'}
+				{call .executionDetailsCustomFieldsWriteMode}
+					{param customFields: $customFields /}
+				{/call}
+			{/if}
+		</div>
+		<!-- Dialog footer -->
+		<footer class="aui-dialog2-footer">
+			<!-- Actions to render on the right of the footer -->
+			<div class="aui-dialog2-footer-actions" id="custom-field-data-model-footer">
+				{if $mode == 'read'}
+					{call .closeFooterForShowMoreDialogBox /}
+				{elseif $mode == 'write'}
+					{call .editFooterForShowMoreDialogBox}
+            {param length: $length /}
+          {/call}
+				{/if}
+			</div>
+		</footer>
+	</section>
+</div>
+{/template}
+
+/**
+* Renders test details history
+*/
+{template .closeFooterForShowMoreDialogBox autoescape="false"}
+<button id="custom-field-dialog-close-button" class="aui-button aui-button-link close-dialog-custom-fields">{getText('zephyr-je.close.link.title')}</button>
+{/template}
+
+/**
+* Renders test details history
+* @param length
+*/
+{template .editFooterForShowMoreDialogBox autoescape="false"}
+<div>
+  {if $length == 0}
+	 <button id="custom-field-dialog-create-button" class="aui-button aui-button-primary">{getText('zephyr.je.create.button.title')}</button>
+  {else}
+   <button id="custom-field-dialog-create-button" class="aui-button aui-button-primary">{getText('zephyr.je.update.button.title')}</button>
+   {/if}
+  <button id="custom-field-dialog-close-button" class="aui-button aui-button-link close-dialog-custom-fields">{getText('zephyr.je.submit.form.cancel')}</button>
+</div>
+{/template}
+
+/**
+* Renders column customisation view
+* @param columns
+* @param submitButtonId
+* @param closeButtonId
+* @param selectAll
+*/
+{template .customFieldsCustomizer}
+<div class="execution-column-picker-dialog-wrapper">
+	<h3>
+		{getText('cycle.choosecustomfields.label')}
+	</h3>
+	<div class="custom-filter filter-options">
+		<a href="javascript:void(0)" class="aui-button aui-button-link choose-all-customize-filter" id="choose-all-custom-fields">
+			{getText('cycle.chooseall.label')}
+		</a>
+		<a href="javascript:void(0)" class="aui-button aui-button-link customize-filter" id="customize-custom-field-selection">
+			{getText('cycle.customize.label')}
+		</a>
+	</div>
+	<div class="aui-list-wrapper aui-list">
+		<div class="aui-list-scroll">
+			<ul class="aui-list">
+			{foreach $key in keys($columns)}
+				<li class="check-list-item">
+					<label class="item-label" title="{$columns[$key].displayName}">
+						<input type="checkbox" name="{$columns[$key].displayName}" id={$key} class="step-column-input" {$columns[$key].isVisible == 'true' ? 'checked' : ''} { $selectAll ? 'disabled' : ''}><span>{$columns[$key].displayName}</span>
+					</label>
+				</li>
+			{/foreach}
+			</ul>
+		</div>
+	</div>
+	<div id="errorColumnSelector">
+		{getText('cycle.Selectatleastoneoption.label')}
+	</div>
+	<div class="button-panel">
+		<input class="aui-button" type="button" value="Done" id="{$submitButtonId}" href="javascript:void(0)" />
+		<a href="javascript:void(0)" class="aui-button aui-button-link close-dialog" id="{$closeButtonId}">
+			{getText('zephyr-je.close.link.title')}
+		</a>
+	</div>
+</div>
+{/template}
+
+
+/**
+ * Renders test details history with show more option
+ * @param customFields
+ * @param mode
+ * @param executionId
+ */
+{template .executionDetailsCustomFieldsReadModeNew}
+<form class="aui">
+	<input type="text" id="date-pickerCustomField">
+	<div class="custom-field-wrapper">
+		{foreach $customField in $customFields}
+			<div class="field-group">
+				<label title="{$customField.customFieldName}">{$customField.customFieldName}</label>
+				<div class="custom-field-value">
+					{if $customField.customFieldType == 'CHECKBOX'}
+						<drop-downcheckbox cellkey="{$customField.customFieldId}" data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" data-executionid="{$executionId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}"></drop-downcheckbox>
+					{elseif $customField.customFieldType == 'RADIO_BUTTON'}
+						<drop-downradio cellkey="{$customField.customFieldId}" data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" data-executionid="{$executionId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}"></drop-downradio>
+					{elseif $customField.customFieldType == 'DATE' or $customField.customFieldType == 'DATE_TIME'}
+						<drop-downdate data-type="{$customField.customFieldType}" data-customFieldValueId="{$customField.customFieldValueId}" data-entityId="{$customField.entityId}" data-customFieldId="{$customField.customFieldId}" data-executionid="{$executionId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}"></drop-downdate>
+					{elseif $customField.customFieldType == 'SINGLE_SELECT'}
+						<drop-down data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" data-executionid="{$executionId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}"></drop-down>
+					{elseif $customField.customFieldType == 'MULTI_SELECT'}
+						<drop-downmultiselect  data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" data-executionid="{$executionId}" mode="{$mode}" options="{$customField.options}" imgurl="{$customField.imgUrl}">
+						</drop-downmultiselect>
+					{elseif $customField.customFieldType == 'TEXT' or $customField.customFieldType == 'NUMBER'}
+						<custom-text  data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" data-executionid="{$executionId}"  type="{$customField.customFieldType}" mode="{$mode}" options="{$customField.options}"></custom-text>
+					{elseif $customField.customFieldType == 'LARGE_TEXT' }
+
+						<div data-options="{$customField.options}" data-type="{$customField.customFieldType}" data-mode="{$mode}" data-entityId="{$customField.entityId}" data-customFieldValueId="{$customField.customFieldValueId}" data-customFieldId="{$customField.customFieldId}" data-executionid="{$executionId}" class="cell-wrapper isStandAlone custom-text textarea-custom-field-wrapper">
+						  <div class="editable-cell-container">
+						    <div class="cell-readMode readMode textarea-custom">
+						      <div id="editableField" class="editable-field textarea-custom-field">
+						        <div>
+						          <span id="renderHTML" class="readValues" data-content="{getText('zephyr.customfield.textarea.placeholder')}" title="{$customField.value}">{$customField.htmlValue or '' |noAutoescape}</span>
+						        </div>
+						      </div>
+						    </div>
+						    <div id="editMode" tabindex="-1">
+						      <div class="cell-editMode hide">
+						            <textarea class="textarea-custom-field-element"
+						            data-oldvalue="{$customField.value}"   data-type="{$customField.customFieldType}" tabindex="-1" maxlength="750" placeholder="Enter Value..." title="{$customField.value}">{$customField.value}</textarea>
+						        </div>
+						    </div>
+						  </div>
+						</div>
+					{/if}
+				</div>
+			</div>
+		{/foreach}
+	</div>
+</form>
+{if $customFields and $customFields.length > 4}
+	<div class="show-content-wrapper">
+		<span id="show-content" data-content="{getText('cycle.showmore.label')}"></span>
+	</div>
+{/if}
+{/template}

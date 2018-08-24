@@ -1,0 +1,80 @@
+#set ($ctxPath =  $req.getContextPath())
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-common")
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-steps")
+$webResourceManager.requireResourcesForContext("com.zephyr.je.vanilla-grid")
+
+<div id="project-config-panel-versions" class="project-config-panel">
+    <div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar"></div>
+    <div class='gridComponentTesting'>
+        <a href="" id="zephyr-file-dialog" style="display:none"></a>
+        <input type="text" id="date-picker" />
+    </div>
+	#if($errors)
+		<input type="hidden" id="zerrors" value="$!errors"/>
+		<div style="opacity:0.9;">
+            <div class="aui-dialog-content">
+                <div class="form-body">
+                    <div class="zephyr-je-ex-error aui-message error" style="top:10px;">
+					</div>
+            	</div>
+            </div>
+        </div>
+        <script type="text/javascript">
+		 	ZEPHYR.ISSUE.Teststep.showError = function(e){
+				var zError = AJS.$('input#zerrors').val();
+				if(zError && zError.length > 0 ){
+					var error = "<span class='aui-icon icon-error'></span>";
+					error += zError;
+					AJS.$("div.zephyr-je-ex-error").html(decHTMLifEnc(error));
+				}
+			};
+            var isLoadedInIframe = function() {
+                try {
+                    return (window !== window.parent);
+                } catch(e) {
+                    return false;
+                }
+            };
+
+            var InitPageContent = function(initCallback) {
+                if(isLoadedInIframe()) {
+                    AJS.$(window).load(function(){
+                        initCallback();
+                    });
+                } else {
+                    AJS.$(document).ready(function(){
+                        initCallback();
+                    });
+                }
+            };
+
+            InitPageContent(function(){
+                setTimeout(function () {
+                    ZEPHYR.ISSUE.Teststep.showError();
+                }, 50);
+            });
+		</script>
+	#else
+
+        <div id="currentIndex" style="display: none">
+            {$currentIndex-1}
+        </div>
+
+        <form id="project-config-versions-add" class="aui" action="#">
+            <div id="stepsGridComponentContainer" class="gridComponent"></div>
+        </form>
+        <div class="issueViewPopover">
+            <div class="gridComponentOuterContainer">
+                <div class="closePopup">
+                    <span class="aui-icon aui-icon-small aui-iconfont-remove-label close-icon" id="close-test-details-popup"></span>
+                </div>
+                <div class="issueViewPopoverWrapper">
+                    <div id="issuePopoverGridWrapper" class="gridComponent" class="gridComponent">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="project-config-error-console">
+        </div>
+	#end
+</div>

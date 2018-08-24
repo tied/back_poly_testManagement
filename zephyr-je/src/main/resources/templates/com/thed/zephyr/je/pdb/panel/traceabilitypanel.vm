@@ -1,0 +1,27 @@
+$webResourceManager.requireResource('com.thed.zephyr.je:zephyr-je-traceability')
+
+#if ($req.getAttribute("errors"))
+	#set ($errors =  $req.getAttribute("errors"))
+#else
+	#set ($errors =  "")
+#end
+
+<div class="aui-group">
+	<input type="hidden" id="zerrors" value="$textutils.htmlEncode($!errors)"/>
+	<input type="hidden" id="projKey" value="${pKey}"/>
+	<input type="hidden" id="projId" value="${pid}"/>
+	<input type="hidden" id="testIssueTypeId" value="${testIssueTypeId}"/>
+	<input type="hidden" id="zephyr-proj-tab" value="traceability-tab"/>
+
+	 #if($!errors && $!errors.length() > 0)
+		<div style="opacity:0.9;">
+			#parse("/templates/zephyr/common/licenseerror.vm")
+		</div>	
+	 #else
+    	<div class="navigator-body">
+	        <div class="contained-content">
+	            <div id="traceability-container"></div>
+	        </div>
+	    </div> 
+	#end	
+</div>

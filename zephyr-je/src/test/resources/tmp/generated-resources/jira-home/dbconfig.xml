@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jira-database-config>
+  <name>zephyrjedb</name>
+  <delegator-name>default</delegator-name>
+  <database-type>mysql</database-type>
+  <schema-name>zephyrjedb</schema-name>
+  <jdbc-datasource>
+    <url>jdbc:mysql://localhost:3306/zephyrjedb?useUnicode=true&amp;characterEncoding=utf8&amp;sessionVariables=storage_engine=InnoDB</url>
+    <driver-class>com.mysql.jdbc.Driver</driver-class>
+    <username>root</username>
+    <password>root</password>
+    <pool-size>15</pool-size>
+    <validation-query>select 1</validation-query>
+  </jdbc-datasource>
+</jira-database-config>

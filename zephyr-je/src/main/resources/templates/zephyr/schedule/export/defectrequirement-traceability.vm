@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    #if($excelContentType == "true") 
+      <meta http-equiv="Content-Type" content="ms-excel; charset=utf-8">
+    #else
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    #end
+    <title>$i18n.getText('zephyr.exporthtml.title')</title>
+    <style type="text/css">
+      table.main-table {
+        font-family : verdana, arial, sans-serif ;
+        font-size : 12px ;
+        padding-left : 50px ;
+        color : #333333 ;
+        border-width : 1px ;
+        border-color : #a9c6c9 ;
+        border-collapse : collapse ;
+        background-color : #d4e3e5 ;
+      }
+      table.main-table th {
+        border-width : 1px ;
+        padding : 8px ;
+        border-style : solid ;
+        border-color : #a9c6c9 ;
+      }
+      table.main-table thead {
+        font-weight : bold ;
+      }
+      table.main-table td {
+        border-width : 1px ;
+        padding : 8px ;
+        border-style : solid ;
+        border-color : #a9c6c9 ;
+      }
+      .badge {
+        font-size: 10px;
+        border-radius: 6px;
+        padding: 2px 3px 2px 3px;
+        background-color: rgba(0,0,0,0.2);
+      }
+      .keyColor {
+        color: #3572b0;
+      }
+    </style>
+  </head>
+  <body>
+    <table class="main-table"  border="1" cellspacing="0" cellpadding="0">
+      <thead>
+        <th>Defect</th>
+        <th>Execution</th>
+        <th>Test</th>
+        <th>Requirement</th>
+      </thead>
+      <tbody>
+          <!-- report body -->
+      </tbody>
+    </table>
+  </body>
+</html>

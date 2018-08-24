@@ -1,0 +1,722 @@
+<html lang="en">
+<head>
+    $webResourceManager.requireResource("com.thed.zephyr.je:zephyr-admin-config")
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_general_configuration"/>
+    <title>$i18n.getText("zephyr.je.admin.plugin.execstatus.config.title")</title>
+    <style>
+        form.aui .aui-ss {
+            max-width: 250px;
+            width: 100%;
+        }
+
+        form.aui label {
+            color: #333;
+        }
+
+        h3.zephyr-je-config-title {
+            margin-top: 0px;
+        }
+
+        div.zephyr-aui-message {
+            margin: 0 0 7px 0;
+        }
+
+        #reIndexProgressBar {
+            padding-top: 5px;
+        }
+
+        .tabs-pane {
+            border-top: none !important;
+        }
+    </style>
+    <script>window.globalIssueLinkTypes = [#foreach($issueLinkType in $action.issueLinkTypes) ["$issueLinkType.name", "$issueLinkType.id"] #if($velocityCount != $action.issueLinkTypes.size()),#end #end];
+    window.issueLinkTypeId =$action.issueLinkTypeId;</script>
+</head>
+<body>
+<div class="module">
+    <div id="general-config-aui-message-bar"></div>
+    <div id="zephyr-aui-aui-message-bar"
+         gen-error="$i18n.getText('zephyr.je.admin.plugin.analytics.update.error')"
+         succ-title="$i18n.getText('schedule.response.success.label')"
+         err-title="$i18n.getText('schedule.response.error.label')"
+         enabled-msg="$i18n.getText('zephyr.je.admin.plugin.analytics.enable.success')"
+         disabled-msg="$i18n.getText('zephyr.je.admin.plugin.analytics.disable.success')"
+    > </div>
+    <h3 class="formtitle zephyr-je-config-title">$action.getText(
+        'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.settings')</h3>
+    <br/><i>$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.info.desc')</i>
+    <form class="aui aui-form">
+        <div class="aui-tabs horizontal-tabs">
+            <ul class="tabs-menu">
+                <li class="menu-item active-tab">
+                    <a href="#general-config-tab">$action.getText(
+                        'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.name')</a>
+                </li>
+                <li class="menu-item">
+                    <a href="#issue-link-tab">$action.getText(
+                        'zephyr.je.admin.plugin.test.section.item.zephyr.issuelink.configuration')</a>
+                </li>
+                <li class="menu-item">
+                    <a href="#re-index-tab">$action.getText(
+                        'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.index.label')</a>
+                </li>
+                <li class="menu-item">
+                    <a href="#cleanup-tab">$action.getText(
+                        'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.sprintCleanup.label')</a>
+                </li>
+                <li class="menu-item">
+                    <a href="#disable-tab">$action.getText(
+                        'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.disable.testmenu.label')</a>
+                </li>
+                <li class="menu-item">
+                <a href="#disable-ew-tab">$action.getText(
+                    'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.disable.execution.workflow.label')</a>
+                </li>
+                #*<li class="menu-item">
+                <a href="#jobprogress-tab">$action.getText(
+                    'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.jobprogress.menu.label')</a>
+                </li>*#
+            </ul>
+            <div class="tabs-pane active-pane" id="general-config-tab">
+                <table class="aui aui-table-rowhover">
+                    <tbody>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-show-workflow">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.showworkflow.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-show-workflow" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline" #if($action.showWorkflow())checked="checked"#end>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-version-check">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.versioncheck.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-version-check" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline" #if($action.getVersionCheck())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-bind-issuetype-test-project-create">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.issuetype.test.project.associate.label')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-bind-issuetype-test-project" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getAssociateIssueTypeTestToProjectCreate())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-bind-enable-zephyr-permission">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.enable.zephyr.permission.label')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-bind-custom-permission" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getZephyrPermissionSchemeCheck())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-enable-update-executedon">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.enable.zephyr.update.executedon.label')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-update-execution-executedon" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getZephyrUpdateExecutionExecutedOnFlag())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="Zephyr Log Level">$action.getText(
+                                'zephyr.je.admin.plugin.zephyr.loglevel.configuration.label')</label></b>
+                        </td>
+                        <td id="zephyrLogLevel" width="50%">
+                            <div>
+                                #set ($logLevel = $action.getZephyrLogLevel())
+                                <select class="select" id="zephyr-log-level-select" type="single">
+                                    <option value="DEBUG" #if($logLevel == 'DEBUG') selected #end>DEBUG</option>
+                                    <option value="INFO" #if($logLevel == 'INFO') selected #end>INFO</option>
+                                    <option value="WARN" #if($logLevel == 'WARN') selected #end>WARN</option>
+                                    <option value="ERROR" #if($logLevel == 'ERROR') selected #end>ERROR</option>
+                                    <option value="OFF" #if($logLevel == 'OFF') selected #end>OFF</option>
+                                </select> &nbsp;
+                            </div>
+                            <span class="overlay-icon icon loading hidden"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="Zephyr Log Max File Size">$action.getText(
+                                'zephyr.je.admin.plugin.zephyr.logmaxsize.configuration.label')</label></b>
+                        </td>
+                        <td width="50%">
+                            <div>
+                                <input id="zephyr-log-max-size" type="text" class="text" style="vertical-align:baseline"
+                                       #if($action.getZephyrLogMaxSize())value="$action.getZephyrLogMaxSize()"#end/> MB
+                            </div>
+                            <span class="overlay-icon icon loading hidden"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="Zephyr Log Max Backup Index">$action.getText(
+                                'zephyr.je.admin.plugin.zephyr.logmaxbackup.configuration.label')</label></b>
+                        </td>
+                        <td width="50%">
+                            <div>
+                                <input id="zephyr-log-max-backup" type="text" class="text"
+                                       style="vertical-align:baseline"
+                                       #if($action.getZephyrLogMaxBackup())value="$action.getZephyrLogMaxBackup()"#end/>
+                            </div>
+                            <span class="overlay-icon icon loading hidden"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="Show Create Zephyr Test on Issue Type(s)">$action.getText(
+                                'zephyr.je.admin.plugin.show.zephyr.test.issue.type')</label></b>
+                        </td>
+                        <td id="nonIssueTypeTestProgress" width="50%">
+                            <div>
+                                <div class="aui-message warning zephyr-aui-message"><span
+                                        class="aui-icon icon-warning"></span>
+                                    <p>$action.getText(
+                                        'zephyr.je.admin.plugin.show.zephyr.test.issue.type.message', '<strong>',
+                                        '</strong>')</p>
+                                </div>
+                                <div style="float: left">
+                                    <select class="select" id="non-issue-type-test-select" multiple="multiple"
+                                            style="width: 400px; height: 60px;">
+                                        #set ($savedIssueTypeList = $action.getNonIssueTypeTestIdSavedList())
+                                        #foreach ($issueType in $action.issueTypes)
+                                            #if($savedIssueTypeList.contains($issueType.id))
+                                                <option value="$issueType.name" id="$issueType.id"
+                                                        selected>$issueType.name</option>
+                                            #else
+                                                <option value="$issueType.name"
+                                                        id="$issueType.id">$issueType.name</option>
+                                            #end
+                                        #end
+                                    </select>
+                                </div>
+                                <input #if($action.issueTypes.size()==0) disabled="disabled" #end
+                                                                         id="non-issue-type-test-save" type="button"
+                                                                         class="aui-button" value="$action.getText(
+                                    'zephyr.je.admin.plugin.show.zephyr.test.issue.type.save')"
+                                                                         style="margin-left: 10px; margin-top: 8px; height: 40px"/>
+                                <span id="zPreferenceSaveMessageId"/>
+                            </div>
+                            <span class="overlay-icon icon loading hidden"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-bind-enable-issue-security">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.enable.issue.security.label')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-bind-issue-security" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getIssueSecurityEnabled())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-bind-disable-labels-filter">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.disable.testsummary.labels.label')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-bind-labels-filter" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getTestSummaryLabelsFilterDisabled())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-bind-disable-all-filters">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.disable.testsummary.allfilters.label')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-bind-all-filters-testsummary" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getTestSummaryAllFiltersDisabled())checked="checked"#end>
+                        </td>
+                    </tr>
+                        #set ($dashboard = $action.testMetricsDashboard)
+                    <tr>
+                        <td width="50%">
+                            <b><label for="dashboard-selection">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.testmetricsmenu.desc')</label></b>
+                        </td>
+                        <td width="50%">
+					<span id="selectedDashboard">
+                        #if( $dashboard )
+							$dashboard.name
+						#end
+					</span>
+                            <br>
+                            <select id="zephyr-metrics-dashboard" name="dashboardSelection" type="single"
+                                    class="select">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                            <strong>$i18n.getText("zephyr.je.admin.plugin.analytics.title.view")</strong>
+                            <p>$i18n.getText("zephyr.je.admin.plugin.analytics.note.desc")</p>
+                        </td>
+                        <td style="display: table-cell;vertical-align: middle;">
+                            <input id="zephyrAnalyticCheck" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getAnalyticsCheck())checked="checked"#end>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tabs-pane" id="issue-link-tab">
+                <table class="aui aui-table-rowhover">
+                    <tbody>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-issuelink-check">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.issuelink.enabled.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-issuelink-check" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getIssueToTestLink())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-ril-check">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.remoteissuelink.enabled.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-ril-check" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getIssueToTestExecutionRemoteLink())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-issuelinkstep-check">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.issuesteplink.enabled.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-issuelinkstep-check" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getIssueToTestStepLink())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-rilstep-check">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.remoteissuesteplink.enabled.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-rilstep-check" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getIssueToTestStepExecutionRemoteLink())checked="checked"#end>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-ril-inverse">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.remoteissuelink.inverse.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <input id="zephyr-ril-inverse" type="checkbox" class="checkbox"
+                                   style="vertical-align:baseline"
+                                   #if($action.getTestToIssueLink())checked="checked"#end>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="Remote Issue Link Refresh">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.linktype.relation.label')</label></b>
+                        </td>
+                        <td id="relinkProgressBar" width="50%">
+                            <div class="aui-message warning zephyr-aui-message"><span
+                                    class="aui-icon icon-warning"></span>
+                                <p>$action.getText(
+                                    'zephyr.je.admin.relinking.this.may.take.a.while', '<strong>', '</strong>')</p>
+                            </div>
+                            <div>
+                                <select class="select" id="issue-link-relation-select" type="single">
+                                    #foreach ($issueLinkType in $action.issueLinkTypes)
+                                        <option value="$issueLinkType.id" #if($issueLinkType.id == $action.issueLinkTypeId)
+                                                selected #end>$issueLinkType.name</option>
+                                    #end
+                                </select> &nbsp;
+                                <input #if($action.issueLinkTypes.size()==0) disabled="disabled" #end
+                                                                             id="zephyr-ril-refresh" type="button"
+                                                                             class="aui-button" value="$action.getText(
+                                    'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.remoteissuelink.label')"/>
+                            </div>
+                            <span class="overlay-icon icon loading hidden"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="Requirement Issue Link Relation">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.linktype.requirement.relation.label')</label></b>
+                        </td>
+                        <td id="linkReqProgressBar" width="50%">
+                            <div class="aui-message warning zephyr-aui-message"><span
+                                    class="aui-icon icon-warning"></span>
+                                <p>$action.getText(
+                                    'zephyr.je.admin.test.linking.requirement.description', '<strong>', '</strong>')</p>
+                            </div>
+                            <div style="float: left">
+                                <input type="hidden" id="oldTestReqLinkType" value=$action.testToRequirementLink/>
+                                <div style="float: left">
+                                    <select class="select" id="test-link-req-relation-select" type="single"
+                                            style="width: 200px; height: 40px">
+                                        #foreach ($issueLinkType in $action.issueLinkTypes)
+                                            <option value="$issueLinkType.id" #if($issueLinkType.id == $action.testToRequirementLink)
+                                                    selected #end>$issueLinkType.name</option>
+                                        #end
+                                    </select>
+                                </div>
+                                <div style="float: left;margin-left: 3px">
+                                    #set ($savedIssueTypes = $action.getNonIssueTypeTestSavedList())
+                                    <select class="select" id="issue-type-select" multiple="multiple"
+                                            style="width: 200px; height:75px;" disabled>
+                                        #foreach($issueType in $savedIssueTypes)
+                                            <option value="$issueType.name" id="$issueType.id">$issueType.name</option>
+                                        #end
+                                    </select>
+                                </div>
+                            </div>
+                            <span class="overlay-icon icon loading hidden"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="tabs-pane" id="re-index-tab">
+                <table class="aui aui-table-rowhover">
+                    <tbody>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-index-all">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.index.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <div class="aui-message warning zephyr-aui-message"><span
+                                    class="aui-icon icon-warning"></span>
+                                <p>$action.getText('admin.indexing.this.may.take.a.while', '<strong>', '</strong>')</p>
+                            </div>
+                        ##        <span class="overlay-icon icon loading hidden"></span>
+                            <div class="checkbox" style="float: left;margin-right: 5px;">
+                                <input class="checkbox" type="checkbox" name="allProjects" id="allProjects"/>
+                                <label for="allProjects">$i18n.getText('zephyr.admin.menu.globalsettings.config.projects.allProjects.label')</label>
+                            </div>
+                            <div style="float: left;margin-left: 3px; margin-right: 5px;">
+                                <select id="zephyr-reindex-project" name="reindexProjectSelection" type="single"
+                                        class="select"></select>
+                            </div>
+                            <div>
+                                <input id="zephyr-index-all" type="button" class="aui-button"
+                                       style="vertical-align:baseline; width: auto;" value="$action.getText(
+                                    'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.index.label')"
+                                       disabled>
+                                <input id="zephyr-sync-all" type="button" class="aui-button"
+                                       style="vertical-align:baseline; width: auto;" value="$action.getText(
+                                    'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.sync.index.label')"
+                                       disabled>
+                            </div>
+                            <div class="checkbox" style="float: left;margin-right: 5px;">
+                                <input class="checkbox" type="checkbox" name="hardIndex" id="hardIndexId"/>
+                                <label for="hardIndex">$i18n.getText('zephyr.admin.menu.globalsettings.config.projects.hardindex.label')</label>
+                            </div>
+                            <div id="reIndexProgressBar"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div id="zephyr-reindex-projects-view" style="height:200px; overflow-y: scroll;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" id="reindexJobProgress" style="display: none;">
+                            <div data-value="0.0" class="aui-progress-indicator app-loading-progress-bar"
+                                 style="display: none;">
+                                <span style="width:0%" class="aui-progress-indicator-value"></span>
+                            </div>
+                            <div class="timeTaken"></div>
+                            <div class="indexingSteps" style="font-weight:bold"></div>
+                            <div id="re-index-aui-message-bar"></div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="tabs-pane" id="cleanup-tab">
+                <table class="aui aui-table-rowhover">
+                    <tbody>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="zephyr-cleanupSprints">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.sprintCleanup.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <div class="aui-message warning zephyr-aui-message"><span
+                                    class="aui-icon icon-warning"></span>
+                                <p>$action.getText(
+                                    'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.sprintCleanup.may.take.a.while',
+                                    '<strong>', '</strong>')</p>
+                            </div>
+                            <input id="zephyr-cleanupSprints" type="button" class="aui-button"
+                                   style="vertical-align:baseline" value="$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.sprintCleanup.label')">
+                            <input id="zephyr-cleanupCycleCache" type="button" class="aui-button"
+                                   style="vertical-align:baseline" value="$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.cyclecache.cleanup.label')">
+                            <span class="overlay-icon icon loading hidden"></span>
+                            <div id="cleanupSprintsProgressBar"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tabs-pane" id="disable-tab">
+                <table class="aui aui-table-rowhover">
+                    <tbody>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="project-selection">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.disable.testmenu.desc')</label></b>
+                        </td>
+                        <td width="50%">
+                            <select id="zephyr-metrics-project" name="projectSelection" type="single"
+                                    class="select"></select>
+                            <br/><span id="selectedProjectSpan"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%">
+                            <b><label for="project-selection">$action.getText(
+                                'zephyr.admin.menu.globalsettings.config.projects')</label></b>
+                        </td>
+                        <td width="50%"><br/><span id="deletedProjectSpan"></span></td>
+                    </tr>
+                    <tr>
+	                    <td>
+	                    <div>
+	                    	<label for="project-filter">$action.getText(
+                                'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.disable.testmenu.filter')</label>
+	                    	<div class="aui project-filter">
+	                        	<input id="test-disabled-project-filter" placeholder="Type to search" type='text' class='searchInput text' />
+	                        	<span id="removeSearchInput" class='show-search-text aui-icon aui-icon-small aui-iconfont-search-small searchbtn'>Search</span>
+	                        </div>
+	                    </div>
+	                    </td>
+						<td>
+							<div id="pagination" style="float:right; overflow:hidden;">
+								<span id="totalDPPages"></span>
+								<a id="buttonDPPrev">Prev</a>
+								<a id="buttonDPNext">Next</a>
+							</div>
+						</td>
+                    </tr>
+                    <tr>
+                    	<td colspan=2>
+                        	<div id="test-disabled-projects-view" style="height:300px; overflow-y: scroll;"></div>
+                        </td>
+                     </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tabs-pane" id="disable-ew-tab">
+            <table class="aui aui-table-rowhover">
+                <tbody>
+                <tr>
+                    <td width="50%">
+                        <b><label for="project-selection-ew">$action.getText(
+                            'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.disable.execution.workflow.desc')</label></b>
+                    </td>
+                    <td width="50%">
+                        <select id="zephyr-metrics-project-ew" name="projectEWSelection" type="single"
+                                class="select"></select>
+                        <br/><span id="selectedEWProjectSpan"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                        <b><label for="project-selection-ew">$action.getText(
+                            'zephyr.admin.menu.globalsettings.config.projects.ew.disable')</label></b>
+                    </td>
+                    <td width="50%"><br/><span id="deletedEWProjectSpan"></span></td>
+                </tr>
+                <tr>
+                    <td>
+                    <div>
+                    	<label for="project-filter-ew">$action.getText(
+                            'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.disable.testmenu.filter')</label>
+                    	<div class="aui project-filter">
+                        	<input id="ew-disabled-project-filter" placeholder="Type to search" type='text' class='searchInput text' />
+                        	<span id="removeEWSearchInput" class='show-search-text aui-icon aui-icon-small aui-iconfont-search-small searchbtn'>Search</span>
+                        </div>
+                    </div>
+                    </td>
+					<td>
+						<div id="paginationEW" style="float:right; overflow:hidden;">
+							<span id="totalEWDPPages"></span>
+							<a id="buttonEWDPPrev">Prev</a>
+							<a id="buttonEWDPNext">Next</a>
+						</div>
+					</td>
+                </tr>
+                <tr>
+                	<td colspan=2>
+                    	<div id="ew-disabled-projects-view" style="height:300px; overflow-y: scroll;"></div>
+                    </td>
+                 </tr>
+                </tbody>
+            </table>
+        </div>
+        #*<div class="tabs-pane" id="jobprogress-tab">
+	        <table class="aui aui-table-rowhover">
+	            <tbody>
+	            <tr>
+	                <td width="50%">
+	                    <b class="required">
+	                    	<label for="jobprogress-ew">$action.getText(
+	                    			'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.jobprogress.item.label')
+	                    	</label>
+	                    </b>
+	                </td>
+	                <td width="50%">
+	                	<input id="jobprogress-input" type="text" class="text" style="vertical-align:baseline; width=150px" />
+	                    <input id="jobprogres-stop-button" type="button" class="aui-button"
+	                    	style="vertical-align:baseline" value="$action.getText(
+	                 		'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.jobprogress.item.button.stop')">
+	                    <br/><span id="jobprogressStatus"></span>
+	                </td>
+	            </tr>
+	            </tbody>
+	        </table>
+        </div>*#
+        </div>
+
+    ##	<table class="aui aui-table-rowhover">
+    ##		<tr>
+    ##			<td width="40%">
+    ##				<label for="zephyr-show-workflow">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.showworkflow.desc')</label>
+    ##			</td>
+    ##			<td width="60%">
+    ##				<input id="zephyr-show-workflow" type="checkbox" class="checkbox" style="vertical-align:baseline" #if($action.showWorkflow())checked="checked"#end>
+    ##			</td>
+    ##		</tr>
+    ##
+    ##		<tr>
+    ##			<td width="40%">
+    ##				<label for="zephyr-version-check">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.versioncheck.desc')</label>
+    ##			</td>
+    ##			<td width="60%">
+    ##				<input id="zephyr-version-check" type="checkbox" class="checkbox" style="vertical-align:baseline" #if($action.getVersionCheck())checked="checked"#end>
+    ##			</td>
+    ##		</tr>
+    ##
+    ##		#set ($dashboard = $action.testMetricsDashboard)
+    ##		<tr>
+    ##			<td width="40%">
+    ##				<label for="dashboard-selection">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.testmetricsmenu.desc')</label>
+    ##			</td>
+    ##			<td width="60%">
+    ##				<span id="selectedDashboard">
+    ##					#if( $dashboard )
+    ##						$dashboard.name
+    ##					#end
+    ##				</span>
+    ##				<br>
+    ##				<select id="zephyr-metrics-dashboard" name="dashboardSelection" type="single" class="select">
+    ##				</select>
+    ##			</td>
+    ##		</tr>
+    ##		<tr>
+    ##			<td width="40%">
+    ##				<label for="zephyr-issuelink-check">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.issuelink.enabled.desc')</label>
+    ##			</td>
+    ##			<td width="60%">
+    ##				<input id="zephyr-issuelink-check" type="checkbox" class="checkbox" style="vertical-align:baseline" #if($action.getIssueToTestLink())checked="checked"#end>
+    ##			</td>
+    ##		</tr>
+    ##		<tr>
+    ##			<td width="40%">
+    ##				<label for="zephyr-ril-check">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.remoteissuelink.enabled.desc')</label>
+    ##			</td>
+    ##			<td width="60%">
+    ##				<input id="zephyr-ril-check" type="checkbox" class="checkbox" style="vertical-align:baseline" #if($action.getIssueToTestExecutionRemoteLink())checked="checked"#end>
+    ##			</td>
+    ##		</tr>
+    ##		<tr>
+    ##			<td width="40%">
+    ##				<label for="Remote Issue Link Refresh">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.linktype.relation.label')</label>
+    ##                <div class="aui-message warning"><span class="aui-icon icon-warning"></span>
+    ##                    <p>$action.getText('zephyr.je.admin.relinking.this.may.take.a.while', '<strong>', '</strong>')</p>
+    ##                </div>
+    ##			</td>
+    ##            <td id="relinkProgressBar" width="60%">
+    ##                <div>
+    ##                    <select class="select" id="issue-link-relation-select" type="single">
+    ##						#foreach ($issueLinkType in $action.issueLinkTypes)
+    ##                            <option value="$issueLinkType.id" #if($issueLinkType.id == $action.issueLinkTypeId) selected #end>$issueLinkType.name</option>
+    ##						#end
+    ##                    </select> &nbsp;
+    ##                    <input id="zephyr-ril-refresh" type="button" class="aui-button" value="$action.getText(
+    ##						'zephyr.je.admin.plugin.test.section.item.zephyr.configuration.remoteissuelink.label')"/>
+    ##                </div>
+    ##                <span class="overlay-icon icon loading hidden"></span>
+    ##            </td>
+    ##		</tr>
+    ##        <tr>
+    ##            <td width="40%">
+    ##                <label for="Remote Issue Link Inverse">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.remoteissuelink.inverse.desc')</label>
+    ##            </td>
+    ##            <td id="inverseLinkProgressBar" width="60%">
+    ##                <input id="zephyr-ril-inverse" type="button" class="aui-button" value="$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.remoteissuelink.inverse.label')" />
+    ##                <span class="overlay-icon icon loading hidden"></span>
+    ##            </td>
+    ##        </tr>
+    ##        <tr>
+    ##			<td width="40%">
+    ##				<label for="zephyr-index-all">$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.index.desc')</label>
+    ##				<div class="aui-message warning"><span class="aui-icon icon-warning"></span>
+    ##					<p>$action.getText('admin.indexing.this.may.take.a.while', '<strong>', '</strong>')</p>
+    ##            	</div>
+    ##			</td>
+    ##			<td  width="60%">
+    ##				<input id="zephyr-index-all" type="button" class="aui-button" style="vertical-align:baseline" value="$action.getText('zephyr.je.admin.plugin.test.section.item.zephyr.configuration.index.label')">
+    ##				<span class="overlay-icon icon loading hidden"></span>
+    ##				<div id="reIndexProgressBar" style="padding:5px 0px 0px 80px;"/>
+    ##			</td>
+    ##		</tr>
+    ##	</table>
+    </form>
+</div>
+
+
+
+
+</body>
+</html>

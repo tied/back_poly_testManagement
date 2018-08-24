@@ -1,0 +1,47 @@
+{namespace ZEPHYR.Templates.Dialog}
+
+/**
+ * Renders dialog
+ * @param dialogId
+ * @param dialogSize
+ * @param dialogHeader
+ * @param dialogContent
+ * @param dialogButtons
+ * @param menuItems
+ * @param isModal
+ */
+{template .renderDialog autoescape="false"}
+	<!-- Render the dialog -->
+	<section role="dialog" id="{$dialogId}" class="zephyr-dialog2 aui-layer aui-dialog2 {$dialogSize}" aria-hidden="true" data-aui-remove-on-hide="true"
+	{if $isModal} data-aui-modal="true"{/if}>
+	    <!-- Dialog header -->
+	    <header class="aui-dialog2-header">
+	        <!-- The dialog's title -->
+	        <h2 class="aui-dialog2-header-main">{$dialogHeader}</h2>
+	    </header>
+	    {if $menuItems}
+		    <div class="dialog-page-menu">
+		    	{foreach $item in $menuItems}
+					<span class="page-menu-item">
+		    			<button class="item-button" id="{$item.id}">{$item.name}</button>
+		    		</span>
+				{/foreach}
+		    </div>
+		{/if}
+	    <!-- Main dialog content -->
+	    <div class="aui-dialog2-content">
+	    	<span class="message-bar"></span>
+	        <span class="dialog2-content">{$dialogContent}</span>
+	    </div>
+	    <!-- Dialog footer -->
+	    <footer class="aui-dialog2-footer">
+	        <!-- Actions to render on the right of the footer -->
+	        <div class="aui-dialog2-footer-actions">
+	        	<span id="dialog-icon-wait" class="aui-icon aui-icon-wait zfj-icon-wait" style="display:none">Loading...</span>
+	        	{foreach $button in $dialogButtons}
+					<button id="{$button.id}" class="aui-button {if $button.type == 'link'}aui-button-link{/if}">{$button.name}</button>
+				{/foreach}
+	        </div>
+	    </footer>
+	</section>
+{/template}

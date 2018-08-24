@@ -1,0 +1,121 @@
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-getting-started-resources")
+<html>
+  <head>
+    <title>Zephyr for JIRA - Getting Started</title>
+    <content tag="section">zephyr_je.topnav.tests</content>
+    <meta name="decorator" content="jira.message">
+    <link rel="stylesheet" href="//www.atlassian.com/en/templating-kit-resources/wac/css/colorbox.css" type="text/css" media="all">
+    <script src="//www.atlassian.com/en/templating-kit-resources/wac/js/jquery-colorbox-min.js" type="text/javascript" charset="utf-8"></script>
+  </head>
+  <body class="page-type-message">
+<input type="hidden" name="selected2" value="zephyr_je.topnav.tests"/> 
+    <div class="aui-panel">
+      <h1 class="zephyr-gs-header">Zephyr for JIRA<span> By Zephyr</span></h1>
+      <div class="zephyr-gs-intro">
+        <strong>Zephyr for JIRA</strong> is an add-on application that augments JIRA, providing cost-effective, highly sophisticated test management capabilities right 
+        <i>inside your JIRA</i>. <strong>Zephyr for JIRA</strong> is the only vertical test management application built exclusively for the JIRA platform.
+      	<p/>
+      	Together, <strong>Zephyr for JIRA</strong> and JIRA enable developers, testers and the entire project team to be better prepared at every stage of the software development lifecycle to plan, build, test and launch great software.
+      </div>
+      <div class="aui-group">
+        <div class="aui-item">
+          <div class="zephyr-gs-item">
+          	Congratulations on successfully installing this add-on and welcome to Zephyr for JIRA! Now let's get started...
+            <h2>1. Terminology</h2>
+            <p>Here's a quick guide to some of the terms used here:</p>
+            <ol>
+              <li>
+                <h3>Test:</h3>
+                A test case. This is a detailed step-by-step description of what should be done to test something. This is a standard issue-type in JIRA like "bug", "task" etc.
+              </li>
+              <li>
+                <h3>Test Summary:</h3>
+                High level summary and counts of all the tests that have been created in a particular project, grouped in various ways.
+              </li>
+              <li>
+                <h3>Test Cycle:</h3>
+                A grouping of executed or unexecuted tests (e.g. "Functionality", "Regression" etc.)
+              </li>
+              <li>
+                <h3>Execution:</h3>
+                When a test is run and its result or status is recorded.
+              </li>
+            </ol>
+            <p><em></em></p>
+            <p>
+            	<a href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Quick+Start">Read More...</a>
+            </p>
+          </div>
+          <div class="zephyr-gs-item">
+            <h2 class="start">2.	User Interface</h2>
+            <p>
+            	<strong>Zephyr for JIRA's</strong> interface is very native and blends seamlessly into JIRA's UI. The top-level menu Tests provides access to all major functions - writing tests, searching, 
+            	planning test execution cycles, executing tests and viewing metrics. For any project, the Test Summary tab on the left provides a comprehensive 
+            	view of all tests that belong to it. The Test Cycles tab shows all the planned test execution cycles for a project and allows for test executions.
+            </p>
+            <p><em></em></p>
+            <p>
+            	<a href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Explore+the+User+Interface">Explore More...</a>
+            </p>
+            
+          </div>
+          <div class="zephyr-gs-item last">
+            <h2 class="share">3.	Start Testing</h2>
+            <p>It is easy to start writing your first test. Go to the project you want to create it in and click on the "Create Issue" link in the top right corner of the screen. 
+            Select the Issue Type to be "Test". Enter the summary and next level details and click on "Create". </p>
+            <p/>
+            <p>There, you just created your first test.</p>
+            <ul>
+              <li>Learn more on how to <a href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Quick+Start">organize your Test Process</a></li>
+              <li>Explore different ways of <a href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Writing+Tests">creating tests</a></li>
+              <li>Learn how to set up a <a href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Planning+Test+Cycles">Test Cycle for execution</a></li>
+              <li>Here's how you can <a href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Executing+Tests">execute tests</a></li>
+              <li>This is how you can <a href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Tracking+Test+Progress">view metrics</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="aui-item zephyr-gs-sidebar">
+          <div class="section">
+            <h3>Watch</h3>
+            <div class="videoWrapper">
+              <a class="videoLB cboxElement" href="https://www.youtube.com/embed/eiPNH8JPFJM?autoplay=1&amp;rel=0&amp;wmode=transparent">
+                <span class="playButton videoLB cboxElement"></span>
+              </a>
+            </div>
+          </div>
+          <div class="section">
+            <h3 class="lnk">Links</h3>
+            <ul>
+              <li><a href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Zephyr+for+JIRA+Documentation+Home">Documentation</a></li>
+              <li><a href="https://marketplace.atlassian.com/plugins/com.thed.zephyr.je/version/874/support">Support and Issues</a></li>
+              <li><a href="https://marketplace.atlassian.com/plugins/com.thed.zephyr.je">On the Marketplace</a></li>
+              <li><a href="https://my.atlassian.com/purchase/buyaddon?key=com.thed.zephyr.je">Buy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+
+      jQuery('.videoLB').colorbox({
+        iframe: true,
+        opacity: 0.7,
+        transition: 'none',
+        innerWidth:640,
+        innerHeight:390,
+        onOpen: function() {
+            jQuery('body').addClass('videoOpen');
+            //AJS.$(this).css('z-index', '0')
+        },
+        onClosed: function() {
+            jQuery('body').removeClass('videoOpen');
+        }
+      });
+
+      jQuery(".gallery").colorbox({rel:'gal'});
+
+    </script>
+    
+ </body>
+</html>

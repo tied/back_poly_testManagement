@@ -1,0 +1,333 @@
+#* @vtlvariable name="action" type="com.thed.zephyr.je.config.action.ViewZephyrExecutionStatuses" *#
+#set($i18n=$action)
+#set ($SQ = "'")
+#set ($spacer_gif = "${requestContext.baseUrl}/images/border/spacer.gif")
+#set ($name = "statusColor")
+
+<!-- 
+References
+VM Page: ViewApplicationLinks.vm
+Path: atlassian-jira-5.0-beta1-source/jira-bamboo-plugin/src/main/resources/templates/plugins/bamboo/ViewApplicationLinks.vm
+
+Action / JSP:
+Viewpriorities.jsp
+ViewPriority.java
+EditPriority.java
+DeletePriority.java
+-->
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_execution_statuses"/>
+    <title>$i18n.getText("zephyr.je.admin.plugin.execstatus.config.title")</title>
+    <style>
+    	.errMsg {
+    		font-weight: bold;
+    	}
+    	.jiraform.addExecStatusForm {
+    		border-collapse: separate;
+    		box-sizing: border-box;
+    		padding: 10px 5px;
+    		background-color: #f5f5f5;
+    		border-top: 1px solid #d3d3d3;
+    		border-bottom: 1px solid #d3d3d3;
+    		margin-top: 0px;
+    	}
+	    .jiraform.addExecStatusForm input:not([type='submit']) {
+	    	width: 100%;
+	    	line-height: 1.5rem;
+	    	padding-left: 5px;
+	    	box-sizing: border-box;
+	    	font-size: 0.8rem;
+	    }
+
+	    .jiraform.addExecStatusForm td {
+	    	padding:0px;
+	    }
+    </style>
+    <script type="text/javascript">
+    	var isLoadedInIframe = function() {
+			try {
+				return (window !== window.parent);
+			} catch(e) {
+				return false;
+			}
+		}
+
+		var InitPageContent = function(initCallback) {
+			if(isLoadedInIframe()) {
+				AJS.$(window).load(function(){
+					initCallback();
+				});
+			} else {
+				AJS.$(document).ready(function(){
+					initCallback();
+				});
+			}
+		}
+
+		InitPageContent(function(){
+	    	AJS.$("a[id^='colorpicker']").bind("click", function(event){
+	    		var params = AJS.$(this).attr('rel').split(',');
+	    		var colorWin = window.open(params[0], '', params.slice(2).join(',')) //params[1] is name of Window but IE doesnt like it - http://msdn.microsoft.com/en-us/library/ms536651(v=vs.85).aspx
+	    		AJS.$(colorWin).focus()
+	    		/*For IE10 - load event is not fired. Hence adding 100msec wait*/
+	    		setTimeout(function(){
+					AJS.$(colorWin.document).find('body').css('min-width', 580) //In 6.x default body width is 990px
+				}, 100);
+	    		AJS.$(colorWin).load(function(){
+	    			AJS.$(colorWin.document).find('body').css('min-width', 580) //In 6.x default body width is 990px
+	    		});
+	    		
+	    		AJS.$(colorWin.window).unload(function(){ 
+	    			AJS.$("#statusColor-rep").css('background-color', (AJS.$("input[name='statusColor']").val())) 
+	    		});
+	    		event.preventDefault();
+	    	});
+	    })
+    </script>
+</head>
+<body>
+
+<table class="jiraform maxWidth">
+    <tbody>
+        <tr>
+            <td class="jiraformheader">
+                <h3 class="formtitle formtitle-bamboo">$i18n.getText("zephyr.je.admin.plugin.execstatus.view")</h3>
+            </td>
+        </tr>
+        <tr>
+            <td class="jiraformbody">
+				<p>$i18n.getText("zephyr.je.admin.plugin.execstatus.table.desc")</p>
+            </td>
+        </tr>
+    <tbody>
+</table>
+
+<table class="jiraform addExecStatusForm maxWidth">
+	<form id="AddExecStatusForm" name="jiraform" action="AddZephyrExecutionStatus.jspa" method="POST">
+    <tbody>
+        ## <tr> 
+        ##     <td class="jiraformheader" colspan="4">
+        ##         <h3 class="formtitle">$i18n.getText("zephyr.je.admin.plugin.execstatus.add.title")</h3>
+        ##     </td>
+        ## </tr>
+        
+	    <tr class="hidden"><td colspan="4"></td></tr>
+
+		<tr>
+			#if( (!$action.errors.isEmpty()) && ($action.errors.name) )
+				<td valign="top">
+					<input type="text" name="name" value="$!action.name" placeholder="$i18n.getText('zephyr.je.admin.plugin.execstatus.name')"/>
+					<br/>
+					<span class="errMsg">$i18n.getText($action.errors.name)</span>
+				</td>
+			#else 
+			<td valign="top">
+				<input type="text" name="name" value="$!action.name" placeholder="$i18n.getText('zephyr.je.admin.plugin.execstatus.name')"/>
+			</td>
+			#end
+
+			<td valign="top"> <input type="text" name="description" value="$!action.description" placeholder='$i18n.getText("zephyr.je.admin.plugin.execstatus.desc")'/> </td>
+ 
+			#if( (!$action.errors.isEmpty()) && ($action.errors.statusColor) )
+				 
+			<td valign="top">
+				<table cellpadding="0" cellspacing="0" border="0" style="width : 100%">
+				    <tr>
+				        <td style="padding:0px">
+				            <input type="text"
+				                   name="$name"
+				                   value="$!statusColor"
+				                   placeholder='Status Color'
+				                   >
+		    			</td>
+				        <td style="padding-left:5px">
+				            <table cellpadding="0" cellspacing="1" border="1">
+		                        <tbody>
+			                        <tr>
+			                            <td id="${name}-rep" style="padding:0px;height:18px;width:18px;background-color:$!action.htmlEncode($action.color)">
+			                                <a id="colorpicker-$name" href="#" rel="${requestContext.baseUrl}/secure/popups/colorpicker.jsp?element=$name, 'colorpicker', menubar=yes,location=no,personalbar=no,scrollbar=yes,width=580,height=300,resizable">
+			                                    <img src="$spacer_gif" width="15" border="0" height="15">
+			                                </a>
+			                            </td>
+			                        </tr>
+		                        </tbody>
+				            </table>
+				       </td>
+				   </tr>
+				</table>
+				<span   class="errMsg">$i18n.getText($action.errors.statusColor)</span>
+			</td>
+			#else 
+				<td valign="top">
+					<table cellpadding="0" cellspacing="0" border="0" style="width : 100%">
+				    <tr>
+				        <td style="padding:0px">
+				            <input type="text"
+				                   name="$name"
+				                   value="$!statusColor"
+				                   placeholder='Status Color'
+				                   >
+		    			</td>
+				        
+				        <td style="padding-left:5px">
+				            <table cellpadding="0" cellspacing="1" border="1">
+		                        <tbody>
+			                        <tr>
+			                            <td id="${name}-rep" style="padding:0px;height:18px;width:18px;background-color:$!action.htmlEncode($action.color)">
+			                                <a id="colorpicker-$name" href="#" rel="${requestContext.baseUrl}/secure/popups/colorpicker.jsp?element=$name, 'colorpicker', menubar=yes,location=no,personalbar=no,scrollbar=yes,width=580,height=300,resizable">
+			                                    <img src="$spacer_gif" width="15" border="0" height="15">
+			                                </a>
+			                            </td>
+			                        </tr>
+		                        </tbody>
+				            </table>
+				       </td>
+				   </tr>
+				</table> 
+				</td>
+			#end
+		    <td>
+		        <div class="buttons-container">
+		            <div class="buttons">
+		                <input type="submit" 
+		                		name="Add" 
+		                		value="$i18n.getText('zephyr.je.add.button.title')" 
+		                		id="add_submit"
+								accesskey="s"
+		                   		title="$i18n.getText('zephyr.je.submit.form.title')"
+			                    class="aui-button "
+		                    />
+		            </div>
+		        </div>
+		
+			</td>
+		</tr> 
+
+
+
+		## #if( (!$action.errors.isEmpty()) && ($!action.errors.name) )
+		## 	#set ($bgcolor="#ffcccc")
+		## 	#set ($errorClass="formErrors")
+		## <tr>
+		## 	<td bgcolor="$bgcolor">&nbsp;</td>
+		## 	<td valign="top" bgcolor="$bgcolor">
+		## 		<span class="errMsg">$i18n.getText($action.errors.name)</span><br/>
+		## 	</td>
+		## </tr>
+		## #end
+
+		## <tr>
+		## 	<td class="fieldLabelArea $errorClass" bgcolor="$bgcolor"> $i18n.getText("zephyr.je.admin.plugin.execstatus.name")<span class="icon icon-required"/></td>
+		## 	<td class="fieldValueArea $errorClass" bgcolor="$bgcolor"> <input type="text" name="name" size="30" value="$!action.name"/> </td>
+		## </tr>
+
+		## <tr>
+		## 	<td class="fieldLabelArea"> $i18n.getText("zephyr.je.admin.plugin.execstatus.desc") </td>
+		## 	<td class="fieldValueArea"> <input type="text" name="description" size="60" value="$!action.description" /> </td>
+		## </tr>
+
+		## ## Reset bgColor and errorClass for next validation.
+		## #set ($bgcolor="#ffffff")
+		## #set ($errorClass="") 
+
+		## #if( (!$action.errors.isEmpty()) && ($!action.errors.statusColor) )
+		## 	#set ($bgcolor="#ffcccc")
+		## 	#set ($errorClass="formErrors")
+		## <tr>
+		## 	<td bgcolor="$bgcolor">&nbsp;</td>
+		## 	<td valign="top" bgcolor="$bgcolor">
+		## 		<span class="errMsg">$i18n.getText($action.errors.statusColor)</span><br/>
+		## 	</td>
+		## </tr>
+		## #end
+		## <tr> 
+		## 	<td class="fieldLabelArea $errorClass" bgcolor="$bgcolor"> $i18n.getText("zephyr.je.admin.plugin.execstatus.exec.color")<span class="icon icon-required"/></td>
+		## 	<td class="fieldValueArea $errorClass" bgcolor="$bgcolor" >
+		## 		<table cellpadding="0" cellspacing="0" border="0">
+		## 		    <tr>
+		## 		        <td style="padding:0px">
+		## 		            <input type="text"
+		## 		                   name="$name"
+		## 		                   value="$!statusColor"
+		## 		                   size="40">
+		##     			</td>
+		## 		        <td style="padding:0px">&nbsp;</td>
+		## 		        <td style="padding:0px">
+		## 		            <table cellpadding="0" cellspacing="1" border="1">
+		##                         <tbody>
+		## 	                        <tr>
+		## 	                            <td id="${name}-rep" style="padding:0px;height:18px;width:18px;background-color:$!action.htmlEncode($action.color)">
+		## 	                                <a id="colorpicker-$name" href="#" rel="${requestContext.baseUrl}/secure/popups/colorpicker.jsp?element=$name, 'colorpicker', menubar=yes,location=no,personalbar=no,scrollbar=yes,width=580,height=300,resizable">
+		## 	                                    <img src="$spacer_gif" width="15" border="0" height="15">
+		## 	                                </a>
+		## 	                            </td>
+		## 	                        </tr>
+		##                         </tbody>
+		## 		            </table>
+		## 		       </td>
+		## 		   </tr>
+		## 		</table>
+		## 	</td>
+		## </tr>
+
+		## <tr class="buttons-container">
+		## 	<td class="jiraformfooter">&nbsp;</td>
+		##     <td>
+		##         <div class="buttons-container">
+		##             <div class="buttons">
+		##                 <input type="submit" 
+		##                 		name="Add" 
+		##                 		value="$i18n.getText('zephyr.je.add.button.title')" 
+		##                 		id="add_submit"
+		## 						accesskey="s"
+		##                    		title="$i18n.getText('zephyr.je.submit.form.title')"
+		## 	                    class="aui-button "
+		##                     />
+		##             </div>
+		##         </div>
+		
+		## 	</td>
+		## </tr>
+	</tbody>	
+    </form>    
+</table>
+
+<table class="aui aui-table-rowhover">
+	<thead>
+		<tr>
+			<th> $i18n.getText("zephyr.je.admin.plugin.execstatus.name") </th>
+			<th> $i18n.getText("zephyr.je.admin.plugin.execstatus.desc") </th>
+			<th> $i18n.getText("zephyr.je.admin.plugin.execstatus.color") </th>
+			<th width="10%"> $i18n.getText("zephyr.je.admin.plugin.execstatus.operations") </th>
+		</tr>
+	</thead>
+	<tbody>
+	#foreach($execStatus in $action.executionStatusList)
+		<tr>
+			<td>$execStatus.name</td>
+			<td>$execStatus.description</td>
+            <td>
+                <table><tr><td bgcolor="$execStatus.color"><img src="$requestContext.baseUrl/images/border/spacer.gif" border="0" width="16" height="16" alt=""/></td></tr></table>
+            </td>
+
+            <td>
+                <ul class="operations-list">
+	                    <li><a href="EditZephyrExecutionStatus!default.jspa?id=$execStatus.id">$i18n.getText("common.words.edit")</a></li>
+					#if($execStatus.type == 1)
+	                    <li><a href="DeleteZephyrExecutionStatus!default.jspa?id=$execStatus.id&amp;name=$execStatus.name">$i18n.getText("common.words.delete")</a></li>
+        		    #end
+                </ul>
+            </td>
+		</tr>			
+	#end
+	</tbody>
+</table>
+
+
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-schedule")
+#if($errors)
+	<div style="opacity:0.9;">
+     	<script type="text/javascript">
+            var isLoadedInIframe = function() {
+                try {
+                    return (window !== window.parent);
+                } catch(e) {
+                    return false;
+                }
+            }
+
+            var InitPageContent = function(initCallback) {
+                if(isLoadedInIframe()) {
+                    AJS.$(window).load(function(){
+                        initCallback();
+                    });
+                } else {
+                    AJS.$(document).ready(function(){
+                        initCallback();
+                    });
+                }
+            }
+
+            InitPageContent(function(){
+                setTimeout(function () {
+                    var error = "<span class='aui-icon icon-error'></span>";
+                    error += "$!errors";
+                    AJS.$("#zephyr-je-schedule-error").html(decHTMLifEnc(error));
+                }, 50);
+            });
+    	</script>
+		<div class="aui-dialog-content">
+			<div class="form-body">
+				<div id="zephyr-je-schedule-error" class="aui-message error" style="top:10px;">
+				</div>
+			</div>
+		</div>
+	</div>
+ #else
+    <div id="zfj-permission-message-bar-issue-executions-detail"></div>
+		<div id="testExecutionGridContainer" class="testExecutionGridWrapper">
+		</div>
+		<div id="noExecutions"></div>
+	 <!-- <table id="ztestSchedulesTable" class="aui KeyTable ztable" width="50%">
+       	<thead>
+            <tr>
+                <th>$i18n.getText('scheduleblock.th.version')</th>
+    			<th>$i18n.getText('scheduleblock.th.cycle')</th>
+                <th>$i18n.getText('enav.search.execution.folder')</th>
+                <th style='width: 150px;'>$i18n.getText('scheduleblock.th.status')</th>
+                <th>$i18n.getText('scheduleblock.th.defects')</th>
+    			<th>$i18n.getText('scheduleblock.th.execby')</th>
+                <th>$i18n.getText('scheduleblock.th.execon')</th>
+                <th class="executionColumnCustomisation"><a id="executionColumnChooser-inlineDialog" aria-controls="columnCustomisation-inlineDialog-1"><div class="contextMenuIcon aui-icon aui-icon-small aui-iconfont-handle-horizontal"></div></a></th>
+            </tr>
+        </thead>
+    	<tbody id="zephyr-je-execution-body">
+
+    	</tbody>
+	</table> -->
+#end

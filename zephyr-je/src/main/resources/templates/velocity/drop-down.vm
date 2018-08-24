@@ -1,0 +1,200 @@
+<dom-module id="drop-down">
+    <template>
+      <custom-style>
+        <style>
+          .drop-down .dropDown-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-width: 1px;
+          }
+
+          .drop-down.isStandAlone .dropDown-wrapper.select-status span:nth-child(1),
+          .drop-down .dropDown-wrapper.select-status span:nth-child(1) {
+            color: #FFF;
+            border: 0;
+          }
+
+          .drop-down .dropDown-wrapper span:nth-child(1) {
+            display: flex;
+            align-items: center;
+            height: 20px;
+            margin-right: 2px;
+            padding-right: 10px;
+            justify-content: center;
+            text-align: center;
+            flex-grow: 1;
+            color: #333;
+            background-color: #F7F8F9;
+            font-size: 12px;
+            overflow: hidden;
+            border-radius: 4px 0 0 4px;
+            border: 1px solid #DEE1E6;
+            box-sizing: border-box;
+          }
+
+          .drop-down .dropDown-wrapper>span:nth-child(1)>div {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+          }
+
+          .drop-down .dropDown-wrapper>span:nth-child(1)>div:empty:after {
+            content: attr(data-content);
+          }
+
+          .drop-down .dropDown-wrapper .trigger-dropDown {
+            min-width: 20px;
+            height: 20px;
+            vertical-align: baseline;
+            background-color: #deebff;
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 0 3px 3px 0;
+            outline: none;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .drop-down .dropDown-wrapper .trigger-dropDown:hover {
+            background: #B2D4FF;
+          }
+
+          .drop-down .dropDown-container {
+            position: absolute;
+            z-index: 300;
+            top: 21px;
+            left: 0;
+            background-color: #fff;
+            border: 1px solid #dfe1e6;
+            border-bottom-left-radius: 3px;
+            border-bottom-right-radius: 3px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
+            width: calc(100% - 25px);
+          }
+
+          .drop-down .dropDown-container ul {
+            list-style: none;
+            margin: 2px 0;
+            padding-left: 0;
+            max-height: 100px;
+            overflow: auto;
+          }
+
+          .drop-down .dropDown-container ul li {
+            width: 100%;
+            padding: 3px 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            box-sizing: border-box;
+          }
+
+          .drop-down .dropDown-container ul li.active {
+            background-color: #ebecf0;
+            background-image: none;
+          }
+
+          .drop-down.cell-wrapper {
+            width: 125px;
+          }
+
+          .drop-down.cell-wrapper.isStandAlone {
+            width: auto;
+            min-width: 125px;
+          }
+
+          .drop-down.isStandAlone .dropDown-wrapper>span:nth-child(1) {
+            height: 30px;
+            color: #333;
+            padding-right: 15px;
+          }
+
+          .drop-down.isStandAlone .dropDown-wrapper .trigger-dropDown {
+            min-width: 30px;
+            height: 30px;
+          }
+
+          .drop-down.isStandAlone .dropDown-container {
+            width: 100%;
+            top: 30px;
+          }
+
+          .drop-down .dropDown-container.open {
+            display: block;
+          }
+
+          .drop-down.isGrid .dropDown-container.open {
+            width: 120px;
+          }
+
+          .drop-down.isGrid .dropDown-container {
+            position: fixed;
+            /* visibility: visible; */
+          }
+
+          .drop-down .dropDown-container.close {
+            /* visibility: hidden; */
+            display: none;
+          }
+
+          .drop-down.readOnly .dropDown-wrapper span:nth-child(1) {
+            border-radius: 4px;
+          }
+
+          .drop-down.readOnly .dropDown-wrapper .trigger-dropDown {
+            display: none;
+          }
+
+          .drop-down .dropDown-wrapper.select-status .remove-data {
+            display: none;
+          }
+
+          .drop-down.isStandAlone .remove-data {
+            right: 40px;
+            font-weight: bold;
+          }
+
+          .drop-down .remove-data {
+            position: absolute;
+            right: 26px;
+            font-weight: 500;
+            cursor: pointer;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+        </style>
+      </custom-style>
+      <div class$="cell-wrapper drop-down {{_checkIsGrid(isgrid)}} {{_isReadOnly(readOnly)}}" data-columnid="status">
+        <div class$="dropDown-wrapper {{_checkStatus(isStatus)}}">
+          <span id="dropDown" title="{{value}}">
+            <div data-content="$i18n.getText('zephyr.customfield.multiselect.placeholder')">{{value}}</div>
+          </span>
+          <template is="dom-if" if="{{value}}">
+            <span class="remove-data" on-click="_emptyData">x</span>
+          </template>
+          <span class="trigger-dropDown" on-click="_triggerDropDown" tabindex="-1" on-focusout="_checkblur" on-keydown="_keydown">
+            <template is="dom-if" if="{{imgurl}}">
+              <img src="{{imgurl}}">
+            </template>
+          </span>
+          <div class$="dropDown-container {{_dropDownOpen(openDropDown)}} stopBlur">
+            <template is="dom-if" if="{{openDropDown}}">
+              <ul>
+                <template indexAs="{{index}}" is="dom-repeat" items="{{cloneOptions}}">
+                  <template is="dom-if" if="{{!item.selected}}">
+                    <li tabindex="-1" class$="{{_checkOptionClass(item.highlighted)}}" data-index="{{index}}" data-value="{{item.value}}" on-mouseenter="_highlightOption" on-click="_handleChange" title="{{item.content}}">{{item.content}}</li>
+                  </template>
+                </template>
+              </ul>
+            </template>
+          </div>
+        </div>
+      </div>
+    </template>
+
+</dom-module>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="12px" viewBox="0 0 18 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 6</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="S-A-02" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-352.000000, -283.000000)">
+        <g id="Group-6" transform="translate(352.000000, 283.000000)" fill="#42526E">
+            <path d="M5.00922203,12 C5.55641359,12 6,11.5561352 6,11 L6,11 C6,10.4477153 5.54902482,10 5.00922203,10 L0.990777969,10 C0.443586406,10 0,10.4438648 0,11 L0,11 C0,11.5522847 0.45097518,12 0.990777969,12 L5.00922203,12 Z" id="Path"></path>
+            <path d="M0,1 C0,1.55228475 0.444946289,2 0.993397683,2 L17.0066023,2 C17.5552407,2 18,1.55613518 18,1 L18,1 C18,0.44771525 17.5550537,0 17.0066023,0 L0.993397683,0 C0.444759292,0 0,0.443864822 0,1 L0,1 Z" id="Path"></path>
+            <path d="M10.9975267,7 C11.5511774,7 12,6.55613518 12,6 L12,6 C12,5.44771525 11.544239,5 10.9975267,5 L1.00247329,5 C0.448822582,5 0,5.44386482 0,6 L0,6 C0,6.55228475 0.455760956,7 1.00247329,7 L10.9975267,7 Z" id="Path"></path>
+        </g>
+    </g>
+</svg>

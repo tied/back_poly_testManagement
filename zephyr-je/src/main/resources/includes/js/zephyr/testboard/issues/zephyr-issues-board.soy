@@ -1,0 +1,189 @@
+{namespace ZEPHYR.Templates.TestBoard.Issues}
+
+
+/**
+ * Sprints View
+ * @param sprints
+ */
+{template .sprintsHTML}
+<div id="zephyr-tb-sprints-wrapper" class="zephyr-tb-sprints-wrapper">
+	{foreach $sprint in $sprints}
+	<div id="zephyr-tb-sprints-module-{$sprint.id}" data-sprint-id="{$sprint.id}" class="module toggle-wrap expanded zephyr-je-sprint-group zephyr-tb-sprints-module">
+		<div id="sprint-module-heading" class="mod-header sprint-module-heading">
+			<h3 class="toggle-title">
+				<span class="pseudo">&</span>
+			</h3>
+			<div class="zephyr-tb-name">{$sprint.name}</div>
+			<div class="zephyr-tb-issue-count" id="zephyr-tb-issues-count">{getText('zephyr-je.testboard.details.issue.count', $sprint.issuesIds.length)}</div>
+			<span class="aui-icon aui-icon-wait zfj-icon-wait zephyr-tb-by-issues-sprint-wait" style="display:none">Loading...</span>
+		</div>
+		<div class="mod-content" id="sprint-content-container-{$sprint.id}" data-sprint-id="{$sprint.id}">
+			<div id="sprint-issues-container-{$sprint.id}" data-sprint-id="{$sprint.id}" class="sprint-issues-container zephyr-tb-issues js-issue-list">
+			</div>
+		</div>
+	</div>
+	{/foreach}
+</div>
+{/template}
+
+/**
+ * Issues View
+ * @param issues
+ */
+{template .issuesHTML}
+<div id="zephyr-tb-issues-wrapper" class="zephyr-tb-issues-wrapper">
+	{foreach $issue in $issues}
+	<div class="js-issue zephyr-tb-issue-compact aui-group" data-issue-id="{$issue.id}" data-issue-key="{$issue.key}">
+		<div class="zephyr-tb-issue-content">
+			<div class="zephyr-tb-row aui-item">
+				{if $issue.totalExecutions > 0}
+					<span id="zephyr-tb-toggle-header-{$issue.id}" data-issue-id="{$issue.id}" class="aui-icon aui-icon-small aui-iconfont-collapsed zephyr-tb-toggle-header"/>
+				{/if}
+				<span class="zephyr-tb-type" title="{$issue.typeName}">
+					<img src="{$issue.typeUrl}">
+				</span>
+				<div class="zephyr-tb-flags">
+					<span class="zephyr-tb-priority" title="{$issue.priorityName}">
+						<img src="{$issue.priorityUrl}">
+					</span>
+				</div>
+				<div class="zephyr-tb-key {if $issue.done} zephyr-tb-line-through {else}{/if}">
+					<a href="{contextPath}/browse/{$issue.key}" title="{$issue.key}" class="js-key-link">{$issue.key}</a>
+				</div>
+				<div class="zephyr-tb-summary" title="{$issue.summary}">
+					<span class="zephyr-tb-inner">{$issue.summary}</span>
+				</div>
+			</div>
+		</div>
+		<div class="zephyr-tb-end zephyr-tb-row aui-item">
+			{if $issue.totalExecutions > 0}
+				<div class="zephyr-tb-status">
+					<span id="issueBoard-defectCount-{$issue.id}" class="zephyr-tb-inner zephyr-tb-defect-hover-wrapper">
+						{call .defectCountHTML}
+							{param totalDefectCount: $issue.totalDefectCount /}
+							{param totalOpenDefectCount: $issue.totalOpenDefectCount /}
+						{/call}
+					</span>
+				</div>
+				<span id="issueBoard-progressBar-{$issue.id}" class="zephyr-tb-versions-table zephyr-tb-end">
+					{call ZEPHYR.Templates.TestBoard.versionProgressHTML}
+						{param summaryList: $issue.executionSummaries /}
+						{param totalExecutions: $issue.totalExecutions /}
+					{/call}
+					<span class="zephyr-tb-version-progress-percentage" totalExecuted={$issue.totalExecuted} totalExecutions={$issue.totalExecutions}>{round($issue.totalExecuted*100/$issue.totalExecutions, 2)}%</span>
+				</span>
+			{/if}
+		</div>
+		<div class="zephyr-tb-issue-content-container" id="zephyr-tb-issue-content-container-{$issue.id}" data-issue-id="{$issue.id}">
+			<div id="zephyr-tb-issue-execution-container-{$issue.id}" data-issue-id="{$issue.id}" class="zephyr-tb-issue-execution-container zephyr-tb-issue-executions js-execution-list">
+			</div>
+			<div id="issue-execution-pagination-container-{$issue.id}" class="issue-execution-pagination-container" />
+		</div>
+	</div>
+	{/foreach}
+</div>
+{/template}
+
+
+/**
+ * Render Execution detail
+ * @param executions
+ * @param executionStatusList
+ * @param issueId
+ */
+{template .executionsHTML}
+<div class="zephyr-tb-container">
+<table class="aui aui-table-rowhover" id="zephyr-tb-executions-table">
+  	<thead>
+		<tr>
+			<th id="sub-key" class="ghx-nowrap">{getText('project.cycle.schedule.table.column.id')}</th>
+			<th id="sub-status" class="">{getText('project.cycle.schedule.table.column.status')}</th>
+			<th id="sub-summary">{getText('project.cycle.schedule.table.column.summary')}</th>
+			<th id="sub-cycle">{getText('je.gadget.common.cycle.label')}</th>
+            <th id="sub-folder">{getText('enav.search.execution.folder')}</th>
+			<th id="sub-actions">{getText('project.cycle.schedule.table.column.defect')}</th>
+			<th id="sub-executed-by">{getText('project.cycle.schedule.table.column.executedBy')}</th>
+			<th id="sub-executed-on">{getText('project.cycle.schedule.table.column.executedOn')}</th>
+			<th id="sub-execute-button"></th>
+		</tr>
+	</thead>
+  	<tbody>
+    	{if $executions.length}
+            {foreach $execution in $executions}
+                <tr class="zephyr-tb-sprint-issue-execution" data-execution-id="{$execution.id}">
+                    {if $execution.canViewIssue}
+                        <td>
+                            <a href="{contextPath}/browse/{$execution.issueKey}">{$execution.issueKey}</a>
+                        </td>
+                        <td class="zephyr-break-word execution-status-td">
+                            <div class="field-group execution-status-container {$execution.executionWorkflowStatus == 'COMPLETED' ? 'executionWorkflowStatusCompletedWhole' : '' }">
+                                <div id="execution-status-value-schedule_{$issueId}-{$execution.id}" class="labels exec-status-container">
+                                    <dl class="zfj-editable-field">
+                                        <dd id="current-execution-status-dd-schedule_{$issueId}-{$execution.id}" class="new-session-status" style="background-color:{$execution.status.color};" title="{$execution.status.name}{$execution.status.description ? (': ' + $execution.status.description) : ''}">{$execution.status.name}</dd>
+                                        <a id="executionStatus-labels-schedule_{$issueId}-{$execution.id}" href="#" class="zfj-overlay-icon icon icon-edit-sml"><span rel="{$execution.status.id}">{$execution.status.name}</span></a>
+                                    </dl>
+                                </div>
+                                <div id="execution-field-select-schedule_{$issueId}-{$execution.id}"  style="display: none; ">
+                                    <select id="exec_status-schedule_{$issueId}-{$execution.id}" data-issueId={$issueId} class="select" style="height:auto; max-height: 200px; width:150px; z-index:10;" size="4">
+                                        {foreach $exec in $executionStatusList}
+                                            {if $exec.id == $execution.status.id}
+                                                <option value="{$exec.id}" selected="selected" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+                                            {else}
+                                                <option value="{$exec.id}" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+                                            {/if}
+                                        {/foreach}
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="zephyr-break-word zephyr-td-issues-summary-td">
+                            <div class="zephyr-td-issues-summary-td-cell"><a href="{contextPath}/browse/{$execution.issueKey}" title="{$execution.issueKey} - {$execution.issueSummary}">{$execution.issueSummary}</a></div>
+                        </td>
+                        <td class="zephyr-break-word zephyr-td-issues-summary-td">
+                            <div class="zephyr-td-issues-summary-td-cell"><a href="{contextPath}/DisplayCycle.jspa?cycleId={$execution.cycleId}&versionId={$execution.versionId}&issueKey={$execution.issueKey}" title="{$execution.cycleName}" class="zephyr-tb-cycle-link js-key-link">{$execution.cycleName}</a></div>
+                        </td>
+                        <td>
+                            {if $execution.folderName}
+                              <span>{$execution.folderName}</span>
+                            {/if}
+                        </td>
+                        <td class="zephyr-break-word">
+                            {if $execution.totalDefectCount >0}<div class="zfj-defect-hover" data-issueKey="{$execution.issueKey}" data-executionId="{$execution.id}" data-color="{$execution.status.color}"><span class="aui-lozenge aui-lozenge-defects">{$execution.executionDefectCount} | {$execution.stepDefectCount}</span>{/if}
+                                {call ZEPHYR.Templates.TestBoard.defectColumnValue}
+                                    {param defects: $execution.executionDefects /}
+                                {/call}
+                            {if $execution.defects}</div>{/if}
+                        </td>
+                        <td class="zephyr-td-issues-user-td">
+                            <div class="zephyr-td-issues-summary-td-cell"><a class="user-hover" rel="{$execution.executedByUserName}" href="{contextPath}/secure/ViewProfile.jspa?name={$execution.executedByUserName}">{$execution.executedByDisplay}</a></div>
+                        </td>
+                        <td>
+                            {$execution.executedOn}
+                        </td>
+                        <td>
+                            <button id="zephyr-td-detail-execute-test" class="aui-button zephyr-td-detail-execute-test" title="{getText('zephyr-je.testboard.details.execute.title')}" data-index="{index($execution)}" data-href="{contextPath}/secure/enav/#{$execution.id}">E</a>
+                            </button>
+                        </td>
+                    {else}
+                        <td colspan='15' style="text-align:center;vertical-align:middle" class="new-session-status">No Permission on Test/Issue ({$execution.issueKey})</td>
+                    {/if}
+                </tr>
+            {/foreach}
+	{else}
+		<tr>
+			<td colspan="4">{getText('enav.results.none.found')}</td>
+		</tr>
+	{/if}
+  	</tbody>
+</table>
+</div>
+{/template}
+
+/**
+ * Render defect status
+ * @param totalDefectCount
+ * @param totalOpenDefectCount
+ */
+{template .defectCountHTML}
+	<span class="aui-lozenge aui-lozenge-defects zephyr-tb-defect-hover" title="{getText('zephyr-je.testboard.issues.defect.count.title', $totalOpenDefectCount, $totalDefectCount)}">{$totalOpenDefectCount}</span>
+{/template}

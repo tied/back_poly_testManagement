@@ -1,0 +1,31 @@
+<script type="text/javascript">
+	function updateFooterVisibility(){
+		setTimeout(function(){
+			url = window.location.hash;
+			if(url.indexOf('selectedTab') > -1){
+				if(url.indexOf('com.thed.zephyr.je') > -1){
+					AJS.$('div.footer-body.zephyr').show()
+				}else{
+					AJS.$('div.footer-body.zephyr').hide()
+				}
+			}
+		}, 750); /*Need to figure out a better way (tab event based) to do this*/
+	}
+	AJS.$(document).ready(updateFooterVisibility)
+	AJS.$(".browse-tab").bind('click', updateFooterVisibility)
+</script>
+<div class="footer-body zephyr">
+	<ul class="aui-panel" style="width:450px; margin:auto">
+		<li>
+			<b>Zephyr Evaluation Support:</b>
+			<a class="seo-link" href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Zephyr+for+JIRA+Documentation+Home">Documentation</a>
+		</li>
+		<li>
+			<a class="seo-link" href="http://support.yourzephyr.com">Support</a>
+		</li>
+		<li>
+			<a class="seo-link" href="https://marketplace.atlassian.com/plugins/com.thed.zephyr.je">How to Buy</a>
+		</li>
+	</ul>
+	<ul/>
+</div>

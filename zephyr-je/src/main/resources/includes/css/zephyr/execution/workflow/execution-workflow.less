@@ -1,0 +1,58 @@
+#executionWorkflowWrapper {
+	padding-top: 20px;
+    padding-bottom: 0px !important;
+}
+.disabled {
+	pointer-events: none;
+	opacity: 0.4;
+}
+.disabled-primary {
+	pointer-events: none;
+}
+.workflow-button-wrapper { 
+	> span {
+		padding-right: 6px;
+	}
+	.aui-button{
+		background-color: #deebff !important;
+		color: #42526e !important;
+		border: 0;
+		min-width: 100px;
+    	text-align: center;
+	}
+	.aui-button-primary{
+		background-color: #42526e !important;
+		color: #fff !important;
+		font-weight: normal;
+	}
+}
+.logged-time-value-wrapper {
+	display: flex;
+    justify-content: space-between;
+    padding-right: 25px;
+    .modify-logged-time{
+    	position: relative;
+    }
+	.modify-logged-time:after {
+		content: '';
+		position: absolute;
+		background: url(images/icons/zfj_sprite.svg) no-repeat;
+		width: 9px;
+	    height: 9px;
+	    background-position: -139px -338px;
+	    right: -12px;
+	    bottom: 5px;
+	}
+}
+#modifyLoggedTimeDialog {
+	width: 400px;
+	max-width: 500px;
+	form.aui {
+		> div {
+			input.text {
+				margin-right: 6px;
+				width: 50%;
+			}
+		}
+	}
+}

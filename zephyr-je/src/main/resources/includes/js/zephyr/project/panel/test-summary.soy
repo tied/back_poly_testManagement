@@ -1,0 +1,67 @@
+{namespace ZEPHYR.Templates.TestSummary}
+
+/**
+ * Renders the grid wrapper
+ * @param items
+ * @param title
+ */
+{template .gridWrapper}
+    <div class="grid-header-wrapper flex">
+        <label class="grid-header">{$title}</label>
+        <div class="search-grid-wrapper">
+
+            <form class="aui">
+                <input placeholder="Type to search" type='text' class='searchInput text' />
+            </form>
+            <span class="removeSearchInput show-search-text aui-icon aui-icon-small aui-iconfont-search-small">Search</span>
+
+        </div>
+
+    </div>
+    <div class="grid-wrapper" id="version-grid">
+        <div>
+
+            <div class="summary-grid-view">
+                {call ZEPHYR.Templates.TestSummary.gridView}
+                    {param items: $items /}
+                {/call}
+            </div>
+        </div>
+        <div class="summary-grid-paginator">
+            <div>
+                <span class="page-count"></span>
+            </div>
+            <div>
+                <span disabled="true" class="prev disabled"><a>{getText('project.cycle.schedule.previous.label')}</a></span>
+                <span>|</span>
+                <span class="next"><a>{getText('project.cycle.schedule.next.label')}</a></span>
+            </div>
+        </div>
+    </div>
+
+{/template}
+
+/**
+ * Renders the grid
+ * @param items
+ */
+{template .gridView}
+	<table class="aui">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+           {if $items}
+               {foreach $item in $items}
+                  <tr>
+                      <td><a style="word-break: break-all; word-wrap: break-word;" href="{contextPath}{$item.url}" title="{$item.name}">{$item.name}</a></td>
+                      <td>{$item.testCount}</td>
+                  </tr>
+               {/foreach}
+           {/if}
+        </tbody>
+    </table>
+{/template}

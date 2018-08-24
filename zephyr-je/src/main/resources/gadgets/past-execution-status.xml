@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="__UP_pastExecutionStatusName__"
+                 directory_title="__MSG_je.gadget.past.testcase.execution.status.directory.title__"
+                 description="__MSG_je.gadget.past.testcase.execution.status.description__"
+                 author="Zephyr" author_affiliation="Zephyr"
+                 author_email="sales@getzephyr.com"
+                 author_location="San Jose, California"
+                 thumbnail='#staticResourceUrl("com.thed.zephyr.je:zephyr-je-gadget-execution-status", "images/gadgets/execution-status-per-assignee.png")'>
+        <Optional feature="gadget-directory">
+            <Param name="categories">
+                ZEPHYR
+            </Param>
+        </Optional>
+        <Optional feature='auth-refresh' />
+        <Require feature="dynamic-height"/>
+        <Require feature="oauthpopup"/>
+        <Require feature="setprefs"/>
+        <Require feature="settitle"/>
+        <Require feature="views"/>
+        <Optional feature="atlassian.util"/>
+        #oauth
+        #supportedLocales("gadget.common,je.gadget,je.gadget.testcase")
+
+    </ModulePrefs>
+    <UserPref name="refresh" datatype="hidden" default_value="false" />
+    <UserPref name="isConfigured" datatype="hidden" default_value="false"/>
+    <UserPref name="showMasterOrChild" datatype="hidden" default_value="false"/>
+    <UserPref name="projectId" datatype="hidden"/>
+    <UserPref name="version" datatype="hidden" default_value="-1"/>
+    <UserPref name="chartType" datatype="hidden"/>
+    <UserPref name="cycles" datatype="hidden" default_value="-1"/>
+    <UserPref name="howMany" datatype="hidden" default_value="5"/>
+    <UserPref name="showProjectName" datatype="hidden" default_value="true" />
+    <UserPref name="showVersionName" datatype="hidden" default_value="true" />
+    <UserPref name="pastExecutionStatusName" datatype="hidden" default_value="Past Test Execution" />
+
+    <Content type="html" view="home,zephyr,default">
+        <![CDATA[
+    		#requireResource("com.atlassian.jira.gadgets:jira-global")
+    		#requireResource("com.thed.zephyr.je:zephyr-je-gadget-past-execution-status-resources")
+    		#includeResources()
+
+        <script type="text/javascript">
+        (function () {
+            var gadget = AJS.Gadget({
+                baseUrl: "__ATLASSIAN_BASE_URL__",
+                useOauth: "/rest/gadget/1.0/currentUser",
+                config: {
+                    descriptor: function(args)
+                    {
+                        return GADGET.descriptor(this, args, "__ATLASSIAN_BASE_URL__");
+                    },
+                    args: GADGET.descriptorArgs("__ATLASSIAN_BASE_URL__")
+                },
+                view: {
+                    onResizeAdjustHeight: true,
+                    enableReload: true,
+                    template: function (args) {
+                        return GADGET.template(this, args, "__ATLASSIAN_BASE_URL__");
+                    },
+                    args: GADGET.templateArgs("__ATLASSIAN_BASE_URL__")
+                }
+            });
+        })();
+        </script>
+    	]]>
+    </Content>
+</Module>

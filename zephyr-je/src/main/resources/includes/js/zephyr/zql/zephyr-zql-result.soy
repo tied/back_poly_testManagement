@@ -1,0 +1,1095 @@
+{namespace ZEPHYR.ZQL.Search}
+/**
+ * Creates Header from ZQL Search
+ * @param currentIndex
+ */
+{template .addZQLHeader}
+<div id="navigator-options" class="saved-search-operations">
+		<ul class="operations">
+			<li class="aui-dd-parent">
+				<a href="#" class="header-views header-operations aui-dropdown-trigger aui-dd-link standard icon-export lnk" title="Export this filter in another format" role="button" style="">
+					<span>{getText('enav.export.label')}</span>
+				</a>
+				<div class="ajs-layer-placeholder">
+					<div id="currentIndex" style="display: none">{$currentIndex-1}</div>
+					<div class="ajs-layer  box-shadow" id="viewOptions_drop"
+						style="position: absolute; left: 1289px; top: 95.83332824707031px; width: 200px; display: none;">
+						<div class="aui-list" style="white-space: nowrap; width: auto;">
+							<ul class="aui-list-section aui-first">
+								<li class="aui-list-item"><a class="aui-list-item-link" id="xmlExecutionId" rel="nofollow" href="javascript:void(0);">{getText('enav.export.xml.schedule.label')}</a> </li>
+							</ul>
+							<ul class="aui-list-section">
+								<li class="aui-list-item"><a class="aui-list-item-link" id="rssExecutionId" rel="nofollow" href="javascript:void(0);">{getText('enav.export.rss.schedule.label')}</a> </li>
+							</ul>
+							<ul class="aui-list-section">
+								<li class="aui-list-item"><a class="aui-list-item-link" id="csvExecutionId" rel="nofollow" href="javascript:void(0);">{getText('enav.export.csv.schedule.label')}</a> </li>
+							</ul>
+							<ul class="aui-list-section">
+								<li class="aui-list-item"><a class="aui-list-item-link" id="htmlExecutionId" rel="nofollow" href="javascript:void(0);">{getText('enav.export.html.schedule.label')}</a> </li>
+							</ul>
+							<ul class="aui-list-section">
+								<li class="aui-list-item"><a class="aui-list-item-link" id="xlsExecutionId" rel="nofollow" href="javascript:void(0);">{getText('enav.export.excel.schedule.label')}</a> </li>
+							</ul>
+							<!-- We dont want to show this link if you are not logged in since the charting plugin portlets do not show to non-->
+						</div>
+					</div>
+				</div>
+			</li>
+			<li class="aui-dd-parent">
+				<a href="#" id="enavBulkToolId" class="header-tools header-operations aui-dropdown-trigger aui-dd-link standard icon-tools disabled" title="{getText('common.concepts.tools')}" role="button"
+				style="height:20px"><span>{getText('common.concepts.tools')}</span></a>
+				<div class="ajs-layer-placeholder">
+					<div class="ajs-layer  box-shadow" id="toolOptions_drop"
+						style="position: absolute; left: 1370.1666259765625px; top: 95.83332824707031px; width: 200px; display:none;">
+						<div id="toolOptions-dropdown" class="aui-list" style="white-space: nowrap; width: auto;">
+							<h5>{getText('enav.bulk.status.label')}:</h5>
+							<ul class="aui-list-section aui-first">
+								<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-bulkstatuschange-id" title="">{getText('enav.status.label')}</a></li>
+								<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-bulkmovecycle-id"  title="">{getText('enav.move.cycle.label')}</a></li>
+								<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-bulkcopycycle-id" title="">{getText('enav.copy.cycle.label')}</a></li>
+								<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-bulkassignuser-id"  title="">{getText('enav.assign.user.label')}</a></li>
+								<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-bulkassociatedefect-id"  title="">{getText('enav.associate.defect.label')}</a></li>
+                				<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-bulkCustomField-id"  title="">{getText('enav.associate.customField.label')}</a></li>
+							</ul>
+							<ul class="aui-list-section aui-last">
+								<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-bulkdelete-id"  title="">{getText('enav.bulk.delete.schedule.label')}</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+</div>
+<div id="search-header-view">
+		<div class="header-section-primary">
+			<h1 class="search-title" title="Search">{getText('zql.search.label')}</h1>
+				<ul class="filter-operations">
+					<li><a href="#" class="aui-button update-new-filter" id="zephyr-zql-update-filter">{getText('zephyr.je.save.button.title')}</a></li>
+					<li><a href="#" class="aui-button save-as-new-filter" id="zephyr-zql-save-filter">{getText('zephyr.je.save.as.button.title')}</a></li>
+				</ul>
+		</div>
+</div>
+{/template}
+
+
+/**
+ * Renders response from ZQL Search
+ * @param totalCount
+ * @param currentIndex
+ * @param maxAllowed
+ */
+{template .addDisplayDetail}
+        <div style="float:left; display:none" id="exportExecutionLoader">
+            <span class="results-count-total">Export is in progress... </span><span class="aui-icon aui-icon-wait"></span>
+        </div>
+		<div class="aui-group count-pagination navigator-results" id="displayDetailId">
+			<div class="results-count aui-item">
+				<div id="list-display-wrapper-left">
+					<span class="results-count-text">
+						{if ($currentIndex * $maxAllowed) < $totalCount}
+							 <br/><span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span><span>-</span><span class="results-count-end">{$currentIndex * $maxAllowed}</span><span> of </span><span class="results-count-total results-count-link"> {$totalCount} </span>
+						{else}
+							 <br/><span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span><span>-</span><span class="results-count-end">{$totalCount}</span><span> of </span><span class="results-count-total results-count-link"> {$totalCount} </span>
+						{/if}
+						<a href="#" id="refreshZQLId" class="refresh-table" title="Refresh results">{getText('issue.nav.refresh')}</a>
+					</span>
+					<div id="selectionCountId" style="display:none;padding-right:20px;">
+						<small><label id="countCheckId">{getText('enav.bulk.select.label',0)}</label></small>
+						/*<a href="#" id="clearSelectionId" class="refresh-table" title="Refresh results">Clear Selection</a>*/
+					</div>
+				</div>
+				<div id="list-display-wrapper-right">
+				<br/>
+				</div>
+			</div>
+
+		</div>
+{/template}
+
+/**
+ * Renders response from ZQL Search
+ * @param totalCount
+ * @param currentIndex
+ * @param maxAllowed
+ */
+{template .addDetailDisplay}
+		<div class="aui-group count-pagination navigator-results" id="displayDetailId">
+			<div class="results-count aui-item">
+				<span class="results-count-text">
+					{if ($currentIndex * $maxAllowed) < $totalCount}
+						 <br/><span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span><span>-</span><span class="results-count-end">{$currentIndex * $maxAllowed}</span><span> of </span><span class="results-count-total results-count-link"> {$totalCount} </span>
+					{else}
+						 <br/><span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span><span>-</span><span class="results-count-end">{$totalCount}</span><span> of </span><span class="results-count-total results-count-link"> {$totalCount} </span>
+					{/if}
+					<a href="#" id="refreshZQLId" class="refresh-table" title="Refresh results">{getText('issue.nav.refresh')}</a>
+				</span>
+			</div>
+
+		</div>
+{/template}
+
+/**
+ * Adds Header to Table
+ * @param isEditable
+ */
+{template .addTableHeader}
+<thead>
+	<tr>
+		{if $isEditable}
+			<th id='headerrow-id-select_executions'><input type="checkbox" class="selectAllID" name="selectAllID" id="selectAllID"/></th>
+		{/if}
+		<th id='headerrow-id-exec-cycle' class='colHeaderLink sortable headerrow-id-exec-cycle' name='CycleName' rel='CycleName:ASC'>{getText('enav.newcycle.name.label')}</th>
+		<th id='headerrow-id-exec-issue' class='colHeaderLink sortable headerrow-issue' name='Issue' rel='Issue:ASC'>{getText('collector.plugin.view.table.title.issuekey')}</th>
+		<th id='headerrow-id-exec-test-summary' class='colHeaderLink sortable headerrow-test-summary' name='summary' rel='summary:ASC'>{getText('execute.test.testsummary.label')}</th>
+		<th id='headerrow-id-exec-labels' class='colHeaderLink sortable headerrow-labels' name='Labels' rel='Labels:ASC'>{getText('issue.field.labels')}</th>
+		<th id='headerrow-id-exec-project' class='colHeaderLink sortable headerrow-project' name='Project' rel='Project:ASC'>{getText('enav.projectname.label')}</th>
+		<th id='headerrow-id-exec-priority' class='colHeaderLink sortable headerrow-priority' name='Priority' rel='Priority:ASC'>Priority</th>
+		<th id='headerrow-id-exec-component' class='colHeaderLink sortable headerrow-component' name='Component' rel='Component:ASC'>Component</th>
+		<th id='headerrow-id-exec-fixVersion' class='colHeaderLink sortable headerrow-component' name='fixVersion' rel='fixVersion:ASC'>Version</th>
+		<th id='headerrow-id-exec-status' class='colHeaderLink sortable headerrow-executionstatus' name='ExecutionStatus' rel='ExecutionStatus:ASC'>{getText('execute.test.executionstatus.label')}</th>
+		<th id='headerrow-id-exec-executedBy' class='colHeaderLink sortable headerrow-executedBy' name='ExecutedBy' rel='ExecutedBy:ASC'>{getText('execute.test.executedby.label')}</th>
+		<th id='headerrow-id-exec-executedOn' class='colHeaderLink sortable headerrow-executedOn' name='ExecutionDate' rel='ExecutionDate:ASC'>{getText('execute.test.executedon.label')}</th>
+		<th id='headerrow-id-exec-createdOn' class='colHeaderLink sortable headerrow-createdOn' name='CreationDate' rel='CreationDate:ASC'>{getText('plugin.license.storage.admin.license.attribute.creationdate.title')}</th>
+		<th id='headerrow-id-exec-schedule' class='colHeaderLink sortable headerrow-id-exec-schedule' name='Execution' rel='Execution:ASC'>&nbsp;</th>
+		<th id='headerrow-id-exec-estimatedTime' class='colHeaderLink sortable headerrow-id-exec-estimatedTime' name='EstimatedTime' rel='EstimatedTime:ASC'>&nbsp;</th>
+		<th id='headerrow-id-exec-loggedTime' class='colHeaderLink sortable headerrow-id-exec-loggedTime' name='LoggedTime' rel='LoggedTime:ASC'>&nbsp;</th>
+	</tr>
+</thead>
+{/template}
+
+/**
+ * Adds Header to Table
+ * @param isEditable
+ * @param selectedColumns
+ */
+{template .addTableHeaderWithColumns}
+<thead>
+	<tr>
+		{if $isEditable}
+			<th id='headerrow-id-select_executions'><input type="checkbox" class="selectAllID" name="selectAllID" id="selectAllID"/></th>
+		{/if}
+		{foreach $selectedColumn in $selectedColumns}
+			<th title='{$selectedColumn.filterIdentifier}' id='headerrow-id-exec-{$selectedColumn.columnClass}' class='colHeaderLink sortable headerrow-id-exec-{$selectedColumn.columnClass}' name='{$selectedColumn.columnName}' rel='{$selectedColumn.columnName}:ASC'>{$selectedColumn.filterIdentifier}</th>
+		{/foreach}
+		{if $isEditable}
+			<th title='{'Execution'}' id='headerrow-id-exec-schedule' class='colHeaderLink sortable headerrow-id-exec-schedule' name='Execution' rel='Execution:ASC'>&nbsp;</th>
+		{/if}
+	</tr>
+</thead>
+<tbody id="resultBodyId"/>
+{/template}
+
+/**
+ * Adds Header to Table
+ * @param schedules
+ * @param executionStatuses
+ * @param contextPath
+ * @param isEditable
+ */
+{template .addTableBody}
+{foreach $data in $schedules}
+	<tr>
+		{if $isEditable}
+			<td> <input type="checkbox" class="checkbox" name= "{$data.id}" id="scheduleCheck-{$data.id}" /></td>
+		{/if}
+		<td class="tdOrdering" title="{$data.cycleName}"><a href="{$contextPath}/DisplayCycle.jspa?cycleId={$data.cycleId}&versionId={$data.versionId}&issueKey={$data.issueKey}">{$data.cycleName |insertWordBreaks:20}</a></td>
+
+            <td class="tdOrdering"><a href="{$contextPath}/browse/{$data.issueKey}">{$data.issueKey}</a></td>
+            <td class="tdOrdering"><a href="{$contextPath}/browse/{$data.issueSummary}">{$data.issueSummary}</a></td>
+            <td class="tdOrdering"><a href="{$contextPath}/browse/{$data.labels}">{$data.labels}</a></td>
+            <td class="tdOrdering"><a href="{$contextPath}/browse/{$data.projectKey}" title="{$data.project}">{$data.project |insertWordBreaks:20} </a></td>
+		<td class="tdOrdering">{$data.priority}</td>
+		<td class="tdOrdering"><a href={$contextPath}/secure/IssueNavigator.jspa?reset=true&jqlQuery={call ZEPHYR.createQueryString data="['component', $data.component]" /} >{$data.component  |insertWordBreaks:20}</a></td>
+		<td class="tdOrdering"><a href="{$contextPath}/browse/{$data.projectKey}/fixforversion/{$data.versionName}">{$data.versionName}</a></td>
+		<td class="tdOrdering">
+			<div id="executionStatus-value-schedule" class="labels exec-status-container ">
+				<dl>
+					<dd id="current-execution-status-dd-schedule-{$data.id}" class="new-session-status" style="background-color:{$data.status.color};" title="{$data.status.name}{$data.status.description ? ': ' + $data.status.description : ''}">{$data.status.name}</dd>
+					{if $isEditable}
+						<a id="executionStatus-labels-schedule-{$data.id}" href="#" class="icon icon-edit-sml"><span rel="{$data.status.id}">{$data.status.name}</span></a>
+					{/if}
+				</dl>
+			</div>
+			<div id="execution-field-select-schedule-{$data.id}" style="display: none; ">
+    			<select id="exec_status-schedule-{$data.id}" class="select" style="width:150px; position:absolute; z-index:10;" size="4">
+	    			//Following loop goes through all keys available in associative array where key = statusid. , allStatusList:allStatusesMap
+	    			{foreach $exec in $executionStatuses}
+	    				{if $exec.id == $data.status.id}
+							<option value="{$exec.id}" selected="selected" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+						{else}
+							<option value="{$exec.id}" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+						{/if}
+					{/foreach}
+				</select>
+		</div>
+		</td>
+		<td class="tdOrdering"><a href="{$contextPath}/secure/ViewProfile.jspa?name={$data.executedByUserName}">{$data.executedBy}</a></td>
+		<td class="tdOrdering">{$data.executedOn}</td>
+		<td class="tdOrdering">{$data.creationDate}</td>
+		{if $isEditable}
+            <td class="tdOrdering" style="width:60px; padding:0.3em 0.2em 0.3em 0.2em; vertical-align: middle;">
+                 <a style="text-align: center; vertical-align: middle;" title="Execute Test"
+                 href="{$contextPath}/secure/enav/#/{$data.id}" class="zExecute aui-button">E</a>
+            </td>
+		{/if}
+	</tr>
+{/foreach}
+{/template}
+
+/**
+ * Render execution details with custom columns
+ * @param schedules
+ * @param executionStatuses
+ * @param contextPath
+ * @param isEditable
+ * @param selectedColumns
+ * @param queryParam
+ * @param isGadget
+ */
+{template .addTableBodyWithColumns}
+{foreach $data in $schedules}
+	<tr data-projectkey="{$data.projectKey}" data-versionname="{if $data.versionId == -1}
+                                                               								{getText('zephyr.je.version.unscheduled')}
+                                                               							{else}
+                                                               								{$data.versionName}
+                                                               							{/if}">
+		{if $isEditable and $data.canViewIssue}
+			<td> <input type="checkbox" class="checkbox execution-check" name= "{$data.id}" id="scheduleCheck-{$data.id}" /></td>
+        {elseif $isEditable and not $data.canViewIssue}
+            <td> <input type="checkbox" class="checkbox execution-check" name= "{$data.id}" id="scheduleCheck-{$data.id}" disabled/></td>
+        {/if}
+		{if $data.canViewIssue}
+            {foreach $selectedColumn in $selectedColumns}
+                {if $selectedColumn.columnName == 'cycleName'}
+                        {if $isGadget}
+                            <td class="tdOrdering" title="{$data.cycleName}"><a href="javascript:void(0);" id="execution-field-cycleName-{$data.id}" title="{$data.cycleName}">{$data.cycleName |insertWordBreaks:20}</a></td>
+                        {else}
+                            <td class="tdOrdering" title="{$data.cycleName}"><a href="{$contextPath}/DisplayCycle.jspa?cycleId={$data.cycleId}&versionId={$data.versionId}&issueKey={$data.issueKey}">{$data.cycleName |insertWordBreaks:20}</a></td>
+                        {/if}
+                    {/if}
+                {if $selectedColumn.columnName == 'Issue'}
+                            <td class="tdOrdering"><a href="{$contextPath}/browse/{$data.issueKey}">{$data.issueKey}</a></td>
+                        {/if}
+                {if $selectedColumn.columnName == 'folderName'}
+                  {if $data.folderName}
+                     	  {if $isGadget}
+                            <td class="tdOrdering" title="{$data.folderName}"><a href="javascript:void(0);" id="execution-field-folderName-{$data.folderId}" title="{$data.folderName}">{if $data.folderName} {$data.folderName |insertWordBreaks:20} {/if}</a></td>
+                         {else}
+	                         <td class="tdOrdering" title="{$data.folderName}">
+ 	               			       <a href="{$contextPath}/DisplayCycle.jspa?cycleId={$data.cycleId}&versionId={$data.versionId}&issueKey={$data.issueKey}&folderId={$data.folderId}">{if $data.folderName} {$data.folderName |insertWordBreaks:20} {/if}</a></td>
+                         {/if}
+	                 {else}
+						             <td class="tdOrdering"></td>
+                   {/if}
+                  {/if}
+                {if $selectedColumn.columnName == 'summary'}
+                            <td class="tdOrdering"><a href="{$contextPath}/browse/{$data.issueKey}">{$data.issueSummary}</a></td>
+                        {/if}
+                {if $selectedColumn.columnName == 'labels'}
+                    <td class="tdOrdering">
+                                {foreach $label in $data.labels}
+                                    <a title="{$label}" href={$contextPath}/secure/IssueNavigator.jspa?reset=true&jqlQuery={call ZEPHYR.createQueryString data="['labels', $label]" /}>{$label}</a>
+                                    {if not isLast($label)}, {/if}
+                                {/foreach}
+                    </td>
+                {/if}
+                {if $selectedColumn.columnName == 'project'}
+                        {if $isGadget}
+                            <td class="tdOrdering"><a href="javascript:void(0);" id="execution-field-project-{$data.id}" title="{$data.projectKey}">{$data.project |insertWordBreaks:20} </a></td>
+                        {else}
+                            <td class="tdOrdering"><a href="{$contextPath}/browse/{$data.projectKey}" title="{$data.project}">{$data.project |insertWordBreaks:20}</a></td>
+                        {/if}
+                    {/if}
+                {if $selectedColumn.columnName == 'priority'}
+                        <td class="tdOrdering">{$data.priority}</td>
+                    {/if}
+                {if $selectedColumn.columnName == 'component'}
+                    <td class="tdOrdering">
+                            {foreach $component in $data.components}
+                                    {if $isGadget}
+                                        <a href="javascript:void(0);" id="execution-field-component-{$data.id}" title="{$component.name}">{$component.name |insertWordBreaks:20}</a>
+                                        {if not isLast($component)}, {/if}
+                                    {else}
+                                        <a href={$contextPath}/secure/IssueNavigator.jspa?reset=true&jqlQuery={call ZEPHYR.createQueryString data="['component', $component.name]" /} title="{$component.name}">{$component.name |insertWordBreaks:20}</a>
+                                        {if not isLast($component)}, {/if}
+                                    {/if}
+                            {/foreach}
+                    </td>
+                {/if}
+                {if $selectedColumn.columnName == 'fixVersion'}
+                    {if $isGadget}
+                        <td class="tdOrdering">
+                                <a href="javascript:void(0);" id="execution-field-fixVersion-{$data.id}" title=
+                                    {if $data.versionId == -1}
+                                        "{getText('zephyr.je.version.unscheduled')}">{getText('zephyr.je.version.unscheduled')}
+                                    {else}
+                                        "{$data.versionName}">{$data.versionName}
+                                    {/if}
+                                </a>
+                        </td>
+                    {else}
+                        <td class="tdOrdering">
+                                <a {if $data.versionId == -1}
+                                    href="{$contextPath}/browse/{$data.projectKey}/fixforversion/{$data.versionId}" class="execution-field-fixVersion" data-projectKey="{$data.projectKey}">{getText('zephyr.je.version.unscheduled')}
+                                {else}
+                                    href="{$contextPath}/browse/{$data.projectKey}/fixforversion/{$data.versionId}">{$data.versionName}{/if}</a></td>
+                            {/if}
+                    {/if}
+                {if $selectedColumn.columnName == 'ExecutionStatus'}
+                    <td class="tdOrdering execution-status-td {$data.executionWorkflowStatus == 'COMPLETED' ? 'executionWorkflowStatusCompletedWhole' : '' }" style="position: relative; overflow: visible ">
+                            <div id="executionStatus-value-schedule" class="labels exec-status-container">
+                                <dl class="zfj-editable-field">
+                                    <dd id="current-execution-status-dd-schedule-{$data.id}" class="new-session-status" style="background-color:{$data.status.color};" title="{$data.status.name}{$data.status.description ? ': ' + $data.status.description : ''}">{$data.status.name}</dd>
+                                    {if $isEditable}
+                                        <a id="executionStatus-labels-schedule-{$data.id}" href="#" class="zfj-overlay-icon icon icon-edit-sml"><span rel="{$data.status.id}">{$data.status.name}</span></a>
+                                    {/if}
+                                </dl>
+                            </div>
+                            <div id="execution-field-select-schedule-{$data.id}" style="display: none; ">
+                                <select id="exec_status-schedule-{$data.id}" class="select" style="width:145px; position:absolute; z-index:10;" size="4">
+                                    //Following loop goes through all keys available in associative array where key = statusid. , allStatusList:allStatusesMap
+                                    {foreach $exec in $executionStatuses}
+                                        {if $exec.id == $data.status.id}
+                                            <option value="{$exec.id}" selected="selected" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+                                        {else}
+                                            <option value="{$exec.id}" rel="{$exec.color}" title="{$exec.description}">{$exec.name}</option>
+                                        {/if}
+                                    {/foreach}
+                                </select>
+                            </div>
+                    </td>
+                {/if}
+                {if $selectedColumn.columnName == 'ExecutedBy'}
+                        {if $isGadget}
+                            <td class="tdOrdering"><a href="javascript:void(0);" id="execution-field-executedBy-{$data.id}" title="{$data.executedByUserName}">{$data.executedByDisplay}</a></td>
+                        {else}
+                            <td class="tdOrdering"><a class="user-hover" rel="{$data.executedByUserName}" href="{$contextPath}/secure/ViewProfile.jspa?name={$data.executedByUserName}">{$data.executedByDisplay}</a></td>
+                        {/if}
+                    {/if}
+                {if $selectedColumn.columnName == 'ExecutionDate'}
+                        <td class="tdOrdering">{$data.executedOn}</td>
+                    {/if}
+                {if $selectedColumn.columnName == 'creationDate'}
+                        <td class="tdOrdering">{$data.creationDate}</td>
+                    {/if}
+                {if $selectedColumn.columnName == 'executionDefectKey'}
+                    {if $data.totalDefectCount > 0}
+                        <td class="tdOrdering{if not $isGadget} zfj-defect-td{/if}">
+                        <div class="zfj-defect-hover" data-issueKey="{$data.issueKey}" data-executionId="{$data.id}" data-color="{$data.status.color}">
+                        <span class="aui-lozenge aui-lozenge-defects">{$data.executionDefectCount} | {$data.stepDefectCount}</span>
+                        {foreach $defect in $data.executionDefects}
+                            {if $defect.defectKey != 'XXXXX'}
+                                <a {if $defect.defectResolutionId} style="text-decoration:line-through;"{/if} href="{$contextPath}/browse/{$defect.defectKey}" data-issueKey="{$defect.defectKey}" data-status="{$defect.defectStatus}" data-summary="{$defect.defectSummary}" data-defect-resolution="{$defect.defectResolutionId}">{$defect.defectKey}</a>
+                                {if not isLast($defect)}, {/if}
+                            {else}
+                                <span {if $defect.defectResolutionId} style="text-decoration:line-through;"{/if} data-issueKey="{$defect.defectKey}" data-status="{$defect.defectStatus}" data-summary="{$defect.defectSummary}" data-defect-resolution="{$defect.defectResolutionId}">{$defect.defectKey}</span>
+                                {if not isLast($defect)}, {/if}
+                            {/if}
+                        {/foreach}
+                        </div>
+                        </td>
+                    {else}
+                        <td class="tdOrdering"/>
+                    {/if}
+                {/if}
+                {if $selectedColumn.columnName == 'assignee'}
+                    {if $isGadget}
+                        <td class="tdOrdering"><a href="javascript:void(0);" id="execution-field-assignee-{$data.id}" title="{$data.assigneeUserName}">{$data.assigneeDisplay}</a></td>
+                    {else}
+                        <td class="tdOrdering"><a class="user-hover" rel="{$data.assigneeUserName}" href="{$contextPath}/secure/ViewProfile.jspa?name={$data.assigneeUserName}">{$data.assigneeDisplay}</a></td>
+                    {/if}
+                {/if}
+                {if $selectedColumn.columnName == 'estimatedTime'}
+                    <td class="tdOrdering">{$data.formattedEstimatedTime ? $data.formattedEstimatedTime : ''}</td>
+                {/if}
+                {if $selectedColumn.columnName == 'loggedTime'}
+                    <td class="tdOrdering">{$data.formattedLoggedTime ? $data.formattedLoggedTime : ''}</td>
+                {/if}
+                {if $selectedColumn.isCustomField}
+                //   {foreach $selectedCustomField in $selectedColumn.visibleCustomFields}
+                		<td class="tdOrdering">
+                			{call getCustomFieldValueSoy}
+								{param customFieldsValueMap: $data.customFieldsValueMap /}
+								{param columnClass: $selectedColumn.columnClass /}
+							{/call}
+                		</td>
+                //   {/foreach}
+                {/if}
+            {/foreach}
+            {if $isEditable}
+                <td class="tdOrdering" style="width:60px; padding:0.3em 0.2em 0.3em 0.2em; vertical-align: middle;">
+                     <a style="text-align: center; vertical-align: middle;" title="Execute Test" data-contextPath="{$contextPath}" data-id="{$data.id}" data-query="{$queryParam}"
+                     href="{$contextPath}/secure/enav/#/{$data.id}?{$queryParam}" onClick='navigateToExecution(this)' class="zExecute aui-button">E</a>
+                </td>
+            {/if}
+        {else}
+            <td colspan='{$selectedColumns.length}+5' style="text-align:center;vertical-align:middle" class="new-session-status">No Permission on Test/Issue ({$data.issueKey})</td>
+        {/if}
+	</tr>
+{/foreach}
+{/template}
+
+/**
+ * Adds All ZQL Filters inside left navigation
+ * @param filters
+ */
+{template .showSavedFilters}
+	{foreach $filter in $filters}
+		<li>
+			<a href="#" class="filter-actions" id="{$filter.id}" data-id="{$filter.id}" title="{$filter.description}" data-owner="{$filter.createdBy}"><span>{$filter.filterName}</span></a>
+			<a href="#?filter={$filter.id}" class="filter-link" id="nav-area-zql-filter-{$filter.id}" data-id="{$filter.id}" title="{$filter.filterName} ({$filter.executionCount})" data-value="{$filter.query}">{$filter.filterName} ({$filter.executionCount})</a>
+		</li>
+	{/foreach}
+{/template}
+
+/**
+ * Manage a ZQL Filters inside left navigation
+ * @param filterId
+ * @param filterName
+ * @param loggedInUser
+ * @param createdBy
+ */
+{template .showFilterAction}
+	<div class="filter-operations aui-list">
+		<ul class="aui-list-section">
+			<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-filter-copy-id-{$filterId}"  data-id="{$filterId}" data-value="{$filterName}" title="{getText('common.words.copy')}">{getText('common.words.copy')}</a></li>
+		</ul>
+		<ul class="aui-list-section">
+			<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-filter-unfavorite-id-{$filterId}" data-id="{$filterId}" title="{getText('zql.filter.remove_from_favourites')}">{getText('zql.filter.remove_from_favourites')}</a></li>
+		</ul>
+        {if $createdBy == $loggedInUser}
+            <ul class="aui-list-section aui-last">
+                <li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-filter-rename-id-{$filterId}" data-id="{$filterId}" data-value="{$filterName}" title="{getText('zql.filter.rename')}">{getText('zql.filter.rename')}</a></li>
+                <li class="aui-list-item"><a href="#" class="aui-list-item-link" id="zfj-filter-delete-id-{$filterId}" data-id="{$filterId}" data-value="{$filterName}" title="{getText('zql.filter.delete.dialog.title')}">{getText('common.words.delete')}</a></li>
+            </ul>
+        {/if}
+	</div>
+{/template}
+
+
+/**
+ * Renders zql search text area
+ * @param zqlFieldz
+ * @param zqlReservedWordz
+ * @param zqlQuery
+ */
+{template .searchZQL}
+	<div class="search-container">
+		<div class="advanced-search-container">
+			<div class="aui-group">
+				<div class="aui-item atlassian-autocomplete" style="width:100%">
+					<label for="advanced-search" style="left:0px;">
+						<span id="jqlerrormsg" class="icon jqlgood" title="">
+							<span>parse</span>
+						</span>
+					</label>
+					<textarea id="zqltext" filterId="" class="search-entry advanced-search ajs-dirty-warning-exempt"
+						name="zqltext" maxlength="2000" style="overflow: hidden; height: 30px;padding-left:25px;" autocomplete="off" value="{$zqlQuery}">{$zqlQuery}</textarea>
+
+					<div class="suggestions" style="top: 30px; display: none;"></div>
+                    <div class="jqlundertext">
+            			<input type="hidden" name="runQuery" value="true"/>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="notifications" id="zql-message-bar"/>
+	<fieldset class="zql-autocomplete-params hidden" ></fieldset>
+	<div style="display:none;" id="zqlFieldz">{$zqlFieldz}</div>
+	<div style="display:none;" id="zqlFunctionNamez"></div>
+	<div style="display:none;" id="zqlReservedWordz">{$zqlReservedWordz}</div>
+{/template}
+
+/**
+* Renders response from ZQL Search
+* @param totalCount
+* @param currentIndex
+* @param maxAllowed
+* @param linksNew
+* @param zqlQuery
+* @param viewType
+*/
+{template .addZQLPaginationFooterOldUI}
+<div class="aui-group count-pagination navigator-results" id="displayDetailId">
+	<div class="results-count aui-item">
+		{if $viewType != 'detail'} {if ($currentIndex * $maxAllowed)
+		< $totalCount} <span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span>
+			<span>-</span>
+			<span class="results-count-end">{$currentIndex * $maxAllowed}</span>
+			<span> of </span>
+			<span class="results-count-total results-count-link"> {$totalCount} </span>
+			{else}
+			<span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span>
+			<span>-</span>
+			<span class="results-count-end">{$totalCount}</span>
+			<span> of </span>
+			<span class="results-count-total results-count-link"> {$totalCount} </span>
+			{/if} {/if}
+			<a href="#" id='refreshZQLId' class="refresh-table" title="Refresh results">Refresh</a>
+	</div>
+	{if $linksNew.length > 0}
+	<div class="pagination aui-item" id="zqlPageId">
+		{if $currentIndex > 1}
+		<a href='#' id='zql-pagination-{$currentIndex-2} * {$maxAllowed}' data-query='{$zqlQuery}' page-id='{$currentIndex-2}*{$maxAllowed}'
+		 class='icon icon-previous push-state'>
+			<span>Previous &gt;&gt;</span>
+		</a>
+		{/if} {foreach $link in $linksNew} {if $link == $currentIndex}
+		<strong>{$link}&nbsp;</strong>
+		{else}
+		<a href='#' id='zql-pagination-{$link-1}*{$maxAllowed}' data-query='{$zqlQuery}' page-id='{$link-1}*{$maxAllowed}'>{$link}&nbsp;</a>
+		{/if} {/foreach} {if $currentIndex * $maxAllowed
+		< $totalCount} <a href='#' id='zql-pagination-{$currentIndex} * {$maxAllowed}'
+		 data-query='{$zqlQuery}' page-id='{$currentIndex} * {$maxAllowed}' class='icon icon-next'>
+			<span>Next &gt;&gt;</span>
+			</a>
+			{/if}
+	</div>
+	{/if}
+</div>
+{/template}
+
+
+/**
+ * Renders response from ZQL Search
+ * @param viewType
+ * @param totalPages
+ * @param entriesCount
+ * @param totalCount
+ * @param zqlQuery
+ * @param linksNew
+ * @param maxAllowed
+ * @param currentIndex
+ */
+{template .addZQLPaginationFooter}
+<div>
+	{if $viewType == 'detail'}
+		<div class="aui-group count-pagination navigator-results" id="displayDetailId">
+			<div class="results-count aui-item">
+				<a href="#" id='refreshZQLId' class="refresh-table" title="Refresh results">Refresh</a>
+			</div>
+			{if $linksNew.length > 0}
+				<div class="pagination aui-item" id="zqlPageId">
+					{if $currentIndex > 1}
+						<span id='zql-pagination-{$currentIndex-2} * {$maxAllowed}' data-query='{$zqlQuery}' page-id='{$currentIndex-2}*{$maxAllowed}' class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-page-pagination">Prev</span>
+					{/if}
+					{foreach $link in $linksNew}
+						{if $link == $currentIndex}
+							<strong class="current-selected-page">{$link}&nbsp;</strong>
+						{else}
+							<a class="pagenation-pages" href='#' id='zql-pagination-{$link-1}*{$maxAllowed}' data-query='{$zqlQuery}' page-id='{$link-1}*{$maxAllowed}'>{$link}&nbsp;</a>
+						{/if}
+					{/foreach}
+					{if $currentIndex * $maxAllowed < $totalCount}
+						<span id='zql-pagination-{$currentIndex} * {$maxAllowed}' data-query='{$zqlQuery}' page-id='{$currentIndex} * {$maxAllowed}' class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow next-page-pagination" id="next-page-pagination">Next</span>
+					{/if}
+				</div>
+			{/if}
+		</div>
+	{else}
+		<div class="zql-list-view-pagination-container">
+			<div class="aui-group count-pagination navigator-results" id="pagination-zql-display-detail-id">
+				<div class="results-count aui-item pagination-zql-outer-container">
+					{if $viewType != 'detail'}
+					<div>
+						<span>
+							{if $currentIndex == 1}
+							<span title="Not available - this is the first page" class="disabled">
+								<span class="pageNumbers">
+									{($totalCount == 0) ? 0 : 1} - {($totalCount
+									< $entriesCount) ? $totalCount : $entriesCount} </span>
+										<span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-page-pagination disabled">
+											Prev
+										</span>
+										<span class="ellipsis">
+											...
+										</span>
+								</span>
+								{else}
+								<span class="pageNumbers goToPage" data-offset=0>
+									{($totalCount == 0) ? 0 : 1} - {($totalCount
+									< $entriesCount) ? $totalCount : $entriesCount} </span>
+										<span id="pagination-zql-prev-page-execution" data-currentpage="{$currentIndex}" class="prev-page-execution" type="button"
+										 title="Previous Execution">
+											<span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-page-pagination">
+												Prev
+											</span>
+											<span class="ellipsis" id="pagination-zql-prev-page-execution-dots" data-currentpage="{$currentIndex}">
+												...
+											</span>
+										</span>
+										{/if}
+								</span>
+								<span>
+									<span class="selected pageNumbers">
+										{($totalCount == 0) ? 0 : $entriesCount*($currentIndex) - ($entriesCount - 1)} - {($totalCount
+										< $entriesCount*($currentIndex))
+										 ? $totalCount : $entriesCount*($currentIndex)} </span>
+									</span>
+									<span>
+										{if $currentIndex == $totalPages}
+										<span title="Not available - this is the first page" class="disabled">
+											<span class="ellipsis">
+												...
+											</span>
+											<span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow next-page-pagination disabled">
+												Next
+											</span>
+											<span class="pageNumbers">
+												{($totalCount == 0) ? 0 : $entriesCount*$totalPages - ($entriesCount - 1)} - {$totalCount}
+											</span>
+										</span>
+										{else}
+
+										<span id="pagination-zql-next-page-execution" data-currentpage="{$currentIndex}" class="next-page-execution" type="button"
+										 title="Next Execution">
+										 	<span class="ellipsis" id="pagination-zql-next-page-execution-dots" data-currentpage="{$currentIndex}">
+												...
+											</span>
+											<span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow next-page-pagination" id="next-page-pagination">
+												Next
+											</span>
+										</span>
+										<span class="pageNumbers goToPage" data-offset={$totalPages}>
+											{($totalCount == 0) ? 0 : $entriesCount*$totalPages - ($entriesCount - 1)} - {$totalCount}
+										</span>
+										{/if}
+									</span>
+					</div>
+					<div class="entries-per-page">
+						<div class="dropdown-Wrapper zql-pagewidth-dropdown">
+							<span class="dropDown-select">
+								{$entriesCount}
+							</span>
+							<span class="aui-icon aui-icon-small aui-iconfont-arrow-down dropDown-Trigger" id="change-pagination-page-width">
+							</span>
+							<div class="dropDown-container dropdown-align show-pagewidth-options" id="pagination-zql-pagewidth-dropdown">
+								<div class="dropDown-options-wrapper">
+									<ul>
+										{if $entriesCount != 10}
+										<li class="chooseEntries" id="change-pagination-width-10" data-currentpage="{$currentIndex}" data-entries=10>
+											10
+										</li>
+										{/if} {for $i in range(2)} {if $entriesCount != ($i+1)*25}
+										<li class="chooseEntries" id="change-pagination-width-{($i+1)*25}" data-currentpage="{$currentIndex}" data-entries={($i+1)*25}>
+											{($i+1)*25}
+										</li>
+										{/if} {/for}
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					{/if}
+				</div>
+			</div>
+		</div>
+	{/if}
+</div>
+{/template}
+
+
+/**
+ * Add detail view layout
+ * @param executions
+ * @param offset
+ * @param contextPath
+ */
+{template .addDetailViewLayout}
+	<div class="aui-item list-results-panel" id="list-results-panel">
+		<div class="list-panel">
+			<!--<div class="list-ordering"></div>-->
+			<div class="list-content">
+				<ol class="issue-list">
+					{foreach $execution in $executions}
+					<li class="execution-name" id="execution-name-{$execution.id}" data-key="{$execution.cycleName}" data-id="{$execution.id}" data-offset="{index($execution) + 1 + $offset}">
+						<ul class="aui-nav aui-nav-breadcrumbs breadcrumbs">
+						    {if $execution.cycleName == 'XXXXX'}
+							    <li title="{$execution.cycleName}"><span data-issue-key="{$execution.cycleName}" class="splitview-issue-link issue-link-key">{$execution.cycleName}</span></li>
+						    {else}
+							    <li title="{$execution.cycleName}"><a  href="{$contextPath}/secure/PlanTestCycle.jspa?projectKey={$execution.projectKey}" data-issue-key="{$execution.cycleName}" class="splitview-issue-link issue-link-key">{$execution.cycleName}</a></li>
+							{/if}
+							{if $execution.folderName}
+								<li title="{$execution.folderName}"><a  href="{$contextPath}/secure/PlanTestCycle.jspa?projectKey={$execution.projectKey}" data-issue-key="{$execution.folderName}" class="splitview-issue-link issue-link-key">{$execution.folderName}</a></li>
+							{/if}
+							{if $execution.issueKey == 'XXXXX'}
+    							<li title="{$execution.issueKey}"><span>{$execution.issueKey}</span></li>
+							{else}
+    							<li title="{$execution.issueKey}"><a href="{$contextPath}/browse/{$execution.issueKey}">{$execution.issueKey}</a></li>
+							{/if}
+						</ul>
+					</li>
+					{/foreach}
+				</ol>
+			</div>
+		</div>
+		<div id="detail-view-pagination-bottom"></div>
+	</div>
+	<div id="detail-panel-wrapper" class="aui-item detail-panel navigator-issue-only active detail-panel-wrapper" style="padding:15px 0 0 15px;">
+	</div>
+{/template}
+
+/**
+ * Html to be returned if there are no search results
+ * @param message
+ */
+{template .noResults}
+    <div class="jira-adbox jira-adbox-medium no-results no-results-message">
+        <h3><p class="no-results-message">{$message|noAutoescape}</p></h3>
+    </div>
+{/template}
+
+/**
+ * Renders list colums drop down
+ */
+{template .addListColumnSelector}
+	<div class="column-picker-trigger-container" id="column-selector" style="display: none;">
+		<button class="aui-button aui-button-subtle column-picker-trigger" title="{getText('enav.executions.view.column.title')}">{getText('enav.executions.view.column.title')}</button>
+	</div>
+	<div id="column-selector-inline-wrapper"/>
+{/template}
+
+/**
+ * Renders list colums inline dialog
+ * @param columns
+ */
+{template .addListColumnInlineDialog}
+	<form action="#" method="post" class="aui top-label column-picker">
+		<div class="check-list-top-panel">
+			<h3>{getText('enav.executions.view.column.title')}</h3>
+		</div>
+		<div class="user-column-sparkler">
+			<div class="check-list-select" id="user-column-sparkler-multi-select">
+				<div class="check-list-field-container">
+					<input autocomplete="off" placeholder="{getText('zql.search.label')}" class="aui-field check-list-field" id="user-column-sparkler-input" wrap="off" style="">
+					<span class="icon noloading"><span>More</span></span>
+				</div>
+				<div class="aui-list" id="user-column-sparkler-suggestions">
+					<div class="aui-list-scroll" id="column-suggestions-all" tabindex="-1" style="height: 20%;">
+						<ul>
+							<li class="check-list-group-actions">
+								<button class="aui-button aui-button-link restore-defaults" id="columns-restore-defaults">{getText('zql.columns.restoreDefault.label')}</button>
+								<div class="mandatory-columns-info">
+									<small><label id="countCheckId">{getText('zql.columns.mandatory.label')}.</label></small>
+								</div>
+							</li>
+						</ul>
+						{call .addListColumnInlineDialogColumns}
+							{param columns: $columns/}
+							{param isFilterColumns: false/}
+						{/call}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="button-panel">
+		<input accesskey="s" title="Press Alt+s to submit this form" class="aui-button submit" type="button" id="column-dialog-save" value="{getText('zephyr.je.done.button.label')}">
+		<a accesskey="`" title="Press Alt+` to cancel" class="aui-button aui-button-link close-dialog" id="column-dialog-close" type="button">{getText('zephyr.je.submit.form.cancel')}</a>
+	</div>
+	</form>
+{/template}
+
+/**
+ * Renders list colums within the inline dialog
+ * @param columns
+ * @param isFilterColumns
+ */
+{template .addListColumnInlineDialogColumns}
+<ul class="aui-list-section selected-group column-items droptrue" id="column-items-selected">
+	{foreach $column in $columns}
+		{if $column.visible}
+		<li class="check-list-item {if not $isFilterColumns}column-drag-handler{/if}">
+			<span class="column-draghandler"/><label class="item-label" title="{$column.filterIdentifier}"><input type="checkbox" tabindex="-1" value="{$column.filterIdentifier}" name="{$column.filterIdentifier}" checked="checked">{$column.filterIdentifier}</label>
+		</li>
+		{/if}
+	{/foreach}
+</ul>
+<ul class="aui-list-section aui-last column-items droptrue" id="column-items-unselected">
+	{foreach $column in $columns}
+		{if not $column.visible}
+		<li class="check-list-item {if not $isFilterColumns}column-drag-handler{/if}">
+			<span class="column-draghandler"/><label class="item-label" title="{$column.filterIdentifier}"><input type="checkbox" tabindex="-1" value="{$column.filterIdentifier}" name="{$column.filterIdentifier}">{$column.filterIdentifier}</label>
+		</li>
+		{/if}
+	{/foreach}
+</ul>
+{/template}
+
+/**
+ * Renders the previous and next navigator
+ * @param totalCount
+ * @param currentIndex
+ * @param prevExecutionId
+ * @param previousOffset
+ * @param nextExecutionId
+ * @param nextOffset
+ * @param queryString
+ * @param maxResultAllowed
+ */
+{template .addPrevNextNavigator}
+ <div class="aui-page-header-actions execution-header" id="prev-next-container">
+	<div id="execution-header-pager">
+	<ul id="prev-next-return-container">
+		<li class="previous prevnext-wrapper">
+			<span>{$currentIndex} of {$totalCount}</span>
+			{if $prevExecutionId == 0}
+				<span title="Not available - this is the first execution" class="icon icon-page-prev-deactivated"></span>
+			{else}
+				<a data-id="{$prevExecutionId}" data-offset="{$previousOffset}" href="#" {if $previousOffset % $maxResultAllowed == 0} id="prev-page-execution" {else} id="previous-execution"{/if} type="button" title="Previous Execution ( Type 'k' )">
+					<span class="icon icon-page-prev"><span>Previous Execution</span></span>
+				</a>
+			{/if}
+			{if $nextExecutionId == 0}
+				<span title="Not available - this is the last execution" class="icon icon-page-next-deactivated"></span>
+			{else}
+				<a data-id="{$nextExecutionId}" data-offset="{$nextOffset}" href="#" {if $nextOffset % $maxResultAllowed == 1} id="next-page-execution" {else} id="next-execution"{/if} type="button" title="Next Execution ( Type 'j' )">
+					<span class="icon icon-page-next"><span>Next Execution</span></span>
+				</a>
+			{/if}
+		</li>
+		<li class="return">
+			<a title="View Full Screen ( Type 'u' )" href="#{$queryString}" id="view-full-screen">
+				View Full Screen
+			</a>
+		</li>
+	</ul>
+	</div>
+</div>
+{/template}
+
+/**
+ * Renders standalone previous and next navigator with return options
+ * @param totalCount
+ * @param currentIndex
+ * @param prevExecutionId
+ * @param previousOffset
+ * @param nextExecutionId
+ * @param nextOffset
+ * @param queryString
+ * @param maxResultAllowed
+ */
+{template .addStandalonePrevNextNavigator}
+	<ul id="prev-next-return-container">
+		<li class="previous prevnext-wrapper">
+			<span>{$currentIndex} of {$totalCount}</span>
+			{if $prevExecutionId == 0}
+				<span title="Not available - this is the first execution" class="icon icon-page-prev-deactivated"></span>
+			{else}
+				<a data-id="{$prevExecutionId}" data-offset="{$previousOffset}" href="#" {if $previousOffset % $maxResultAllowed == 0} id="prev-page-execution" {else} id="previous-execution"{/if} type="button" title="Previous Execution ( Type 'k' )">
+					<span class="icon icon-page-prev"><span>{getText('execute.test.execution.prev.label')}</span></span>
+				</a>
+			{/if}
+			{if $nextExecutionId == 0}
+				<span title="Not available - this is the last execution" class="icon icon-page-next-deactivated"></span>
+			{else}
+				<a data-id="{$nextExecutionId}" data-offset="{$nextOffset}" href="#" {if $nextOffset % $maxResultAllowed == 1} id="next-page-execution" {else} id="next-execution"{/if} type="button" title="Next Execution ( Type 'j' )">
+					<span class="icon icon-page-next"><span>{getText('execute.test.execution.next.label')}</span></span>
+				</a>
+			{/if}
+		</li>
+		<li class="return">
+			<a /*title="Return to Search ( Type 'u' )"*/ href="?{$queryString}" id="return-to-search">
+				<span class="icon icon-back"></span>
+				{getText('execute.test.return.search.label')}
+			</a>
+		</li>
+	</ul>
+{/template}
+
+/**
+ * Renders enav
+ * @param zqlFields
+ * @param zqlFunctionNames
+ * @param zqlReservedWords
+ * @param contextPath
+ * @param dropdown2Support
+ */
+{template .enavWrapper}
+<div class="content-container">
+		<div id="zfj-sidebar-menu-column" style="display: none;">
+			<ul class="zfj-sidebar-menu" id="zfj-sidebar-menu">
+				<li class="zfj-sidebar-dock-button" role="button" title="{getText('je.gadget.zql.filter.sidebar.dock.title')}">
+					<a title="{getText('je.gadget.zql.filter.sidebar.dock.title')}" href="#" class="toggle-filter-panel"></a>
+					<span class="zfj-sidebar-menu-inner">{getText('zql.filter.label')}</span>
+				</li>
+			</ul>
+		</div>
+		<div class="content-related" id="contentRelatedId">
+				<h4 class="filter-title">{getText('zql.filter.label')}
+					<div class="filter-actions">
+						<a title="{getText('je.gadget.zql.filter.sidebar.undock.title')}" class="aui-button aui-button-subtle ui-undock zfj-sidebar-undock" href="#"><span class="icon"></span></a>
+						<a title="{getText('je.gadget.zql.filter.sidebar.dock.title')}" style="display:none;" class="aui-button aui-button-subtle ui-dock zfj-sidebar-dock" href="#"><span class="icon"></span></a>
+					</div>
+				</h4>
+				<div class="filter-panel-section predefinedFilters-wrapper">
+					<h4 class="filter-title">{getText('zql.filter.predefined.label')}</h4>
+					<ul id="predefinedFilters" class="saved-filter filter-list system-filters">
+						<li><a class="filter-link" href="#?filter=-1" title="{getText('zql.filter.system.1')}">{getText('zql.filter.system.1')}</a></li>
+						<li><a class="filter-link" href="#?filter=-2" title="{getText('zql.filter.system.2')}">{getText('zql.filter.system.2')}</a></li>
+						<li><a class="filter-link" href="#?filter=-3" title="{getText('zql.filter.system.3')}">{getText('zql.filter.system.3')}</a></li>
+						<li><a class="filter-link" href="#?filter=-4" title="{getText('zql.filter.system.4')}">{getText('zql.filter.system.4')}</a></li>
+						<li><a class="filter-link" href="#?filter=-5" title="{getText('zql.filter.system.5')}">{getText('zql.filter.system.5')}</a></li>
+						<li><a class="filter-link" href="#?filter=-6" title="{getText('zql.filter.system.6')}">{getText('zql.filter.system.6')}</a></li>
+					</ul>
+				</div>
+				<div class="filter-panel-section">
+					<h4 class="filter-title">{getText('webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters')}</h4>
+					<ul class="saved-filter filter-list system-filters">
+						<li>
+							<a class="filter-link" href="{$contextPath}/secure/ZQLManageFilters.jspa"  title="{getText('webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters')}">
+							{getText('webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters')}</a>
+						</li>
+                    </ul>
+					<div class="filter-panel-section">
+						<h4 class="filter-title">{getText('zql.filter.quick.srh.label')}</h4>
+						<div class="field-group aui-field-filterpicker frother-control-renderer search-zql-filter-name-wrapper">
+    					  	<select name="searchZQLFilterName" id="searchZQLFilterName" data-query="" filterId="" class="hidden" type="single" size="4">
+    					  	</select>
+							<div class="search-zql-arrow-right-img-wrapper">
+    							<a href="#" id="zql-quick-srh-id">
+									<img title="{getText('webfragments.view.issue.opsbar.zephyr-je.test.execute')}"
+										alt="{getText('webfragments.view.issue.opsbar.zephyr-je.test.execute')}"
+										src="{$contextPath}/images/icons/arrow_right_small.gif" height="16" border="0" hspace="0"
+										width="16"/>
+								</a>
+    						</div>
+						</div>
+						<br/>
+						<div class="description search-zql-filter-description">{getText('user.picker.ajax.desc')}</div>
+					</div>
+				</div>
+				<div class="filter-panel-section">
+					<h4 class="filter-title">{getText('zql.filter.favorite.label')}</h4>
+				</div>
+        </div>
+        <div class="navigator-body" id="jqlcomponent">
+			<div class="contained-content" style="">
+        		<header id="zqlHeader" class="saved-search-selector"></header>
+				<div class ="navigator-search">
+					<div class="search-container">
+							<div class="advanced-search-container">
+								<div class="aui-group">
+		                			<div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar"></div>
+									<div class="notifications active zfj-permissions-active" id="zfj-permission-message-bar"></div>
+									<div class="aui-item atlassian-autocomplete" style="width:100%">
+										<label for="advanced-search">
+											<span id="jqlerrormsg" class="icon jqlgood" title="">
+												<span>{getText('execute.test.parse.label')}</span>
+											</span>
+											<span class="jql-label">{getText('execute.test.query.label')} <span id="jqlcolrowcount">{getText('execute.test.line.label')}:<span id="jqlrownum">1</span>{getText('execute.test.character.label')}:<span id="jqlcolumnnum">25</span></span></span>
+										</label>
+										<textarea id="zqltext" filterId="" data-query="" class="search-entry advanced-search ajs-dirty-warning-exempt" name="zqltext" maxlength="2000" style="overflow: hidden; height: 33px;" autocomplete="off"></textarea>
+
+										<div class="suggestions" style="top: 30px; display: none;"></div>
+	                                    <div class="jqlundertext">
+	                            			<input type="hidden" name="runQuery" value="true"/>
+	                                    </div>
+									</div>
+									<div class="aui-item search-button-container">
+    									<button id="zephyr-transform-all" class="aui-item aui-button aui-button-subtle search-button" type="submit">
+    										<span class="icon aui-icon aui-icon-small aui-iconfont-search" title="Search">{getText('zql.search.label')}</span>
+    									</button>
+    									<span class="switcher" style="display:none">
+    										<a href="#" class="switcher-item" data-id="basic">{getText('execute.test.advanced.label')}</a>
+    										<a href="#" class="switcher-item active" data-id="advanced">{getText('execute.test.basic.label')}</a>
+    									</span>
+    								</div>
+    								<div id="layout-switcher-toggle" class="aui-item view-selector">
+    									{if $dropdown2Support == true}
+			            					<a href="#views-menu" aria-owns="views-menu" aria-haspopup="true" class="aui-button aui-dropdown2-trigger aui-style-default">
+			            						<span class="aui-icon aui-icon-small icon-view-split" id="view-button-icon"></span>
+			            					</a>
+		            						<div class="aui-dropdown2 aui-style-default" id="views-menu">
+		            							<ul class="aui-dropdown2-section">
+		            								<strong>{getText('enav.executions.layout.switcher.views.title')}</strong>
+		            								<li class="aui-list-item layout-switcher-item"><a data-layout-key="split-view" class="aui-list-item-link" id="split-view" href="#"><span class="aui-icon aui-icon-small"></span>{getText('enav.executions.layout.switcher.views.detail.label')}</a></li>
+		            								<li class="aui-list-item layout-switcher-item"><a data-layout-key="list-view" class="aui-list-item-link" id="list-view" href="#"><span class="aui-icon aui-icon-small"></span>{getText('enav.executions.layout.switcher.views.list.label')}</a></li>
+		            							</ul>
+		            						</div>
+    									{else}
+    										<div id="view-btn-container" class="layout-switcher-item">
+				                                <a id="list-view" class="aui-button view-btn active-view list-view">
+
+				                                    <div></div>
+				                                    {getText('cycle.list.view.label')}
+
+				                                </a>
+				                                <a id="split-view" class="aui-button view-btn detail-view">
+
+				                                    <div></div>
+				                                    {getText('cycle.detail.view.label')}
+				                                </a>
+				                            </div>
+    										<!-- <div class="aui-buttons">
+			            						<button type="button" class="aui-button drop-arrow js-default-dropdown" id="layout-switcher-button" title='Change view (Type "t")'>
+			            							<span class="aui-icon aui-icon-small icon-view-split" id="view-button-icon"></span>
+			            						</button>
+			            						<div class="aui-list hidden">
+			            							<h5>{getText('enav.executions.layout.switcher.views.title')}</h5>
+			            							<ul class="aui-list-section aui-first aui-last">
+			            								<li class="aui-list-item layout-switcher-item"><a data-layout-key="split-view" class="aui-list-item-link" id="split-view" href="#"><span class="icon"></span>{getText('enav.executions.layout.switcher.views.detail.label')}</a></li>
+			            								<li class="aui-list-item layout-switcher-item"><a data-layout-key="list-view" class="aui-list-item-link" id="list-view" href="#"><span class="icon"></span>{getText('enav.executions.layout.switcher.views.list.label')}</a></li>
+			            							</ul>
+			            						</div>
+			            					</div> -->
+    									{/if}
+		            				</div>
+								</div>
+							</div>
+						</div>
+						<div class="notifications" id="zql-message-bar"/>
+	            	</div>
+                </div>
+				<div class="navigator-group" id="zql-navigator-group">
+					 <div class="results-panel navigator-item">
+						<div class="content-body">
+							<div id="zqlResponse">
+								<div class="aui-group split-view" />
+							</div>
+						</div>
+						<div class="navigator-content"></div>
+					</div>
+				</div>
+			</div>
+        	<fieldset class="zql-autocomplete-params hidden" ></fieldset>
+        	<div style="display:none;" id="zqlFieldz">{$zqlFields}</div>
+        	<div style="display:none;" id="zqlFunctionNamez">{$zqlFunctionNames}</div>
+        	<div style="display:none;" id="zqlReservedWordz">{$zqlReservedWords}</div>
+	   </div>
+  </div>
+  <iframe id="execDownloadFrame" style="visibility:hidden;height:0px;width:0px;"></iframe>
+{/template}
+
+/**
+ * Render navigation error for standalone detail view
+ * @param errorTitle
+ * @param errorBody
+ * @param contextPath
+ */
+{template .enavStandaloneError}
+<div class="execution-error-container">
+	<div class="form-body" id="execution-content">
+		<header class="execution-nav-header">
+			<div class="execution-header-content">
+				<header class="aui-page-header">
+					<div class="aui-page-header-inner">
+						<div class="aui-page-header-main">
+							<h1>{$errorTitle}</h1>
+						</div>
+					</div>
+				</header>
+			</div>
+		</header>
+		<div class="execution-body-content">
+			<div class="aui-message error">
+				<span class="aui-icon icon-error"></span>
+				<p>{$errorBody}</p>
+				<p>{getText('execute.test.error.message.label')}<a href="{$contextPath}/secure/ContactAdministrators!default.jspa"> {getText('execute.test.jira.admin.label')}</a>.</p>
+				<p><a href="javascript: history.go(-1)">{getText('execute.test.goback.label')}</a><p>
+			</div>
+		</div>
+	</div>
+</div>
+{/template}

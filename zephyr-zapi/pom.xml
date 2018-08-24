@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.thed.zephyr</groupId>
+	<artifactId>zapi</artifactId>
+	<version>${major.version}.${minor.version}</version>
+
+	<organization>
+		<name>D Software Inc.</name>
+		<url>http://www.getzephyr.com/</url>
+	</organization>
+
+	<name>ZAPI</name>
+	<description>APIs for Zephyr for JIRA (see http://www.getzephyr.com for more details)</description>
+	<packaging>atlassian-plugin</packaging>
+	<repositories>
+		<repository>
+			<id>inhouse1</id>
+			<name>theD Internal repository</name>
+			<url>http://192.168.100.200:9999/repository</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+	<scm>
+		<connection> scm:svn:http://192.168.100.200/svn/jiraplugins/trunk/zephyr-zapi/ </connection>
+		<developerConnection> scm:svn:http://192.168.100.200/svn/jiraplugins/trunk/zephyr-zapi/</developerConnection>
+		<url>http://192.168.100.200/projects/jiraplugins/browse</url>
+	</scm>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-core</artifactId>
+			<version>${jira.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>jndi</groupId>
+					<artifactId>jndi</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>jta</groupId>
+					<artifactId>jta</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-api</artifactId>
+			<version>${jira.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.jcip</groupId>
+			<artifactId>jcip-annotations</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-api</artifactId>
+			<version>${jira.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.util.concurrent</groupId>
+			<artifactId>atlassian-util-concurrent</artifactId>
+			<version>2.3.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.8.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-tests</artifactId>
+			<version>${jira.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-func-tests</artifactId>
+			<version>${jira.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.1.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- SAL Dependencies -->
+		<dependency>
+			<groupId>com.atlassian.sal</groupId>
+			<artifactId>sal-api</artifactId>
+			<version>2.7.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- REST dependency -->
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-rest-plugin</artifactId>
+			<version>${jira.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.plugins.rest</groupId>
+			<artifactId>atlassian-rest-common</artifactId>
+			<version>1.0.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-core</artifactId>
+			<version>1.8</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- JQL dependency -->
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-test-framework</artifactId>
+			<version>1.1.2-ea</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.1</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<!-- REST dependency end -->
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>1.3.9</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.upm</groupId>
+			<artifactId>licensing-api</artifactId>
+			<version>${upm.license.compatibility.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.upm</groupId>
+			<artifactId>upm-api</artifactId>
+			<version>${upm.license.compatibility.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.templaterenderer</groupId>
+			<artifactId>atlassian-template-renderer-api</artifactId>
+			<version>${atlassian.templaterenderer.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-core</artifactId>
+			<version>1.1.3</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+    		<groupId>com.atlassian.usercompatibility</groupId>
+    		<artifactId>usercompatibility-jira</artifactId>
+    		<version>0.10</version>
+  		</dependency>
+  </dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>com.atlassian.maven.plugins</groupId>
+				<artifactId>maven-jira-plugin</artifactId>
+				<version>${amps.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+
+					<!-- For creation of obr file plugin license storage plugin -->
+					<instructions>
+                        <Public-Package>
+                            com.thed.zephyr.zapi.rest.*
+                        </Public-Package>
+                        <Export-Package>
+                            com.thed.zephyr.zapi.component;version="${major.version}.${minor.version}"
+                        </Export-Package>
+					</instructions>
+
+					<productVersion>${jira.version}</productVersion>
+					<productDataVersion>${jira.version}</productDataVersion>
+
+						<pluginArtifacts>
+						<pluginArtifact>
+							<groupId>com.atlassian.activeobjects</groupId>
+							<artifactId>activeobjects-plugin</artifactId>
+							<version>${ao.version}</version>
+						</pluginArtifact>
+						<pluginArtifact>
+							<groupId>com.atlassian.activeobjects</groupId>
+							<artifactId>activeobjects-jira-spi</artifactId>
+							<version>${ao.version}</version>
+						</pluginArtifact>
+					</pluginArtifacts>
+					<productVersion>${jira.version}</productVersion>
+					<productDataVersion>${jira.version}</productDataVersion>
+					<productDataPath>${basedir}/src/test/resources/generated-test-resources.zip</productDataPath>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+				</configuration>
+			</plugin>
+
+            <plugin>
+                <groupId>ru.concerteza.buildnumber</groupId>
+                <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+                <version>1.2.7</version>
+                <executions>
+                    <execution>
+                        <id>git-buildnumber</id>
+                        <goals>
+                            <goal>extract-buildnumber</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <javaScriptBuildnumberCallback>
+                                    var str = "" + commitsCount
+                                    var pad = "00000"
+                                    pad.substring(0, pad.length - str.length) + str
+                            </javaScriptBuildnumberCallback>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+	</build>
+	<properties>
+ 	
+ 		<jira.version>7.0.0</jira.version>
+		<jira.data.version>7.0.0</jira.data.version>
+		<ao.version>0.30.0-m005</ao.version>
+		<amps.version>6.1.0</amps.version>
+		<major.version>2.7</major.version>
+		<minor.version>0</minor.version>
+        <version.prefix>270</version.prefix>
+		<upm.license.compatibility.version>2.9.3</upm.license.compatibility.version>
+		<atlassian.templaterenderer.version>1.0.5</atlassian.templaterenderer.version>
+	</properties>
+
+</project>

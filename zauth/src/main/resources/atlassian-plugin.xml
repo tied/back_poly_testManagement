@@ -1,0 +1,78 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}"
+	name="${project.name}" plugins-version="2">
+	<plugin-info>
+		<description>${project.description}</description>
+		<version>${project.version}</version>
+		<vendor name="${project.organization.name}" url="${project.organization.url}" />
+	</plugin-info>
+
+	<resource type="i18n" name="i18nMessages" location="com.thed.jira.zauth.messages.ZAuth" />
+
+	<servlet-filter name="Zephyr SOAP Authentication Filter" key="zephyr-soap-auth-filter"
+		class="com.thed.jira.zauth.filter.ZAuthenticationFilter" location="before-login"
+		weight="200">
+		<description>Intercepts SOAP requests and perform authentication
+		</description>
+		<url-pattern>/rest/auth*</url-pattern>
+		<url-pattern>/*/soap/jirasoapservice-v2</url-pattern>
+		<url-pattern>/*/soap/zephyrsoapservice</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</servlet-filter>
+	
+	<servlet-filter name="Zephyr Rest Authentication Filter" key="zephyr-rest-auth-filter"
+		class="com.thed.jira.zauth.filter.ZBasicAuthenticationFilter" location="before-login"
+		weight="200">
+		<description>Intercepts REST, RSS requests and performs authentication
+		</description>
+		<url-pattern>/rest/activities*</url-pattern>
+		<!--<url-pattern>/rest/auth/latest*</url-pattern>-->
+        <url-pattern>/rest/api/2*</url-pattern>
+		<url-pattern>/*si/jira.issueviews:issue-xml*</url-pattern>
+		<url-pattern>/*sr/jira.issueviews:searchrequest-xml/temp/SearchRequest.xml*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</servlet-filter>
+	
+	<web-resource key="zauth-admin-resources"
+		name="Zephry Authentication Admin Resources">
+		<resource type="download" name="general-config.js" location="includes/js/admin/general-config.js">
+			<property key="content-type" value="text/javascript" />
+		</resource>
+		<context>atl.admin</context>
+	</web-resource>
+	
+	<webwork1 key="zauth-webwork" i18n-name-key="zauth-webwork.name"
+		name="ZAuth webwork Action" class="java.lang.Object">
+		<actions>
+			<action name="com.thed.jira.zauth.admin.ZAuthConfiguration" alias="ZAuthConfiguration" roles-required="admin">
+				<view name="input">/templates/config/zauth-config.vm</view>
+				<view name="success">/templates/config/zauth-config.vm</view>
+				<command name="editConfig" alias="ZAuthConfigEdit">
+					<view name="success">/templates/config/zauth-config.vm</view>
+					<view name="error">/templates/config/zauth-config.vm
+					</view>
+				</command>
+			</action>
+		</actions>
+	</webwork1>					
+
+	<web-section key="zauth_admin_section" name="ZAuth General Configuration"
+		location="admin_plugins_menu" i18n-name-key="zauth.admin.section.zauthsection.name"
+		weight="10">
+		<label key="zauth.admin.section.zauthsection.label" />
+		<link linkId="zephyr_general_configuration"><![CDATA[/secure/admin/ZAuthConfiguration!default.jspa]]></link>
+		<condition class="com.atlassian.jira.plugin.webfragment.conditions.UserIsAdminCondition" />
+	</web-section>
+	<web-item key="zephyr_general_configuration" name="ZAuth General Configuration"
+		section="admin_plugins_menu/zauth_admin_section"
+		i18n-name-key="zauth.admin.section.zauthsection.item.configuration.name"
+		weight="10">
+		<label
+			key="zauth.admin.section.zauthsection.item.configuration.label" />
+		<link linkId="zephyr_general_configuration"><![CDATA[/secure/admin/ZAuthConfiguration!default.jspa]]></link>
+		<condition
+			class="com.atlassian.jira.plugin.webfragment.conditions.UserIsAdminCondition" />
+	</web-item>
+</atlassian-plugin>

@@ -1,0 +1,37 @@
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-reports-resources")
+##$webResourceManager.requireResource("com.thed.zephyr.je:testcase-execution-report-resources")
+<div>
+    <table class="reportHeader" border="0" cellspacing="0" >
+        <thead>
+        <tr>
+            <th nowrap="true">
+                <h3 class="bluetext">
+                    $reportForTitle&nbsp;$textutils.htmlEncode($action.getSelectedProject().getName())
+                    #if($version.getId())
+                        #if($version.getName().length() > 100)
+                            #set ($versionNameDisplay = $version.getName().substring(0,100))
+                        #else
+                            #set ($versionNameDisplay = $version.getName())
+                        #end
+                        &nbsp;($textutils.htmlEncode($versionNameDisplay))
+                    #end
+                </h3>
+            </th>
+        </tr>
+        </thead>
+    </table>
+
+    <table class="report" id="report" border="0" cellspacing="0">
+        <tbody>
+            <tr>
+                <td>
+                    <div id="zephyr-test-report" class="zephyr-chart">
+                        <script language="JavaScript" type="text/javascript">
+                            ZEPHYR.REPORT.paint('$selectedProjectId', '$versionIdString', '$groupFld', '$defectsCount', '$pickStatus', '$cycle', '$reportKey', '$sprintId');
+                        </script>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

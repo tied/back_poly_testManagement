@@ -1,0 +1,30 @@
+#set ($ctxPath =  $req.getContextPath())
+$webResourceManager.requireResource("com.thed.zephyr.je:zql-manage-filters")
+
+<html>
+<head>
+	#set ($title = ${i18n.getText('webfragments.navigation.com.thed.zephyr.je.topnav.tests.manage.filters')})		
+    <title>$title</title>    
+</head>
+<body class="aui-layout aui-theme-default ka page-type-navigator"> 
+    <header>
+        <div id="heading-avatar">
+            <img alt="" height="48" src="$ctxPath/download/resources/com.thed.zephyr.je:zephyr-je-gadget-zql-filter-resources/images/filter_48.png" width="48" />
+        </div>
+        <h1>$title</h1>        
+    </header>
+        <div class="aui-tabs vertical-tabs">
+           	 <ul class="tabs-menu">			    
+			        <li id="mzf_fav_li" class="menu-item"><a id="fav-filters-tab" title="${i18n.getText('common.favourites.favourite')}" href="#"><strong>${i18n.getText('common.favourites.favourite')}</strong></a></li>			    		    
+			        <li id="mzf_my_li" class="menu-item"><a id="my-filters-tab" title="${i18n.getText('managefilters.my')}" href="#"><strong>${i18n.getText('managefilters.my')}</strong></a></li>			    			    
+			        <li id="mzf_pop_li" class="menu-item"><a id="popular-filters-tab" title="${i18n.getText('common.concepts.popular')}" href="#"><strong>${i18n.getText('common.concepts.popular')}</strong></a></li>			    			    
+			        <li id="mzf_search_li" class="menu-item"><a id="search-filters-tab" title="${i18n.getText('common.concepts.search')}" href="#"><strong>${i18n.getText('common.concepts.search')}</strong></a></li>
+			 </ul>
+			 <div id="zql-mng-filters-content" class="tabs-pane active-pane">
+        		<div id="mzf-message-bar"></div>              
+        	</div>    
+        </div>
+</body>
+</html>
+
+

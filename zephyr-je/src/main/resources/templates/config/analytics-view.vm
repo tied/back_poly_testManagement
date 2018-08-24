@@ -1,0 +1,148 @@
+#set($i18n=$action)
+<html lang="en">
+<head>
+	$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-common")
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_analytics_info"/>
+     <style>
+	    .errMsg {
+    		font-weight: bold;
+    	}
+    	.jiraform.addExecStatusForm {
+    		border-collapse: separate;
+    		box-sizing: border-box;
+    		padding: 10px 5px;
+    		background-color: #f5f5f5;
+    		border-top: 1px solid #d3d3d3;
+    		border-bottom: 1px solid #d3d3d3;
+    		margin-top: 0px;
+    	}
+	    .jiraform.addExecStatusForm input:not([type='submit']) {
+	    	width: 100%;
+	    	line-height: 1.5rem;
+	    	padding-left: 5px;
+	    	box-sizing: border-box;
+	    	font-size: 0.8rem;
+	    }
+
+	    .jiraform.addExecStatusForm td {
+	    	padding:0px;
+	    }
+    </style>
+    <title>$i18n.getText("zephyr.je.admin.plugin.analytics.title.view")</title>
+    <script type="text/javascript">
+        String.prototype.capitalize = function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        }
+    	var isLoadedInIframe = function() {
+			try {
+				return (window !== window.parent);
+			} catch(e) {
+				return false;
+			}
+		}
+
+		var InitPageContent = function(initCallback) {
+			if(isLoadedInIframe()) {
+				AJS.$(window).load(function(){
+					initCallback();
+				});
+			} else {
+				AJS.$(document).ready(function(){
+					initCallback();
+				});
+			}
+		}
+
+        var showError = function(jqXHR, textStatus, value){
+            if(jqXHR.responseText != ""){
+                var cxt = AJS.$("#zephyr-aui-aui-message-bar"),msg=cxt.attr('gen-err');
+                cxt.empty();
+				try {
+                     if (jqXHR.status==200 && jqXHR.statusText == 'OK' && value == 'true') {
+                         msg = cxt.attr('enabled-msg');
+                     }else{
+                         msg = cxt.attr('disabled-msg');
+					 }
+					 AJS.messages.success(cxt, {
+						 title: cxt.attr('succ-title').capitalize(),
+						 body: msg,
+						 closeable: true
+					 });
+                }catch (error){
+				    //error
+                    AJS.messages.error(cxt, {
+                        title: cxt.attr('err-title'),
+                        body: msg,
+                        closeable: true
+                    });
+				}
+            }
+        };
+
+		InitPageContent(function(){
+	    	AJS.$("input[name='zephyrAnalyticCheck']").bind("click", function(event){
+                var value = AJS.$(this).val();
+                jQuery.ajax({
+                    url:  contextPath +"/secure/addZephyrAnalytics.jspa?decorator=none&zephyrAnalytics="+value,
+                    type : "post",
+                    complete : function(jqXHR,textStatus){
+                        showError(jqXHR,textStatus,value)
+					}
+                });
+	    	});
+	    });
+
+
+
+    </script>
+</head>
+<body>
+<div id="zephyr-aui-aui-message-bar"
+	 gen-error="$i18n.getText('zephyr.je.admin.plugin.analytics.update.error')"
+	 succ-title="$i18n.getText('schedule.response.success.label')"
+	 err-title="$i18n.getText('schedule.response.error.label')"
+	 enabled-msg="$i18n.getText('zephyr.je.admin.plugin.analytics.enable.success')"
+	 disabled-msg="$i18n.getText('zephyr.je.admin.plugin.analytics.disable.success')"
+> </div>
+<table class="jiraform maxWidth">
+    <tbody>
+        <tr>
+            <td class="jiraformheader">
+                <h3 class="formtitle formtitle-bamboo">$i18n.getText("zephyr.je.admin.plugin.analytics.title.view")</h3>
+            </td>
+        </tr>
+        <tr>
+            <td class="jiraformbody">
+				<p>$i18n.getText("zephyr.je.admin.plugin.analytics.note.desc")</p>
+            </td>
+        </tr>
+    <tbody>
+</table>
+<table class="aui aui-table-rowhover">
+    <tbody>
+    <tr>
+        <td>
+			<label for="enabledZephyrAnalyticCheck">
+				$i18n.getText("zephyr.je.admin.plugin.analytics.enabled.view")
+				<input type="radio" id="enabledZephyrAnalyticCheck" class="zephyr-analytics-check" value="true" name="zephyrAnalyticCheck"  style="vertical-align:baseline" #if($action.getAnalyticsCheck())checked="checked"#end>
+				<div class="description">$i18n.getText("zephyr.je.admin.plugin.analytics.enabled.info")</div>
+			</label>
+        </td>
+    </tr>
+	<tr>
+		<td>
+			<label for="disabledZephyrAnalyticCheck">
+				$i18n.getText("zephyr.je.admin.plugin.analytics.disabled.view")
+				<input type="radio" id="disabledZephyrAnalyticCheck" class="zephyr-analytics-check" value="false" name="zephyrAnalyticCheck" style="vertical-align:baseline" #if(!$action.getAnalyticsCheck())checked="checked"#end>
+				<div class="description">$i18n.getText("zephyr.je.admin.plugin.analytics.disabled.info")</div>
+            </label>
+		</td>
+	</tr>
+	</tbody>
+</table>
+
+
+</body>
+</html>

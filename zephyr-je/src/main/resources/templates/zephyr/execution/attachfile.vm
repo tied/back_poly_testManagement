@@ -1,0 +1,67 @@
+$webResourceManager.requireResource("jira.webresources:jira-global")
+
+#set ($entityId = $req.getAttribute("entityId"))
+#set ($entityType = $req.getAttribute("entityType"))
+
+#set ($projectId = $req.getAttribute("projectId"))
+#set ($projectKey = $req.getAttribute("projectKey"))
+#set ($issue = $req.getAttribute("issue"))
+#set ($maxSize = $req.getAttribute("maxSize"))
+
+<div id="zephyr-attach-file-dialog" class="aui-popup jira-dialog box-shadow jira-dialog-open popup-width-medium jira-dialog-content-ready" style="display: block; margin-left: -270px; margin-top: -154.5px;">
+	<h2/>
+	<h2 class="aui-dialog-heading">
+        $i18n.getText('attachfile.title')<span class="header-separator" style="display:none">:&nbsp;</span>
+        <a href="$requestContext.baseUrl/browse/$issue.getKey()" title="Execute Test" style="display:none" class="header-issue-key">$issue.getKey()</a>
+   </h2>
+    <div class="aui-popup-content">
+    	<div class="aui-dialog-content">
+    		<form method="post" id="zephyr-attach-file" enctype="multipart/form-data" class="aui">
+    			<input type="hidden" id="projectId" name="projectId" value="$projectId"/>
+				<input type="hidden" id="id" name="id" value="$entityId"/>
+				<input type="hidden" id="entityType" name="entityType" value="$entityType"/>
+				<input type="hidden" id="issueId" name="issueId" value="$issue.id"/>
+
+				<div class="form-body" style="max-height: 320px;">
+                    <fieldset class="group ">
+                        <legend><span>$i18n.getText('issue.field.attachment')</span></legend>
+    					<div class="field-group file-input-label">
+    						<div class="field-group">
+    							<input type="file" class="ignore-inline-attach upfile zephyr-attachment-upload" name="tempFilename" multiple>
+    								<div class="hidden" id="attach-max-size">$action.getMaxSize(false)</div>
+    						 </div>
+                            <div class="description resetFontColor">$i18n.getText('cycle.or.label')</div>
+                            <div class="description resetFontColor">$i18n.getText('attachfile.copyPasteInstruction')</div>
+    						<div class="description">$i18n.getText('attachfile.filebrowser.warning', $action.getMaxSize(true))</div>
+    					</div>
+    				</fieldset> <!-- // .group -->
+    				<div class="field-group aui-field-wikiedit comment-input">
+    					<label for="comment">$i18n.getText('issue.field.comment')</label>
+                         <div class="wiki-edit">
+                            <div class="wiki-edit-content" id="comment-wiki-edit">
+                                  <textarea data-issuekey="$issue.getKey()" data-projectkey="$projectKey" wrap="virtual" rows="5" name="comment" id="comment" cols="60" class="textarea long-field wiki-textfield mentionable"></textarea>
+                                  <div class="content-inner">
+                                  </div>
+                            </div>
+                        </div>
+                        <!-- // Since there is no functionality for preview and notation commenting it
+                        <div class="field-tools">
+                            <a title="$i18n.getText('renderer.preview')" id="comment-preview_link" href="javascript:void(0);" class="wiki-renderer fullscreen">preview</a>
+                            <a title="$i18n.getText('renderer.notation-help')" onclick="window.open('$requestContext.baseUrl/secure/WikiRendererHelpAction.jspa?section=texteffects', 'wiki_renderer_notation_help', 'width=780, height=575, resizable, scrollbars=yes'); return false;" id="viewHelp" href="$requestContext.baseUrl/secure/WikiRendererHelpAction.jspa?section=texteffects" class="wiki-renderer help-icon">wiki markup help</a>
+                        </div> -->
+                        #set ($isGroupPresent = !$groupLevels.isEmpty())
+						#set ($isRolePresent = !$roleLevels.isEmpty())
+						#if($isGroupPresent || $isRolePresent)
+							#createLevelSelect($roleLevels $groupLevels $selectedCommentLevel)
+						#end
+                    </div>
+                    <div class="buttons-container form-footer">
+                        <div class="buttons"><span class="icon throbber"></span>
+                			<input type="button" value=$i18n.getText('attachfile.submitname') title="Press Ctrl+s to submit this form" name="Attach" id="attach-file-submit1" onclick="attachFiles('$entityId', '$entityType');" class="aui-button" href="javascript:void(0);" accesskey="s"/>
+                			 <a title="Press Ctrl+` to cancel" id="attach-file-cancel" href="javascript:void(0);" class="cancel" accesskey="`">$i18n.getText('common.words.cancel')</a>
+                        </div>
+                    </div>
+    		</form> <!-- // .aui #attach-file -->
+    	</div>
+    </div>
+</div>

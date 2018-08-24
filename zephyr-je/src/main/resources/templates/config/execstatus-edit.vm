@@ -1,0 +1,180 @@
+#* @vtlvariable name="action" type="com.thed.zephyr.je.config.action.EditZephyrExecutionStatuses" *#
+
+#set($i18n=$action)
+#set ($SQ = "'")
+#set ($spacer_gif = "${requestContext.baseUrl}/images/border/spacer.gif")
+#set ($name = "color")
+
+<!-- 
+	References
+	VM Page: 
+	ViewApplicationLinks.vm
+	Path: atlassian-jira-5.0-beta1-source/jira-bamboo-plugin/src/main/resources/templates/plugins/bamboo/ViewApplicationLinks.vm
+	editlookandfeel.vm - on how to add color picker.
+	
+	Action / JSP:
+	Viewpriorities.jsp
+	ViewPriority.java
+	EditPriority.java
+	DeletePriority.java
+-->
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_execution_statuses"/>
+    <title>$i18n.getText("zephyr.je.admin.plugin.execstatus.config.title")</title>
+    <script type="text/javascript">
+    	var isLoadedInIframe = function() {
+			try {
+				return (window !== window.parent);
+			} catch(e) {
+				return false;
+			}
+		}
+
+		var InitPageContent = function(initCallback) {
+			if(isLoadedInIframe()) {
+				AJS.$(window).load(function(){
+					initCallback();
+				});
+			} else {
+				AJS.$(document).ready(function(){
+					initCallback();
+				});
+			}
+		}
+
+		InitPageContent(function(){
+	    	AJS.$("a[id^='colorpicker']").bind("click", function(event){
+	    		var params = AJS.$(this).attr('rel').split(',');
+	    		var colorWin = window.open(params[0], '', params.slice(2).join(','))
+	    		AJS.$(colorWin).focus()
+	    		/*For IE10 - load event is not fired. Hence adding 100msec wait*/
+	    		setTimeout(function(){
+					AJS.$(colorWin.document).find('body').css('min-width', 580) //In 6.x default body width is 990px
+				}, 100);
+	    		AJS.$(colorWin).load(function(){
+	    			AJS.$(colorWin.document).find('body').css('min-width', 580) //In 6.x default body width is 990px
+	    		});
+	    		AJS.$(colorWin.window).unload(function(){ 
+	    			AJS.$("#color-rep").css('background-color', (AJS.$("input[name='color']").val())) 
+	    		});
+	    		event.preventDefault();
+	    	});
+	    })
+    </script>
+</head>
+<body>
+
+<table class="jiraform maxWidth">
+	<form name="jiraform" action="EditZephyrExecutionStatus.jspa" method="POST">
+		<input type="hidden" name="id" value="$action.id"/>
+    <tbody>
+        <tr>
+            <td class="jiraformheader" colspan="2">
+                <h3 class="formtitle formtitle-bamboo">$i18n.getText("zephyr.je.admin.plugin.execstatus.edit.title")</h3>
+            </td>
+        </tr>
+        
+	    <tr class="hidden"><td colspan="2"></td></tr>
+
+		#set ($bgcolor="#ffffff")
+		#set ($errorClass="") 
+		#if( (!$action.errors.isEmpty()) && ($!action.errors.name) )
+			#set ($bgcolor="#ffcccc")
+			#set ($errorClass="formErrors")
+		<tr>
+			<td bgcolor="$bgcolor">&nbsp;</td>
+			<td valign="top" bgcolor="$bgcolor">
+				<span class="errMsg">$i18n.getText($action.errors.name)</span><br/>
+			</td>
+		</tr>
+		#end
+		<tr>
+			<td class="fieldLabelArea $errorClass" bgcolor="$bgcolor"> $i18n.getText("zephyr.je.admin.plugin.execstatus.name") </td>
+			<td class="fieldValueArea $errorClass" bgcolor="$bgcolor"> <input type="text" name="name" size="30" value="$action.name" /> </td>
+		</tr>
+		<tr>
+			<td class="fieldLabelArea"> $i18n.getText("zephyr.je.admin.plugin.execstatus.desc") </td>
+			<td class="fieldValueArea"> <input type="text" name="description" size="60" value="$action.description" /> </td>
+		</tr>
+
+		## Reset bgColor and errorClass for next validation.
+		#set ($bgcolor="#ffffff")
+		#set ($errorClass="") 
+
+		#if( (!$action.errors.isEmpty()) && ($!action.errors.color) )
+			#set ($bgcolor="#ffcccc")
+			#set ($errorClass="formErrors")
+		<tr>
+			<td bgcolor="$bgcolor">&nbsp;</td>
+			<td valign="top" bgcolor="$bgcolor">
+				<span class="errMsg">$i18n.getText($action.errors.color)</span><br/>
+			</td>
+		</tr>
+		#end
+		<tr> 
+			<td class="fieldLabelArea $errorClass" bgcolor="$bgcolor"> $i18n.getText("zephyr.je.admin.plugin.execstatus.exec.color")<span class="icon icon-required"><span>$i18n.getText("zephyr-je-required.desc")</span></span></td>
+			<td class="fieldValueArea $errorClass" bgcolor="$bgcolor">
+				<table cellpadding="0" cellspacing="0" border="0">
+				    <tr>
+				        <td style="padding:0px">
+				            <input type="text"
+				                   name="$name"
+				                   value="$action.htmlEncode($action.color)"
+				                   size="40">
+		    			</td>
+				        <td style="padding:0px">&nbsp;</td>
+				        <td style="padding:0px">
+				            <table cellpadding="0" cellspacing="1" border="1">
+		                        <tbody>
+			                        <tr>
+			                            <td id="${name}-rep" style="padding: 0px; height: 18px; width: 18px; background-color: $action.htmlEncode($action.color)">
+			                                <a id="colorpicker-$name" href="#" rel="${requestContext.baseUrl}/secure/popups/colorpicker.jsp?element=$name&amp;defaultColor=${urlcodec.encode($action.color)}, colorpicker, menubar=yes,location=no,personalbar=no,scrollbar=yes,width=580,height=300,resizable">
+			                                    <img src="$spacer_gif" width="15" border="0" height="15">
+			                                </a>
+			                            </td>
+			                        </tr>
+		                        </tbody>
+				            </table>
+				       </td>
+				   </tr>
+				</table>
+			</td>
+		</tr>
+
+		<tr class="buttons-container">
+			<td class="jiraformfooter">&nbsp;</td>
+		    <td>
+		        <div class="buttons-container">
+		            <div class="buttons">
+		                <input type="submit" 
+		                		name="Edit" 
+		                		value="$i18n.getText('zephyr.je.update.button.title')" 
+		                		id="edit_submit"
+								accesskey="s"
+		                   		title="$i18n.getText('zephyr.je.submit.form.title')"
+			                    class="aui-button "
+		                    />
+		            
+		                <a href="ViewZephyrExecutionStatuses!default.jspa"
+		                   id="cancelButton"
+		                   class="aui-button-cancel"
+		                   accesskey="`"
+		                   title="$i18n.getText('zephyr.je.submit.form.cancel.title')"
+		                   name="ViewZephyrExecutionStatuses.jspa">$i18n.getText('zephyr.je.submit.form.cancel')
+		                </a>
+		            </div>
+		        </div>
+		
+			</td>
+		</tr>
+	</tbody>	
+    </form>    
+</table>
+
+
+</body>
+</html>

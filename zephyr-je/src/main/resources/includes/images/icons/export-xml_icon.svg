@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="12px" viewBox="0 0 10 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>download-pdf_icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="S-A-02" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-971.000000, -485.000000)">
+        <g id="download-pdf_icon" transform="translate(971.000000, 485.000000)" fill="#4A90E2">
+            <g id="noun_972253_cc" fill-rule="nonzero">
+                <g id="Group">
+                    <polygon id="Shape" points="8.19496357 10.6214886 8.04027555 10.6214886 7.30769231 9.90172186 7.46216184 9.75 8.11761956 10.3937985 8.77307727 9.75 8.92754681 9.90172186"></polygon>
+                    <rect id="Rectangle-path" x="7.98461547" y="8.625" width="1" height="1.8416478"></rect>
+                    <path d="M2.749,3.5 L1,3.5 L1,3 L2.749,3 C2.8875,3 3,2.8875 3,2.749 L3,1 L3.5,1 L3.5,2.749 C3.5,3.163 3.163,3.5 2.749,3.5 Z" id="Shape"></path>
+                    <path d="M9,12 L1,12 C0.4485,12 0,11.5515 0,11 L0,2.748 L0.073,2.571 L2.571,0.073 L2.748,0 L9,0 C9.5515,0 10,0.4485 10,1 L10,11 C10,11.5515 9.5515,12 9,12 Z M0.5,2.8515 L0.5,11 C0.5,11.276 0.7245,11.5 1,11.5 L9,11.5 C9.276,11.5 9.5,11.276 9.5,11 L9.5,1 C9.5,0.7245 9.276,0.5 9,0.5 L2.8515,0.5 L0.5,2.8515 Z" id="Shape"></path>
+                </g>
+            </g>
+            <text id="XML" font-family="OpenSans-SemiBold, Open Sans" font-size="3" font-weight="500">
+                <tspan x="2" y="7">XML</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,39 @@
+{namespace ZEPHYR.Templates.Schedule}
+
+/**
+ * Render the dialog for releasing the done column as a version
+ * @param schedule
+ */
+{template .deleteScheduleConfirmationDialog}
+	<h2 class="dialog-title">{getText('schedule.operation.delete.label')}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="{$schedule.url}" method="delete">
+		<div class="form-body">
+			<div id="schedule-aui-message-bar">
+				<div class="aui-message warning">
+        	        <span class="aui-icon icon-warning"></span>
+                  {if $schedule.isFolder == 'true'}
+            	       {getText('schedule.operation.delete.warning.fromfolder')}
+                  {else}
+                     {getText('schedule.operation.delete.warning')}
+                  {/if}
+	            </div>
+	        </div>
+            <label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="cycle-delete-form-submit" value="{getText('common.words.delete')}" />
+	            <a href="#" class="cancel">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+/**
+ * Renders Execution Table
+ */
+{template .testExecutionGridTemplate}
+    <a class="trigger-delete-dialog" style="display: none"></a>
+    <div class="grid-component" id="testExecutionGrid"></div>
+{/template}

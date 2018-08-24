@@ -1,0 +1,99 @@
+{namespace ZEPHYR.Templates.Execution.DefectHover}
+
+/**
+ * Renders inline defect content on hover
+ * @param? executionDefects
+ * @param? stepDefects
+ * @param? issueStatus
+ * @param? executionStatus
+ * @param? issueKey
+ * Note: Using two tables instead of one as table tr field does not support border, 
+ * 		 and the header 'Step Defects' requires top border.
+ */
+{template .inlineDefectHover}
+<div class="execution-defects-container">
+	<div class="execution-defects-header">{getText('execute.defect.hover.execution.label', $issueKey)}</div>
+	<table cellspacing="0" class="execution-defects-table">
+		<tbody id="execution-defects" class="execution-defects">
+			{foreach $executionDefect in $executionDefects}
+                <tr class="execution-defects-row">
+                    {if isFirst($executionDefect)}<td rowspan="{$executionDefects.length}" width="7%" style="background-color: {$executionDefect.color};"></td>{/if}
+                    <td width="15%">
+                        {if $executionDefect.maskedIssueKey and $executionDefect.maskedIssueKey == 'XXXXX'}
+                            <span {if $executionDefect.resolution} style="text-decoration:line-through;"{/if} >{$executionDefect.maskedIssueKey}</span>
+                        {else}
+                            {if $executionDefect.key == 'XXXXX'}
+                                <span {if $executionDefect.resolution} style="text-decoration:line-through;"{/if} >{$executionDefect.key}</span>
+                            {else}
+                                <a {if $executionDefect.resolution} style="text-decoration:line-through;"{/if} href="{contextPath}/browse/{$executionDefect.key}">{$executionDefect.key}</a>
+                            {/if}
+                        {/if}
+                    </td>
+                    <td width="10%">
+                     {if $executionDefect.status == 'XXXXX'}
+                        <td width="25%">
+                            <span class="aui-lozenge aui-lozenge-subtle zfj-aui-lozenge-status jira-issue-status-lozenge-#333333">{$executionDefect.status}</span>
+                        </td>
+                    {/if}
+                    {foreach $status in $issueStatus}
+                        {if $status.name == $executionDefect.status}
+                            <!--<img width="16" height="16" alt="{$status.name}" title="{$status.name} - {$status.description}" src="{$status.iconUrl}">-->
+                            <td width="25%">
+                                {let $statusColor}
+                                    {if $status.statusCategory and $status.statusCategory.colorName}{$status.statusCategory.colorName}{else}'#333333'{/if}
+                                {/let}
+                                <span class="aui-lozenge aui-lozenge-subtle zfj-aui-lozenge-status jira-issue-status-lozenge-{$statusColor}">{$status.name}</span>
+                            </td>
+                         {/if}
+                    {/foreach}
+                    </td>
+                    <td title="{$executionDefect.summary}" class="inline-defects-text-wrap">{$executionDefect.summary}</td>
+                </tr>
+			{/foreach}
+		</tbody>
+	</table>
+	{if length(keys($stepDefects)) != 0}	
+	<div class="step-defects-header">{getText('execute.defect.hover.step.label')}</div>
+	<table cellspacing="0" class="step-defects-table">		
+		{foreach $stepDefect in keys($stepDefects)}
+		<tbody id="step-defects-{$stepDefect}" class="step-defects">
+			{foreach $defect in $stepDefects[$stepDefect].stepDefects}
+				<tr class="step-defects-row">				
+					{if isFirst($defect)}<td rowspan="{length(($stepDefects[$stepDefect].stepDefects))}" width="7%" align="center"
+					style="background-color: {$executionStatus[$stepDefects[$stepDefect].currentStepExecutionStatus].color}; color: #fff;"
+					> </td>{/if}
+					<td width="15%">
+						{let $defectStatus}{call convertToLowerCase data="[$defect.status]" /}{/let}
+                        {if $defect.maskedIssueKey and $defect.maskedIssueKey == 'XXXXX'}
+                            <span {if $defect.resolution} style="text-decoration:line-through;"{/if} >{$defect.maskedIssueKey}</span>
+                        {else}
+    						<a {if $defect.resolution} style="text-decoration:line-through;"{/if} href="{contextPath}/browse/{$defect.key}">{$defect.key}</a>
+                        {/if}
+					</td>
+					<td width="10%">
+                         {if $defect.status == 'XXXXX'}
+                            <td width="25%">
+                                <span class="aui-lozenge aui-lozenge-subtle zfj-aui-lozenge-status jira-issue-status-lozenge-#333333">{$defect.status}</span>
+                            </td>
+                        {/if}
+                        {foreach $status in $issueStatus}
+                            {if $status.name == $defect.status}
+                                <!--<img width="16" height="16" alt="{$status.name}" title="{$status.name} - {$status.description}" src="{$status.iconUrl}">-->
+                                <td width="25%">
+                                    {let $statusColor}
+                                        {if $status.statusCategory and $status.statusCategory.colorName}{$status.statusCategory.colorName}{else}'#333333'{/if}
+                                    {/let}
+                                    <span class="aui-lozenge aui-lozenge-subtle zfj-aui-lozenge-status jira-issue-status-lozenge-{$statusColor}" title="{$status.name}">{$status.name}</span>
+                                </td>
+                            {/if}
+                        {/foreach}
+					</td>
+					<td title="{$defect.summary}" class="inline-defects-text-wrap">{$defect.summary}</td>
+				</tr>
+			{/foreach}
+		</tbody>
+		{/foreach}
+	</table>
+	{/if}		
+</div>
+{/template}

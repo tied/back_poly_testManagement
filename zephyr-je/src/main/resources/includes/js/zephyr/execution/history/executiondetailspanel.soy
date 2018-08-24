@@ -1,0 +1,350 @@
+{namespace ZEPHYR.Execution.Templates.ExecutionDetails}
+
+/**
+ * Renders test details history with show more option
+ * @param	auditLogs
+ * @param	showMore
+ * @param showHeader
+ * @param oldValue
+ * @param? contextPath
+ * @param isDialog
+ * @param totalCount
+ * @param currentIndex
+ * @param titleForSort
+ * @param titleForRefresh
+ */
+{template .addExecutionDetailsHistory}
+<div id="je-audit-executionpanel" class="mod-header">
+	<div id="je-audit-executionpanel-child">
+		<div class="module toggle-wrap" id="execution-history-details">
+	 		{if $showHeader}
+			<div class="mod-header">
+				<h3 class="toggle-title execution-history-title" >{getText('execute.test.execution.history.subheader.label')}</h3>
+				<div class="executiondetails-header" style="float: right; height: 20px;">
+					{if $auditLogs.length != 0}
+						<a class="zephyr-icon-sort-up execution-history-sort"  href="javascript:void(0);" >
+                            <span data-order="descending" title="{$titleForSort}">
+                            </span>
+                        </a>
+					{/if}
+					<a class="executiondetails-refresh-wrapper" href="javascript:void(0);" title="{$titleForRefresh}">
+						<div id="executiondetails-refresh" class="aui-icon aui-icon-small"></div>
+					</a>
+				</div>
+			</div>
+			{/if}
+			<div class="mod-content">
+				{if $auditLogs.length == 0}
+					{getText('zephyr-je.executions.executiondetails.none')}
+				{else}
+					<div id="executiondetails-wrapper">
+                          {if $showHeader}
+                                        {call .addAuditHistory}
+                                            {param auditLogs: $auditLogs/}
+                                            {param contextPath: $contextPath/}
+                              {param oldValue: $oldValue/}
+                                        {/call}
+                          {else}
+                            {call .addAuditHistoryDetails}
+                              {param auditLogs: $auditLogs/}
+                              {param contextPath: $contextPath/}
+                            {/call}
+                          {/if}
+					</div>
+					{if $isDialog}
+						{call .addPrevNextNavigator}
+							{param totalCount: $totalCount/}
+							{param currentIndex: $currentIndex/}
+						{/call}
+					{/if}
+					{if $showMore}
+						<div>
+							{if $showHeader}
+								<div class="audit-history-show-more-container">
+									<a class="view-in-detail" id="audit-history-detail-mode">{getText('cycle.viewdetail.label')}</a>
+								</div>
+							{/if}
+						</div>
+					{/if}
+				{/if}
+			</div>
+		</div>
+	</div>
+</div>
+{/template}
+
+/**
+ * Renders test details history
+ * @param auditLogs
+ * @param contextPath
+ */
+{template .addAuditHistoryDetails autoescape="false"}
+<div id="audithistory-actions-container" class="issuePanelContainer">
+	<div id="audithistory" class="issue-data-block">
+		<div class="actionContainer">
+			<div class="action-body action-details">
+      <table width="100%" class="zephyr-audithistory-table" cellspacing="0" cellpadding="0" border="0" id="audithistory">
+        <thead>
+          <tr align="left">
+            <th width="25%">{getText('cycle.changesby.label')}</th>
+            <th width="25%">{getText('cycle.changeson.label')}</th>
+            <th width="25%">{getText('bulk.move.oldvalue')}</th>
+            <th width="25%">{getText('bulk.move.newvalue')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foreach $audit in $auditLogs}
+            <tr>
+              <td width="25%" class="audio-history-table-row">
+              {if $audit.creatorExists}
+                  <a href="{$contextPath}/secure/ViewProfile.jspa?name={$audit.creatorKey}" id="audithistoryauthor" rel="{$audit.creatorKey}" class="user-hover">
+                      {if $audit.avatarUrl}
+                          <span class="aui-avatar aui-avatar-xsmall">
+                               {if $audit.userNameAvatar}
+                              <span class="user-name-image">
+                                {$audit.userNameAvatar}
+                              </span>
+                              {else}
+                              <span class="aui-avatar-inner">
+                                <img src="{$audit.avatarUrl}">
+                              </span>
+                              {/if}
+                          </span>&nbsp;
+                      {/if}
+                      <span class="user-details">
+                        <div class="execution-details-user">
+                          {$audit.creator}
+                          {if $audit.creatorActive == false}
+                          &nbsp;({getText('zephyr.executionDetailsPanel.inactive')})
+                          {/if}
+                      </div>
+                      <div class="execution-details-grey">
+                        <span> {getText('cycle.on.label')} </span>
+                        <span title="{$audit.creationDate}" class="date">
+                <time datetime="{$audit.creationDate}" class="livestamp">{$audit.creationDate}</time>
+                </span>
+                      </div>
+                      </span>
+
+                  </a>
+              {else}
+                  <span class="user-hover user-avatar table" rel="{$audit.creatorKey}">
+                      {if $audit.avatarUrl}
+                          <span class="aui-avatar aui-avatar-xsmall table-cell">
+                              <span class="aui-avatar-inner">
+                                  <img src="{$audit.avatarUrl}">
+                              </span>
+                          </span>&nbsp;
+                      {/if}
+                      <span class="table-cell">
+                        <div class="execution-details-user">
+                          {$audit.creator}
+                      </div>
+                      <div class="execution-details-grey">
+                        <span> {getText('cycle.on.label')} </span>
+                        <span title="{$audit.creationDate}" class="date">
+                <time datetime="{$audit.creationDate}" class="livestamp">{$audit.creationDate}</time>
+                        </span>
+                      </div>
+                      </span>
+                  </span>
+
+              {/if}
+
+              </td>
+              <td width="25%" class="audio-history-table-row">
+              <div class="execution-details-field">
+                {if $audit.auditItems.field}
+                      {$audit.auditItems.field}
+                  {/if}
+              </div>
+              </td>
+              <td width="25%" class="audio-history-table-row">
+              {if $audit.auditItems.oldValue}
+                {call ZEPHYR.Execution.History.getValueBasedOnField}
+                  {param field: $audit.auditItems.field /}
+                  {param value: $audit.auditItems.oldValue /}
+                {/call}
+              {else}
+                <div>-</div>
+              {/if}
+                </td>
+              <td width="25%" class="audio-history-table-row">
+              {if $audit.auditItems.newValue}
+                {call ZEPHYR.Execution.History.getValueBasedOnField}
+                  {param field: $audit.auditItems.field /}
+                  {param value: $audit.auditItems.newValue /}
+                {/call}
+              {else}
+                <div>-</div>
+              {/if}
+              </td>
+            </tr>
+          {/foreach}
+        </tbody>
+      </table>
+			</div>
+		</div>
+	</div>
+</div>
+{/template}
+
+/**
+ * Renders test details history
+ * @param auditLogs
+ * @param contextPath
+ * @param oldValue
+ */
+{template .addAuditHistory autoescape="false"}
+{foreach $audit in $auditLogs}
+<div id="audithistory-actions-container" class="issuePanelContainer">
+	<div id="audithistory-{$audit.auditItems.id}" class="issue-data-block">
+		<div class="actionContainer">
+			<div id="audithistorydetails_{$audit.auditItems.id}" class="action-details">
+                {if $audit.creatorExists}
+                    <a href="{$contextPath}/secure/ViewProfile.jspa?name={$audit.creatorKey}" id="audithistoryauthor" rel="{$audit.creatorKey}" class="user-hover">
+                        {if $audit.avatarUrl}
+                            <span class="aui-avatar aui-avatar-xsmall">
+                                <span class="aui-avatar-inner">
+                                  {if $audit.isDefaultAvatar == true}
+                                    <span class="user-name-image">
+                                      {$audit.userNameAvatar}
+                                    </span>
+                                  {else}
+                                    <img src="{$audit.avatarUrl}">
+                                  {/if}
+                                </span>
+                            </span>&nbsp;
+                        {/if}
+                        <span class="user-details">
+                        	<div class="execution-details-user">
+	                        	{$audit.creator}
+		                        {if $audit.creatorActive == false}
+		                        &nbsp;({getText('zephyr.executionDetailsPanel.inactive')})
+		                        {/if}
+		                    </div>
+		                    <div class="execution-details-grey">
+		                    	<span> {getText('cycle.on.label')} </span>
+		                    	<span title="{$audit.creationDate}" class="date">
+									<time datetime="{$audit.creationDate}" class="livestamp">{$audit.creationDate}</time>
+								</span>
+		                    </div>
+                        </span>
+
+                    </a>
+                {else}
+                    <span class="user-hover user-avatar table" rel="{$audit.creatorKey}">
+                        {if $audit.avatarUrl}
+                            <span class="aui-avatar aui-avatar-xsmall table-cell">
+                                <span class="aui-avatar-inner">
+                                    <img src="{$audit.avatarUrl}">
+                                </span>
+                            </span>&nbsp;
+                        {/if}
+                        <span class="table-cell">
+                        	<div class="execution-details-user">
+	                        	{$audit.creator}
+		                    </div>
+		                    <div class="execution-details-grey">
+		                    	<span> {getText('cycle.on.label')} </span>
+		                    	<span title="{$audit.creationDate}" class="date">
+									<time datetime="{$audit.creationDate}" class="livestamp">{$audit.creationDate}</time>
+								</span>
+		                    </div>
+                        </span>
+                    </span>
+
+                {/if}
+
+			</div>
+			<div class="changehistory action-body">
+				<div class="execution-details-grey">
+					{getText('cycle.changeson.label')}
+				</div>
+				<div class="execution-details-field">
+					{if $audit.auditItems.field}
+				      	{$audit.auditItems.field}
+				    {/if}
+				</div>
+			</div>
+      {if $oldValue}
+        <div class="oldValues">
+          <div class="execution-details-grey">
+            {getText('cycle.oldvalue.label')}
+          </div>
+          <div class="execution-details-field">
+            {if $audit.auditItems.oldValue}
+              {call ZEPHYR.Execution.History.getValueBasedOnField}
+                {param field: $audit.auditItems.field /}
+                {param value: $audit.auditItems.oldValue /}
+              {/call}
+            {else}
+              <div>-</div>
+            {/if}
+          </div>
+        </div>
+      {/if}
+		</div>
+	</div>
+</div>
+{/foreach}
+{/template}
+
+/**
+ * Render the dialog for reorder executions
+ */
+{template .exectionAuditHistoryDialog}
+<div id="execution-audit-history-dialog-wrapper">
+   <h2 class="dialog-title">{getText('execute.test.execution.history.subheader.label')}</h2>
+	<form class="aui" action="#">
+		<div id="execution-history-dialog-container"></div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <button class="aui-button aui-button-link cancel" id="aui-dialog-close">{getText('zephyr-je.close.link.title')}</button>
+	        </div>
+	    </div>
+	</form>
+</div>
+{/template}
+/**
+ * Renders the previous and next navigator
+ * @param totalCount
+ * @param currentIndex
+ */
+{template .addPrevNextNavigator}
+ <div class="pagination-wrapper" class="prev-next-container">
+ {if $totalCount > 0}
+    <div>
+
+      <span>
+      {getText('project.cycle.schedule.count.label',  ($currentIndex + 1)  + ' - ' +  (($currentIndex + 20 > $totalCount) ? $totalCount : $currentIndex + 20), $totalCount)}
+       &nbsp;|&nbsp;
+      </span>
+
+      {if $currentIndex <= 0}
+        <span title="Not available - this is the first page">
+          {getText('project.cycle.schedule.previous.label')}
+          &nbsp;|&nbsp;
+        </span>
+      {else}
+        <a id="prev-page-execution-detail" class="prev-page-execution" type="button" title="Previous Execution">
+          {getText('project.cycle.schedule.previous.label')}
+          &nbsp|&nbsp;
+        </a>
+      {/if}
+
+
+      {if ($currentIndex + 20 ) >= $totalCount}
+        <span title="Not available - this is the last page">
+          {getText('project.cycle.schedule.next.label')}
+        </span>
+      {else}
+        <a id="next-page-execution-detail" class="next-page-execution" type="button" title="Next Execution">
+           {getText('project.cycle.schedule.next.label')}
+        </a>
+      {/if}
+
+    </div>
+  {/if}
+</div>
+{/template}

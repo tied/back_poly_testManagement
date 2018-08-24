@@ -1,0 +1,137 @@
+<dom-module id="single-select">
+    <template>
+      <custom-style>
+      <style>
+      .single-select .session-status {
+          color: white;
+          font-size: 12px;
+          font-weight: 700;
+          padding: 2px 3px 1px;
+          text-align: center;
+          width: 100px;
+          -moz-border-radius: .4em;
+          -webkit-border-radius: .4em;
+          border-radius: .4em;
+          overflow: hidden;
+      }
+      .single-select .editable-field.select {
+        display: block;
+        min-height: unset;
+      }
+
+      .single-select .editable-field {
+        box-sizing: border-box;
+        border-radius: 2.01px;
+        box-shadow: 0 0 0 1px #CCCCCC;
+        display: inline-block;
+        max-width: 100%;
+        padding: 2px 5px 2px 5px;
+        position: relative;
+        transition: box-shadow 150ms ease-in 0ms;
+        vertical-align: top;
+        min-height: 26px;
+        min-width: 80px;
+        width: 100%;
+      }
+
+      .single-select .editable-field:hover {
+        background-color: #FFFFFF;
+        box-shadow: 0 0 0 1px #CCCCCC;
+      }
+
+      .single-select .editable-field .overlay-icon {
+        box-sizing: border-box;
+        background-color: #F0F0F0;
+        background-position: 4px 4px;
+        background-repeat: no-repeat;
+        border-left: 1px solid #CCCCCC;
+        bottom: 0;
+        height: auto;
+        margin: 0;
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 24px;
+        z-index: -1;
+      }
+
+      .single-select .editable-field:hover .overlay-icon {
+        transition: opacity 150ms ease-in 0ms;
+        opacity: 1;
+        z-index: auto;
+      }
+
+      .single-select .editable-cell-container .cell-editMode {
+        position: relative;
+      }
+
+      .single-select .editable-cell-container #editMode {
+        outline : none;
+      }
+
+      .single-select .editable-cell-container .noInlineEdit .cell-editMode {
+        padding: 0px;
+      }
+
+      .single-select .update-cancel-buttons{
+        background-color: #F0F0F0;
+        border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+        border-image: none;
+        border-radius: 0 0 3px 3px;
+        border-width: medium 1px 1px;
+        box-shadow: 0 3px 6px rgba(111, 111, 111, 0.2);
+        outline: medium none;
+        padding: 3px;
+        position: absolute;
+        right: 31px;
+        z-index: 1;
+      }
+
+      .single-select .update-cancel-buttons button {
+        width: 20px;
+        height: 20px;
+        padding: 0;
+      }
+
+      .single-select .update-cancel-buttons button i {
+        font-size: 12px;
+        vertical-align: text-top;
+      }
+
+      .single-select input {
+        width : 100px;
+      }
+
+      .single-select input[type=checkbox], .single-select input[type=radio] {
+        width: 20px;
+      }
+
+      </style>
+      </custom-style>
+      <div class="cell-wrapper single-select" data-columnid="status">
+        <div class="editable-cell-container">
+          <div class="cell-readMode">
+            <div class="editable-field select" on-click="_changeMode">
+              <div class="" id="sessionStatus">
+                <template is="dom-if" if="{{readMode}}">
+                      <span>{{value}}</span>
+                </template>
+              </div>
+            </div>
+          </div>
+          <div id="editMode" tabindex="-1" on-focusout="_checkblur">
+            <template is="dom-if" if="{{editMode}}">
+              <div class="cell-editMode">
+                <select name="{{rowid}}" on-change="_handleChange">
+                  <template is="dom-repeat" items="{{cloneOptions}}">
+                    <option value="{{item.value}}" selected="{{item.selected}}">{{item.content}}</option>
+                  </template>
+                </select>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </template>
+</dom-module>

@@ -1,0 +1,134 @@
+#* @vtlvariable name="action" type="com.thed.zephyr.je.config.action.ViewZephyrTestStepStatuses" *#
+#set($i18n=$action)
+
+<!-- 
+References
+VM Page: ViewApplicationLinks.vm
+Path: atlassian-jira-5.0-beta1-source/jira-bamboo-plugin/src/main/resources/templates/plugins/bamboo/ViewApplicationLinks.vm
+
+Action / JSP:
+Viewpriorities.jsp
+ViewPriority.java
+EditPriority.java
+DeletePriority.java
+-->
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="admin.active.section" content="admin_plugins_menu/testing_section/zephyr_admin_section"/>
+    <meta name="admin.active.tab" content="zephyr_step_execution_statuses"/>
+    <title>$i18n.getText("zephyr.je.admin.plugin.step.execstatus.config.title")</title>
+</head>
+<body>
+
+<table class="jiraform maxWidth">
+	<form id="jiraform" action="DeleteZephyrTestStepStatus.jspa" method="POST">
+		<input type="hidden" name="confirm" value="true"/>
+		<input type="hidden" name="id" value="$action.id"/>
+    <tbody>
+        <tr>
+            <td class="jiraformheader" colspan="2">
+                <h3 class="formtitle formtitle-bamboo">$i18n.getText("zephyr.je.admin.plugin.step.execstatus.delete.title") $action.name</h3>
+            </td>
+        </tr>
+	
+	  #if($action.StepExecutionStatusList.size() > 0)
+		<tr class="descriptionrow">
+			<td class="jiraformheader" colspan="2">
+				<div class="desc-wrap">
+					<div class="aui-message warning">
+						<span class="aui-icon icon-warning"></span>
+						$i18n.getText("zephyr.je.admin.plugin.step.execstatus.delete.confirm.message",$action.stepsCount)
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<tr class="hidden">
+			<td colspan="2"></td>
+		</tr>
+
+		<tr>
+			<td class="fieldLabelArea"> $i18n.getText("zephyr.je.admin.plugin.execstatus.delete.matching.schedules") </td>
+			<td class="fieldValueArea">
+				<fieldset class="hidden parameters">
+					<input class="list" type="hidden" value="" title="summaries">
+					<input class="list" type="hidden" value="" title="summaries">
+					<input class="list" type="hidden" value="" title="summaries">
+					<input class="list" type="hidden" value="" title="summaries">
+					<input class="list" type="hidden" value="" title="summaries">
+					<input type="hidden" value="newId" title="paramName">
+				</fieldset>
+				<select id="newId_select" name="newId">
+				#foreach($stepExecStatus in $action.StepExecutionStatusList)
+					<option value="$stepExecStatus.id"> $stepExecStatus.name </option>
+				#end
+				</select>
+				<span id="newId_summary" class="selectDescription"></span>
+			</td>
+		</tr>
+
+		<tr class="buttons-container">
+			<td class="jiraformfooter">&nbsp;</td>
+		    <td>
+		        <div class="buttons-container">
+		            <div class="buttons">
+		                <input type="submit" 
+		                		name="Delete" 
+		                		value="$i18n.getText('zephyr.je.delete.button.title')" 
+		                		id="delete_submit"
+								accesskey="s"
+		                   		title="$i18n.getText('zephyr.je.submit.form.title')"
+			                    class="aui-button "
+		                    />
+		            
+		                <a href="ViewZephyrTestStepStatuses!default.jspa"
+		                   id="cancelButton"
+		                   class="aui-button-cancel"
+		                   accesskey="`"
+		                   title="$i18n.getText('zephyr.je.submit.form.cancel.title')"
+		                   name="ViewZephyrTestStepStatuses.jspa">$i18n.getText("zephyr.je.submit.form.cancel")
+		                </a>
+		            </div>
+		        </div>
+		
+			</td>
+		</tr>
+	 #else
+		<tr class="descriptionrow">
+			<td class="jiraformheader" colspan="2">
+				<div class="desc-wrap">
+					<div class="aui-message error">
+						<span class="aui-icon icon-error"></span>
+					</div>
+				</div>
+			</td>
+		</tr>
+
+		<tr class="buttons-container">
+			<td class="jiraformfooter">&nbsp;</td>
+		    <td>
+		        <div class="buttons-container">
+		                <a href="ViewZephyrTestStepStatuses.jspa"
+		                   id="cancelButton"
+		                   class="aui-button-cancel"
+		                   accesskey="`"
+		                   title="$i18n.getText('zephyr.je.submit.form.cancel.title')"
+		                   name="ViewZephyrTestStepStatuses.jspa">$i18n.getText('zephyr.je.submit.form.cancel')
+		                </a>
+		            </div>
+		        </div>
+		
+			</td>
+		</tr>
+
+	 #end
+	 
+	</tbody>	
+    </form>    
+</table>
+
+
+</body>
+</html>

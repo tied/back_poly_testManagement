@@ -1,0 +1,1063 @@
+{namespace ZEPHYR.Project.Cycle}
+
+
+/**
+ * Render the Cycle Header
+ * @param ctx
+ * @param cycle
+ * @param cycleId
+ * @param restUrl
+ * @param offset
+ * @param summaryList
+ * @param action
+ * @param sorter
+ * @param zqlQuery
+ */
+{template .cycleHeader}
+	<li id="cycle-{$cycleId}" class="expando">
+		<div class="zcycle-header versionBanner-header" title="{getText('project.version.expand.cycle', $cycle.name)}">
+
+            <a id="version-expando-{$cycleId}" class="versionBanner-link" href="{$restUrl}?cycleId={$cycleId}&action={$action}&offset={$offset}&sorter={$sorter}"></a>
+<!-- re-enable it once we have execNavigator
+	<a  class="versionBanner-name" title="{getText('cycle.browse.title')}" title="getText('project.version.expand.cycle', {$cycle.name})">{$cycle.name}</a>
+-->
+			<div>
+           		<a class="versionBanner-name singleLine" href='{$ctx}/secure/enav/#?{$zqlQuery}' title="{$cycle.name}">{$cycle.name}</a>
+            	<span class="versionBanner-description singleLine" title="{$cycle.description}">{$cycle.description}</span>
+            </div>
+			<div class="versionProgress" style="padding-right:55px">
+			  <table width="250" height="6" cellspacing="0" cellpadding="0" border="0" align="right" valign="middle">
+			  	<tbody>
+			  		<tr height="6">
+	            		{if $cycle.totalExecutions == 0 }
+	            			<td width="40"/>
+			           		<td width="200">{getText('cycle.header.no.schedule')}</td>
+						{else}
+							<td width="40" valign="middle" align="middle"><span class="subText" title="{getText('cycle.header.total.execution', $cycle.totalExecuted, $cycle.totalExecutions, round(($cycle.totalExecuted / $cycle.totalExecutions) * 100, 2)) }">{$cycle.totalExecuted}</span></td>
+				            {foreach $summary in $summaryList}
+								{if $summary.count > 0}
+					               <td width="{$summary.count * 160 / $cycle.totalExecutions}" bgcolor="{$summary.statusColor}">
+
+                							{call .chartImage}
+                								{param ctx: $ctx/}
+                								{param status: $summary.statusName/}
+                								{param cnt: $summary.count/}
+                								{param percent: round(($summary.count / $cycle.totalExecutions) * 100, 2)/}
+                							{/call}
+
+        						   </td>
+								{/if}
+					       {/foreach}
+					       <td width="50" valign="middle" align="right"><span class="subText" title="{getText('cycle.header.total.percent.execution', round($cycle.totalExecuted*100/$cycle.totalExecutions, 2))}">&nbsp;&nbsp;
+					       {if $cycle.totalExecutions > 0 }
+					       		{round($cycle.totalExecuted*100/$cycle.totalExecutions, 2)}
+					       {/if}
+					       %</span>
+				       </td>
+					   {/if}
+			        </tr>
+			    </tbody>
+			  </table>
+				  <div class="cycle-manage" id="cycle-{$cycleId}-operations">
+				  	<a class="cycle-operations-trigger">
+	    				<span class="icon icon-manage"></span>
+	    				/*<span class="icon twixi-opened"></span>*/
+	    			</a>
+	    			<div class="cycle-operations-list aui-list">
+				        <ul class="aui-list-section aui-first">
+				            <li class="aui-list-item"><a class="aui-list-item-link cycle-operations-add-tests" href="#">{getText('cycle.operation.add.tests.label')}</a></li>
+				            {if $cycleId != -1}
+				            	<li class="aui-list-item"><a class="aui-list-item-link cycle-operations-edit" href="#">{getText('cycle.operation.edit.label')}</a></li>
+				            	<li class="aui-list-item"><a class="aui-list-item-link cycle-operations-delete" href="#">{getText('cycle.operation.delete.label')}</a></li>
+				            {/if}
+				            <li class="aui-list-item"><a class="aui-list-item-link cycle-operations-export" href="#">{getText('cycle.operation.export.label')}</a></li>
+				        </ul>
+					{if $cycleId != -1}
+				        <ul class="aui-list-section">
+				            <li class="aui-list-item"><a class="aui-list-item-link cycle-operations-clone-cycle" href="#">{getText('cycle.operation.clone.cycle.label')}</a></li>
+				        </ul>
+					{/if}
+					{if $cycle.totalExecutions > 1}
+					<ul class="aui-list-section">
+						<li class="aui-list-item"><a class="aui-list-item-link cycle-operations-revert-executions-order" href="#">{getText('cycle.operation.original.executions.label')}</a></li>
+			            <li class="aui-list-item"><a class="aui-list-item-link cycle-operations-reorder-executions" href="#">{getText('cycle.operation.reorder.executions.label')}</a></li>
+			        </ul>
+			        {/if}
+				    </div>
+				  </div>
+			</div>
+            <br/>
+            <div style="clear:both;" class="cycle-subbanner">
+            {if $cycle.startDate}
+            	{if $cycle.started == 'true' }
+                	<label class="versionBanner-releaseDate">{getText('cycle.startedon.label')}: <span class="date">{$cycle.startDate}</span></label>
+                {else}
+                	<label class="versionBanner-releaseDate">{getText('cycle.starton.label')}: <span class="date">{$cycle.startDate}</span></label>
+                {/if}
+            {else}
+                /*{if ($component) || ($isPersonal == true)}*/
+                    <span class="versionBanner-releaseDate">{getText('cycle.no.start.date.label')}</span>
+                /*{/if}*/
+            {/if}
+            {if $cycle.endDate}
+            	{if $cycle.ended == 'true' }
+                	<label class="versionBanner-releaseDate">{getText('cycle.endedon.label')}: <span class="date">{$cycle.endDate}</span></label>
+                {else}
+                	<label class="versionBanner-releaseDate">{getText('cycle.endon.label')}: <span class="date">{$cycle.endDate}</span></label>
+                {/if}
+            {else}
+            	<span class="versionBanner-releaseDate">{getText('cycle.no.end.date.label')}</span>
+            {/if}
+            <span class="field-group description singleLine versionBanner-createdBy">
+				<label>{getText('cycle.createdby.label')}: </label>
+				<a href='{contextPath}/secure/ViewProfile.jspa?name={$cycle.createdBy}' rel='{$cycle.createdBy}' class='user-hover'>
+				{if $cycle.createdByDisplay}
+					{$cycle.createdByDisplay}
+				{elseif $cycle.createdBy}
+					{$cycle.createdBy}
+				{/if}
+				</a>
+			</span>
+            <span class="field-group description singleLine versionBanner-build">
+        		<label>{getText('cycle.build.label')}: </label>
+        		<label class="medium-field" title="{$cycle.build}"><strong>{$cycle.build}</strong></label>
+        	</span>
+        	<span class="field-group description singleLine versionBanner-environment">
+        		<label>{getText('cycle.environment.label')}: </label>
+        		<span class="medium-field" title="{$cycle.environment}"><strong>{$cycle.environment}</strong></span>
+        	</span>
+            </div>
+        </div>
+        <div class="versionBanner-content" id="cycle-wrapper-{$cycleId}">
+        	<div class="notifications zfj-notifications" id="zfj-permission-message-bar-cycle-{$cycleId}"/>
+        </div>
+	</li>
+
+{/template}
+
+/**
+* Render chart image
+* @param? ctx
+* @param? status
+* @param? cnt
+* @param? percent
+*/
+{template .chartImage}
+	<img width="100%" height="10" border="1" src="{$ctx}/images/border/spacer.gif" class="hideOnPrint" alt="" title="{$status} {$cnt} / {$percent}%">
+{/template}
+
+
+/**
+ * Render schedule table
+ * @param schedule
+ * @param stMap
+ * @param url
+ * @param currentlySelectedScheduleId
+ * @param allStatusList
+ * @param statusIdArray
+ * @param dtStatusName
+ * @param zqlQuery
+ */
+{template .scheduleTable}
+    <tr class="schedule-wrapper-tr{if $schedule.id == $currentlySelectedScheduleId} focused{/if}">
+       {if $schedule.canViewIssue}
+            <td style="width:50px" class="summary">
+                    {if $schedule.issueKey}
+                        <a href="{$url}/browse/{$schedule.issueKey}">{$schedule.issueKey}</a>
+                    {else}
+                        {getText('zephyr.cycle.invalid')}
+                    {/if}
+            </td>
+            <td style="width:11em/* keeps width td fixed*/;">
+                <div class="field-group execution-status-container">
+                    <div id="execution-field-current-status-schedule-{$schedule.id}">
+                        <div id="executionStatus-value-schedule-{$schedule.id}" class="labels exec-status-container">
+                            <dl class="zfj-editable-field">
+                                <dt>{$dtStatusName}</dt>
+                                <dd id="current-execution-status-dd-schedule-{$schedule.id}" class="new-session-status" style="background-color:{$stMap.color};" title="{$stMap.name}{$stMap.description ? (': ' + $stMap.description) : ''}">{$stMap.name}</dd>
+                                <a id="executionStatus-labels-schedule-{$schedule.id}" type='button' class="zfj-overlay-icon zExecute icon icon-edit-sml"><span rel="{$stMap.id}">{$stMap.name}</span></a>
+                            </dl>
+                        </div>
+                    </div>
+                    <div id="execution-field-select-schedule-{$schedule.id}" style="display: none; ">
+                        <select id="exec_status-schedule-{$schedule.id}" class="select" style="width:150px; position:absolute; z-index:10;" size="4">
+                            //Following loop goes through all keys available in associative array where key = statusid. , allStatusList:allStatusesMap
+                            {foreach $iStatus in $statusIdArray}
+                                {if $stMap.id == $allStatusList[$iStatus].id}
+                                    <option value="{$stMap.id}" selected="selected" rel="{$stMap.color}" title="{$stMap.description}">{$stMap.name}</option>
+                                {else}
+                                    <option value="{$allStatusList[$iStatus].id}" rel="{$allStatusList[$iStatus].color}" title="{$allStatusList[$iStatus].description}">{$allStatusList[$iStatus].name}</option>
+                                {/if}
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+
+            </td>
+
+            <td class="summary"><a href="{$url}/browse/{$schedule.issueKey}" title="{$schedule.issueKey} - {$schedule.summary}">
+                        {if $schedule.summary}
+                            {$schedule.summary}
+                        {else}
+                            {$schedule.issueId}
+                        {/if}
+                    </a>
+            </td>
+            <td class="summary">
+                    {if $schedule.totalDefectCount >0}
+                    <div class="zfj-defect-hover" data-issueKey="{$schedule.issueKey}" data-executionId="{$schedule.id}" data-color="{$stMap.color}"><span class="aui-lozenge aui-lozenge-defects">{$schedule.executionDefectCount} | {$schedule.stepDefectCount}</span>{/if}
+                    {call .defectColumnValue}
+                            {param defects: $schedule.defects/}
+                            {param url: $url/}
+                    {/call}
+                    {if $schedule.defects}</div>{/if}
+            </td>
+            <td>{if $schedule.component} {$schedule.component} {/if}</td>
+            <td>{if $schedule.label} {$schedule.label} {/if}</td>
+            <td id="executed-by-schedule-{$schedule.id}" class="summary">
+                    {if $schedule.executedByDisplay}
+                        <a href='{contextPath}/secure/ViewProfile.jspa?name={$schedule.executedBy}' rel='{$schedule.executedBy}' class='user-hover'>{$schedule.executedByDisplay}</a>
+                    {elseif $schedule.executedBy}
+                        {$schedule.executedBy}
+                    {/if}
+            </td>
+            <td id="executed-on-schedule-{$schedule.id}">{if $schedule.executedOn} {$schedule.executedOn} {/if}</td>
+            <td style="width:60px; padding:0.3em 0.2em 0.3em 0.2em; vertical-align: middle;" class="summary">
+                <a class="zExecute aui-button" id="execution-button-{$schedule.id}" href="{$url}/secure/enav/#/{$schedule.id}?{$zqlQuery}" title="{getText('issue.schedule.execute.title')}" style="padding: 4px !important; text-align: center; vertical-align: middle;">
+                    {getText('issue.schedule.execute.button.label')}</a>
+                <a class="zExecute issue-schedule-operations" href='{$url}/rest/zephyr/latest/execution/{$schedule.id}' rel="{$schedule.id}"><span class='icon icon-delete' style="margin-left:3px; margin-top:2px;"></span></a>
+            </td>
+        </tr>
+    {else}
+       <td colspan='10' style="text-align:center;vertical-align:middle">{getText('zephyr.cycle.noPermissionOnTestAndIssue')} ({$schedule.issueKey})</td>
+    {/if}
+{/template}
+
+
+/**
+* generate schedule defect list
+* @param? defects
+* @param? url
+*/
+{template .defectColumnValue}
+	{if $defects}
+		{foreach $defect in $defects}
+			{let $defectStatus}{call convertToLowerCase data="[$defect.status]" /}{/let}
+			{if $defect.maskedIssueKey and $defect.maskedIssueKey == 'XXXXX'}
+                <span {if $defect.resolution} style="text-decoration:line-through;"{/if} data-maskedIssueKey="{$defect.maskedIssueKey}"  data-defect-resolution="{$defect.resolution}" data-issueKey="{$defect.key}" data-status="{$defect.status}" data-summary="{$defect.summary}">{$defect.maskedIssueKey}</span>
+			{else}
+			    <a {if $defect.resolution} style="text-decoration:line-through;"{/if} href="{$url}/browse/{$defect.key}" data-maskedIssueKey="" data-defect-resolution="{$defect.resolution}" data-issueKey="{$defect.key}" data-status="{$defect.status}" data-summary="{$defect.summary}">{$defect.key}</a>
+			{/if}
+	   	 	{if not isLast($defect)}, {/if}
+		{/foreach}
+	{else}
+		/*{getText('zephyr.je.defects.none')}*/
+	{/if}
+{/template}
+
+/**
+ * Render the dialog for releasing the done column as a version
+ * @param pIndex
+ * @param statuses
+ * @param issueId
+ * @param cycleId
+ * @param comments
+ * @param executionStatus
+ * @param executedBy
+ * @param executedOn
+ */
+{template .renderExecuteTestDialog}
+	<div id="execution-new">
+	 <form id="z-executetest_form-{$pIndex}" class="aui">
+	 	<input id="issueId-{$pIndex}" type="hidden" value="{$issueId}"/>
+	 	<input id="cycleId-{$pIndex}" type="hidden" value="{$cycleId}"/>
+		 <div class="zexecutetesttable">
+		 	<fieldset>
+	    		<div class="field-group">
+		                	<label for="name">{getText('enav.status.label')}:</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			  				<select id="zexecutetest-select-{$pIndex}">
+    	        				{foreach $status in $statuses}
+		  					   	 	<option id="status_detail" value="{$status.id}"
+		  					   	 	{if $executionStatus == $status.id}
+		  					   	 		selected
+		  					   	 	{/if}
+		  					   	 	><table><tr><td class="execution-status-opt-1" title="{$status.desc}">{$status.name}</td></tr></table></option>
+								{/foreach}
+							</select>
+							{if $executionStatus != -1}
+								&nbsp;&nbsp;&nbsp {getText('zephyr.je.cycle.createMoveExecutionGrid.displayExecutedBy')}: <b>{$executedBy}</b> &nbsp;&nbsp;&nbsp; {getText('zephyr.cycle.on')}: {$executedOn}
+							{/if}
+			    </div>
+	    		<div class="field-group" style="margin-top:20px">
+	   			     <label for="comments">{getText('zephyr.cycle.comments')} : </label><br/>
+	        		 <textarea name="comment_text" id="comment_textarea-{$pIndex}" rows="5" cols="30" style="width:75%;">
+	        		 	{if $comments != null}
+	        		 		{$comments}
+	        		 	{/if}
+	        		 </textarea>
+	   			 </div>
+				<div class="field-group" style="margin-top:20px">
+	   			     <label for="build">{getText('cycle.build.label')} : </label>
+	        		<input class="text" type="text" id="executetest_build-{$pIndex}" name="executetest_build" title="executetest_build" value="" style="width:25%;"/>
+	   			 </div>
+				<div class="field-group" style="margin-top:20px">
+	   			     <label for="attach">{getText('zephyr.cycle.attach')} : </label>
+	        		 <a class="issueaction-attach-file icon icon-add16" href="secure/AttachFile!default.jspa?id=10000"><span>{getText('zephyr.cycle.linkTextHidden')}</span></a>
+	   			 	 <table class="aui" style="width:75%">
+	   			 	 	<tr>
+	   			 	 		<td>{getText('zephyr.cycle.firstName')}</td>
+	   			 	 		<td>{getText('zephyr.cycle.size')}</td>
+	   			 	 		<td>{getText('zephyr.cycle.date')}</td>
+	   			 	 	</tr>
+	   			 	 	<tr>
+	   			 	 		<td>{$issueId}</td>
+	   			 	 		<td>{getText('zephyr.cycle.thisIsKey')}</td>
+	   			 	 		<td>P1</td>
+	   			 	 	</tr>
+	   			 	 </table>
+	   			 </div>
+				<div class="field-group" style="margin-top:20px">
+	   			     <label for="link">{getText('zephyr-je.pdb.importer.links.label')} : </label>
+	        		 <a class="issueaction-attach-file icon icon-add16" href="secure/LinkExistingIssue!default.jspa?id=10000"><span>{getText('zephyr.cycle.linkTextHidden')}</span></a>
+	   			 	 <table class="aui"  style="width:75%">
+	   			 	 	<tr>
+	   			 	 		<td>{getText('cycle.reorder.executions.issue.label')}</td>
+	   			 	 		<td>{getText('project.cycle.schedule.table.column.summary')}</td>
+	   			 	 		<td>{getText('project.cycle.addTests.priority.label')}</td>
+	   			 	 	</tr>
+	   			 	 	<tr>
+	   			 	 		<td>{$issueId}</td>
+	   			 	 		<td>{getText('zephyr.cycle.thisIsKey')}</td>
+	   			 	 		<td>P1</td>
+	   			 	 	</tr>
+	   			 	 </table>
+	   			 </div>
+				<div class="field-group" style="margin-top:20px">
+	   			     <label for="link">{getText('zephyr.cycle.fileNewBug')} : </label>
+	        		 <a class="issueaction-create-issue icon icon-add16" href="secure/CreateIssue!default.jspa"><span>{getText('zephyr.cycle.linkTextHidden')}</span></a>
+	   			 </div>
+	    	</fieldset>
+	 	 </div>
+	 	</form>
+	</div>
+{/template}
+
+/**
+ * Render the dialog for releasing the done column as a version
+ * @param node
+ */
+{template .deleteCycleConfirmationDialog}
+	<h2 class="dialog-title">{$node.folderId ? getText('folder.operation.delete.label') : getText('cycle.operation.delete.label')}: {$node.name}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message warning" id="">
+                	<span class="aui-icon icon-warning"></span>
+                	{$node.isFolder ? getText('folder.operation.delete.warning') : getText('cycle.operation.delete.warning')}
+            	</div>
+            </div>
+            <label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="cycle-delete-form-submit" value="{getText('common.words.delete')}" />
+	            <a href="#" class="cancel cycle-close">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+
+/**
+ * Render the dialog for moving executions to a folder
+ * @param node
+ * @param folders
+ */
+{template .moveExecutionsToFolderDialgoue}
+	<h2 class="dialog-title">{getText('project.cycle.summary.contextMenu.moveExecutions',$node.nodeObj.name)}</h2>
+	<form class="aui">
+		<div class="form-body">
+      <div class="move-select-wrapper">
+        <div>
+  			  <label> {getText('zephyr-je.pdb.importer.folderpref.label')} : </label>
+  			  <select  name='select-folder' id='select-folder'class="select">
+  					{foreach $folder in $folders}
+  			    		<option title="{$folder.folderName}" value="{$folder.folderId}">{$folder.folderName}</option>
+  			    	{/foreach}
+  				</select>
+        </div>
+        <div>
+          <input name="allExecutions" id="allExecutions" type="checkbox"/>
+          <label for="allExecutions"> {getText('zephyr.cycle.moveAllExecutions')} </label>
+        </div>
+      </div>
+      <div class="hidden">{call fetchGridToMove  data="$node"/}</div>
+      	<div id="moveExecutionsTables">
+		  <div class="grid-component" id="moveExecutionGrid"></div>
+		  <div id="moveExecutionPagination"></div>
+		</div>
+		</div>
+
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="cycle-move-executions-form-submit" value="Move" disabled/>
+	            <a href="#" class="cancel cycle-close">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+
+/**
+ * Renders the previous and next navigator
+ * @param totalPages
+ * @param selectedPage
+ * @param entriesCount
+ * @param totalCount
+ */
+{template .moveExecutionsPagination}
+<div class="pagination-wrapper-newUI" class="prev-next-container">
+	<div class="pagination">
+		<div>
+			<span>
+				{if $selectedPage == 1}
+				<span title="Not available - this is the first page" class="disabled">
+					<span class="pageNumbers">{($totalCount == 0) ? 0 : 1} - {($totalCount
+						< $entriesCount) ? $totalCount : $entriesCount}</span>
+							<span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-arrow disabled"></span>
+							<span class="ellipsis">...</span>
+					</span>
+					{else}
+					<span class="pageNumbers goToPage" data-offset=0>{($totalCount == 0) ? 0 : 1} - {($totalCount
+						< $entriesCount) ? $totalCount : $entriesCount}</span>
+							<span id="prev-page-execution" class="prev-page-execution" type="button" title="Previous Execution">
+								<span class="aui-icon aui-icon-small aui-iconfont-arrow-up prev-arrow"></span>
+								<span class="ellipsis">...</span>
+							</span>
+
+							{/if}
+					</span>
+
+					<span>
+						<span class="selected pageNumbers">{($totalCount == 0) ? 0 : $entriesCount*($selectedPage) - ($entriesCount - 1)} - {($totalCount
+							< $entriesCount*($selectedPage))
+							 ? $totalCount : $entriesCount*($selectedPage)}</span>
+						</span>
+
+						<span>
+							{if $selectedPage == $totalPages}
+							<span title="Not available - this is the first page" class="disabled">
+								<span class="ellipsis">...</span>
+								<span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow disabled"></span>
+								<span class="pageNumbers">{($totalCount == 0) ? 0 : $entriesCount*$totalPages - ($entriesCount - 1)} - {$totalCount}</span>
+							</span>
+							{else}
+
+							<span id="next-page-execution" class="next-page-execution" type="button" title="Next Execution">
+								<span class="ellipsis">...</span>
+								<span class="aui-icon aui-icon-small aui-iconfont-arrow-up next-arrow"></span>
+							</span>
+							<span class="pageNumbers goToPage" data-offset={$totalPages}>{($totalCount == 0) ? 0 : $entriesCount*$totalPages - ($entriesCount - 1)} - {$totalCount}</span>
+							{/if}
+						</span>
+		</div>
+
+
+	</div>
+	<div class="entries-per-page">
+		<div class="dropdown-Wrapper">
+			<span class="dropDown-select">{$entriesCount}</span>
+			<span class="aui-icon aui-icon-small aui-iconfont-arrow-down dropDown-Trigger"></span>
+			<div class="dropDown-container dropdown-top">
+				<div class="dropDown-options-wrapper">
+					<ul>
+						{if $entriesCount != 10}
+						<li class="chooseEntries" data-entries=10>10</li>
+						{/if} {for $i in range(2)} {if $entriesCount != ($i+1)*25}
+						<li class="chooseEntries" data-entries={($i+1)*25}>{($i+1)*25}</li>
+						{/if} {/for}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{/template}
+
+
+/**
+ * Render the dialog for releasing the done column as a version
+ * @param progress
+ * @param percent
+ * @param timeTaken
+ * @param auiclass
+ * @param warningMsg
+ * @param isFolder
+ */
+{template .deleteCycleConfirmatedDialog}
+	<h2 class="dialog-title">{$isFolder ? getText('folder.operation.delete.label') : getText('cycle.operation.delete.label')}</h2>
+	{call ZEPHYR.About.evalMessage /}
+	<form class="aui" action="#" method="post">
+		<div class="form-body">
+            <div data-value="{$progress}" class="aui-progress-indicator app-loading-progress-bar">
+                <span style="width:{$percent}%" class="aui-progress-indicator-value"></span>
+            </div>
+		    <div class="timeTaken">
+             {getText('zephyr.je.cycle.timeTaken')}: {$timeTaken}
+            </div>
+            <div id="cycle-delete-aui-message-bar">
+                <div class="aui-message {$auiclass}" id="">
+                    <span class="aui-icon icon-info"></span>
+                        {$warningMsg}
+                </div>
+            </div>
+            <label for="unresolved-ignore" id="unresolved-ignore-label">{getText('je.common.dialog.confirmation.msg')}</label>
+		</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="cycle-delete-form-submit" value="{getText('common.words.delete')}" />
+	            <a href="#" class="cancel cycle-delete">{getText('common.forms.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+{/template}
+
+/**
+ * Render the dialog as Create Cycle
+ * @param folderName
+ */
+{template .cloneFolderDialog}
+<div id="clone-folder-dialog" class="aui">
+	<h2 class="dialog-title" id="dialog-title">{getText('project.cycle.summary.contextMenu.cloneFolder')}</h2>
+	<form action="#" method="post" id="zcycle" class="aui" onsubmit="return false">
+		 {call ZEPHYR.About.evalMessage /}
+		<fieldset>
+			<div class="field-group field-row">
+				<label for="folder_name">{getText('enav.newfolder.name.label')} :<span class="aui-icon icon-required required"></span></label>
+				<input class="text large-field" type="text" id="folder_name" name="folder_name" title="{getText('zephyr.je.maxChar.tooltip', 210)}" value="Clone-{$folderName}" maxlength="210"/>
+        	</div>
+			<div class="field-group">
+				<label for="clone_customFields"> {getText('cycle.clone.custom.fields')} </label>
+				<input type="checkbox" id="clone_customFields" name="clone_customFields" title={getText( 'cycle.clone.custom.fields')}/>
+			</div>
+			<div class="buttons-container">
+				<a href="#" id="zephyr-je-dlgclose" class="cancel" title="Cancel" style="float:right;margin:5px 5px 5px 0">{getText('zephyr.je.submit.form.cancel')}</a>
+				<input class="aui-button" type="submit" id="clone-folder-form-submit" value="{getText('zephyr.je.save.button.title')}"
+				 style="float:right;margin:5px 5px 5px 0" />
+			</div>
+		</fieldset>
+	</form>
+</div>
+{/template}
+
+/**
+ * Render the dialog as Create Cycle
+ * @param projectId
+ * @param versions
+ * @param lastvisitedVersion
+ * @param cycle
+ * @param sprints
+ */
+{template .createCycleDialog}
+<div id="create-cycle-dialog" class="aui {if $cycle} clone-cycle-wrapper {/if}">
+	{if $cycle}
+	<input id="clonedFromCycle" type="hidden" value="{$cycle.id}"/>
+	{/if}
+	<h2 class="dialog-title" id="dialog-title">{$cycle ? getText('project.cycle.summary.clone.dialog.heading') : getText('project.cycle.summary.create.dialog.heading')}</h2>
+    <form action="#" method="post" id="zcycle" class="aui" onsubmit="return false">
+       {call ZEPHYR.About.evalMessage /}
+       <div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" class="form-body" style="display:none"></div>
+       <fieldset>
+		   <div class="field-group" >
+			   <label for="versionId">{getText('je.gadget.common.version.label')}</label>
+			   <select id="cycle_version" class="select">
+				   {foreach $version in $versions}
+				   <option value="{$version.id}" {if $lastvisitedVersion == $version.id}selected="selected"{/if}>{$version.name}</option>
+				   {/foreach}
+				</select>
+			</div>
+			{if $sprints.length}
+			<div class="field-group" >
+				<label for="sprintId">{getText('je.gadget.common.sprint.label')}</label>
+				<select id="cycle_sprint" class="select">
+					{foreach $sprint in $sprints}
+		    		<option value="{$sprint.id}">{$sprint.name}</option>
+					{/foreach}
+				</select>
+			</div>
+			{/if}
+			<div class="field-group">
+				<label for="cycle_name">{getText('cycle.name.label')}<span class="aui-icon icon-required required"></span></label>
+				<input class="text large-field" type="text" id="cycle_name" name="cycle_name" title="{getText('zephyr.je.maxChar.tooltip', 210)}" value="{$cycle?$cycle.name:''}" maxlength="210"/>
+			</div>
+			<div class="field-group">
+				<label for="cycle_description">{getText('cycle.description.label')}</label>
+				<textarea rows="2" class="textarea large-field" id="cycle_description" name="cycle_description" title="{getText('zephyr.je.maxChar.tooltip', 255)}" maxlength="255">{$cycle ?$cycle.description:''}</textarea>
+			</div>
+			<div class="field-group">
+				<label for="build">{getText('cycle.build.label')}</label>
+				<input class="text large-field" type="text" id="cycle_build" name="cycle_build" title="{getText('zephyr.je.maxChar.tooltip', 255)}" value="{$cycle?$cycle.build:''}" maxlength="255"/>
+			</div>
+			<div class="field-group">
+				<label for="environment">{getText('cycle.environment.label')}</label>
+				<input class="text large-field" type="text" id="cycle_environment" name="cycle_environment" title="{getText('zephyr.je.maxChar.tooltip', 255)}" value="{$cycle?$cycle.environment:''}" maxlength="255" />
+			</div>
+			<div class="field-group aui-field-datepicker">
+				<label for="cycle_startDate">{getText('cycle.start.date.label')}</label>
+				<input class="text large-field" id="cycle_startDate" name="cycle_startDate" type="text" value="{$cycle?$cycle.startDate:''}" />
+				<a href="#" id="startDate-trigger" title="Select a date">
+					<span class="aui-icon icon-date">{getText('cycle.select.date.label')}</span>
+				</a>
+				<script type="text/javascript">
+    			Calendar.setup({lb}
+				firstDay : 0,
+				inputField : "cycle_startDate",
+				button : "startDate-trigger",
+				align : "Br",
+				singleClick : true,
+				ifFormat : AJS.params.zdateformat
+    			{rb});
+				</script>
+    	</div>
+    	<div class="field-group aui-field-datepicker" >
+			<label for="cycle_endDate">{getText('cycle.end.date.label')}</label>
+    		<input class="text large-field" id="cycle_endDate" name="cycle_endDate" type="text" value="{$cycle?$cycle.endDate:''}" />
+    		<a href="#" id="endDate-trigger" title="Select a date">
+				<span class="aui-icon icon-date">{getText('cycle.select.date.label')}</span>
+    		</a>
+    		<script type="text/javascript">
+    			Calendar.setup({lb}
+				firstDay : 0,
+				inputField : 'cycle_endDate',
+				button : 'endDate-trigger',
+				align : 'Br',
+				singleClick : true,
+				singleClick : true,
+				ifFormat : AJS.params.zdateformat
+    			{rb});
+				</script>
+		</div>
+		{if $cycle}
+			 <div class="field-group">
+				 <label for="clone_customFields"> {getText('cycle.clone.custom.fields')} </label>
+				 <input type="checkbox" id="clone_customFields" name="clone_customFields" title={getText('cycle.clone.custom.fields')}/>
+			 </div>
+		 {/if}
+		<div class="buttons-container">
+			<a href="#" id="zephyr-je-dlgclose" class="cancel" title="Cancel" style="float:right;margin:5px 5px 5px 0">{getText('zephyr.je.submit.form.cancel')}</a>
+    		<input class="aui-button" type="submit" id="cycle-create-form-submit-{$projectId}" value="{getText('zephyr.je.save.button.title')}" style="float:right;margin:5px 5px 5px 0"/>
+         </div>
+    </fieldset>
+    </form>
+</div>
+{/template}
+
+
+/**
+ * Render the dialog as Edit Cycle
+ * @param projectId
+ * @param versions
+ * @param cycle
+ * @param sprints
+ */
+{template .editCycleDialog}
+<div id="create-cycle-dialog" class="aui">
+	<h2 class="dialog-title" id="dialog-title">{getText('project.cycle.summary.edit.dialog.heading')}</h2>
+    <form action="#" method="post" id="zcycle" class="aui">
+       {call ZEPHYR.About.evalMessage /}
+       <div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" class="form-body" style="display:none"></div>
+       <fieldset>
+        <div class="field-group" >
+            <label for="versionId">{getText('je.gadget.common.version.label')}</label>
+				<select id="cycle_version" class="select">
+					{foreach $version in $versions}
+			    		<option value="{$version.id}" {if $cycle.versionId == $version.id}selected="selected"{/if}>{$version.name}</option>
+			    	{/foreach}
+				</select>
+		</div>
+		{if $sprints.length}
+		 <div class="field-group" >
+            <label for="sprintId">{getText('je.gadget.common.sprint.label')}</label>
+			<select id="cycle_sprint" class="select">
+				{foreach $sprint in $sprints}
+		    		<option value="{$sprint.id}" {if $cycle.sprintId == $sprint.id}selected="selected"{/if}>{$sprint.name}</option>
+		    	{/foreach}
+			</select>
+		</div>
+		{/if}
+		<div class="field-group">
+            <label for="cycleName">{getText('cycle.name.label')}<span class="aui-icon icon-required required"></span></label>
+            <input class="text large-field" type="text" id="cycle_name" name="cycle_name" title="{getText('zephyr.je.maxChar.tooltip', 210)}" value="{$cycle.name}" maxlength="210"/>
+        </div>
+        <div class="field-group">
+            <label for="cycle_description">{getText('cycle.description.label')}</label>
+            <textarea rows="2" class="textarea large-field"  id="cycle_description" name="cycle_description" maxlength="255" title="{getText('zephyr.je.maxChar.tooltip', 255)}">{$cycle.description?$cycle.description:''}</textarea>
+        </div>
+        <div class="field-group">
+            <label for="build">{getText('cycle.build.label')}</label>
+            <input class="text large-field" type="text" id="cycle_build" name="cycle_build" value="{$cycle.build}" maxlength="255" title="{getText('zephyr.je.maxChar.tooltip', 255)}"></input>
+        </div>
+        <div class="field-group">
+            <label for="environment">{getText('cycle.environment.label')}</label>
+            <input class="text large-field" type="text" id="cycle_environment" name="cycle_environment" title="{getText('zephyr.je.maxChar.tooltip', 255)}" maxlength="255" value="{$cycle.environment}"/>
+        </div>
+       	<div class="field-group aui-field-datepicker">
+    		<label for="cycle_startDate">{getText('cycle.start.date.label')}</label>
+    		<input class="text large-field" id="cycle_startDate" name="cycle_startDate" type="text" value="{$cycle.startDate}">
+    		<a href="#" id="startDate-trigger" title="Select a date">
+    			<span class="aui-icon icon-date">{getText('cycle.select.date.label')}</span>
+    		</a>
+    		<script type="text/javascript">
+    			Calendar.setup({lb}
+    				firstDay : 0,
+    				inputField : "cycle_startDate",
+    				button : "startDate-trigger",
+    				align : "Br",
+    				singleClick : true,
+    				ifFormat : AJS.params.zdateformat
+    			{rb});
+    		</script>
+    	</div>
+    	<div class="field-group aui-field-datepicker" >
+    		<label for="cycle_endDate">{getText('cycle.end.date.label')}</label>
+    		<input class="text large-field" id="cycle_endDate" name="cycle_endDate" type="text" value="{$cycle.endDate}" />
+    		<a href="#" id="endDate-trigger" title="Select a date">
+    			<span class="aui-icon icon-date">{getText('cycle.select.date.label')}</span>
+    		</a>
+    		<script type="text/javascript">
+    			Calendar.setup({lb}
+    				firstDay : 0,
+    				inputField : 'cycle_endDate',
+    				button : 'endDate-trigger',
+    				align : 'Br',
+    				singleClick : true,
+    				ifFormat : AJS.params.zdateformat
+    			{rb});
+    		</script>
+    	</div>
+		<div class="buttons-container">
+			<a href="#" id="zephyr-je-dlgclose" class="cancel" title="Cancel" style="float:right;margin:5px 5px 5px 0">{getText('zephyr.je.submit.form.cancel')}</a>
+    		<input class="aui-button" type="submit" id="cycle-create-form-submit-{$projectId}" value="{getText('zephyr.je.save.button.title')}" style="float:right;margin:5px 5px 5px 0"/>
+         </div>
+    </fieldset>
+    </form>
+</div>
+{/template}
+
+
+/**
+ * Render the Add individual tests form, gets added in panel body
+ * @param projectId
+ * @param contextPath
+ */
+{template .addTestsToCycleDialog}
+<div id="zephyr-je-add-tests" class="aui" style="padding-top:20px">
+    <form action="#" method="post" id="addTests" class="aui" onsubmit="return false;">
+       <div class="form-body" id="zephyr-aui-message-bar"></div>
+       <fieldset>
+			<div class="field-group add-test-individually-field-group">
+                  <label class="add-test-individually-label" for="defects">{getText('zephyr.issuetype.testcase')}</label>
+				  <select name="zephyr-je-testkey" id="zephyr-je-testkey" multiple="multiple"
+						class="aui-field-tescasepickers hidden" style="width:500px;" size="4"
+								data-ajax-options.data.current_jql="type=Test"
+						        data-remove-on-un-select="true"
+								data-ajax-options.query="true"
+								data-ajax-options.data.current-issue-key=""
+								data-ajax-options.url="{$contextPath}/rest/zephyr/latest/issues"
+								data-ajax-options.data.current-project-id="{$projectId}">
+            	  </select>
+            	  <div class="description" style="width:350px">{getText('cycle.add.test.tooltip.label')}</div>
+			</div>
+			<!--<div id="add-tests-cycle-assignee-container-individual" />-->
+      <div class="addTest-exec-assignee">
+          <div class="field-group add-test-individually-field-group" id="zephyr-je-execution-assignee-individual">
+              <label for="exec-assignee-wrapper">{getText('zephyr.cycle.assignedTo')}</label>
+              <div id="exec-assignee-wrapper" class="exec-assignee-wrapper" />
+          </div>
+      </div>
+	  </fieldset>
+</form>
+</div>
+{/template}
+
+/**
+ * Render the Add tests from saved searches form, gets added in panel body
+ */
+{template .addTestsFromSavedSearchToCycleDialog}
+<div id="zephyr-je-add-tests" class="aui" style="padding-top:20px">
+    <form action="#" method="post" id="addTests" class="aui"  onsubmit="return false;">
+       <div id="zephyr-aui-message-bar" class="form-body"></div>
+       <fieldset>
+       		<div class="field-group aui-field-filterpicker frother-control-renderer">
+                  <label for="addTestsSavedSearch">{getText('project.cycle.version.savedSearchCombo.label')}</label>
+			  	  <select name="addTestsSavedSearch" id="addTestsSavedSearch"
+						class="hidden" type="multiple" multiple="multiple" style="width:580px;" size="4">
+                  </select>
+                  <div class="description" style="width:350px">{getText('cycle.add.test.byFilter.tooltip.label')}</div>
+			</div>
+			<!--<div id="add-tests-cycle-assignee-container-filter" />-->
+      <div class="addTest-exec-assignee">
+          <div class="field-group" id="zephyr-je-execution-assignee-filter">
+              <label for="exec-assignee-wrapper">{getText('zephyr.cycle.assignedTo')}</label>
+              <div id="exec-assignee-wrapper" class="exec-assignee-wrapper" />
+          </div>
+      </div>
+			<br>
+			<div class="mod-content">
+				  <ul class="item-details">
+    				<li>
+                		<dl class="hidden">
+				            <dt>{getText('common.concepts.description')}:</dt>
+				            <dd id="savedSearch-description"/>
+				        </dl>
+						<dl class="hidden">
+							<dt>{getText('project.cycle.version.savedSearch.total.tests')}:</dt>
+							<dd id="savedSearch-count"/>
+							</dd>
+						</dl>
+					</li>
+				  </ul>
+			</div>
+	  </fieldset>
+</form>
+</div>
+{/template}
+
+/**
+ * Render the Add tests from previous cycle form, gets added in panel body
+ * @param criteriaInfo
+ */
+{template .addTestsFromPreviousCycleDialog}
+<div id="zephyr-je-add-tests" class="aui add-tests-cycle-prev-container">
+    <form action="#" method="post" id="addTests" class="aui"  onsubmit="return false;">
+       <div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar" class="form-body"></div>
+       <fieldset>
+			<div class="field-group">
+                  <label for="addTestsVersion">{getText('project.cycle.version.selection.label')}</label>
+				  <select id="addTestsVersion" class="select"></select>
+			</div>
+			<div class="field-group">
+                  <label for="addTestsCycle">{getText('project.cycle.addTests.cycle.label')}</label>
+				  <select id="addTestsCycle" class="select"/>
+			</div>
+			<div class="field-group">
+                <label for="addTestsFolder">{getText('execute.dialog.execute.folder.label')}</label>
+            	<select id="addTestsFolder" class="select"/>
+            </div>
+			<!--<div id="add-tests-cycle-assignee-container-prev" />-->
+      <div class="addTest-exec-assignee">
+          <div class="field-group" id="zephyr-je-execution-assignee-prev">
+              <label for="exec-assignee-wrapper">{getText('zephyr.cycle.assignedTo')}</label>
+              <div id="exec-assignee-wrapper" class="exec-assignee-wrapper" />
+          </div>
+      </div>
+			<div class="module toggle-wrap expanded" id="add-tests-cycle-prev-module">
+				<div id="add-tests-cycle-prev-module-heading" class="mod-header">
+					<h3 class="toggle-title"><strong>{getText('zephyr-je.pdb.cycle.operation.add.tests.prev.filter.label')}</strong></h3>
+				</div>
+				<div class="mod-content">
+					<label for="addTestsCycle">{getText('project.cycle.addTests.filter.label')}</label>
+					<div class="field-group aui-field-prioritypicker frother-control-renderer add-tests-cycle-prev-module-grp">
+						<label for="addTestsPriority">{getText('project.cycle.addTests.priority.label')}</label>
+						<select class="select  hidden" id="addTestsPriority" multiple="multiple" name="priorities" data-remove-null-options="true">
+							<optgroup label="{getText('project.cycle.addTests.priority.label')}">
+								{foreach $prioritiy in $criteriaInfo.priorities}
+							  		<option value="{$prioritiy.id}">{$prioritiy.name}</option>
+							  	{/foreach}
+							</optgroup>
+		    			</select>
+						<div class="description">{getText('generic.picker.static.desc')}</div>
+					</div>
+					<div class="field-group aui-field-executionstatuspicker frother-control-renderer add-tests-cycle-prev-module-grp">
+						<label for="addTestsExecutionStatus">{getText('execute.test.executionstatus.label')}</label>
+						<select class="select  hidden" id="addTestsExecutionStatus" multiple="multiple" name="executionstatuses" data-remove-null-options="true">
+							<optgroup label="{getText('execute.test.executionstatus.label')}">
+								{foreach $status in $criteriaInfo.executionStatuses}
+							  		<option value="{$status.id}"><font color="{$status.color}">{$status.name}</font></option>
+							  	{/foreach}
+							</optgroup>
+		    			</select>
+						<div class="description">{getText('generic.picker.static.desc')}</div>
+					</div>
+					 <div class="field-group aui-field-componentpicker frother-control-renderer add-tests-cycle-prev-module-grp">
+						<label for="addTestsComponent">{getText('project.cycle.schedule.table.column.component')}</label>
+						<select class="select  hidden" id="addTestsComponent" multiple="multiple" name="components" data-remove-null-options="true">
+							<optgroup label="{getText('project.cycle.schedule.table.column.component')}">
+								{foreach $component in $criteriaInfo.components}
+							  		<option value="{$component.id}">{$component.name}</option>
+							  	{/foreach}
+							</optgroup>
+		    			</select>
+						<div class="description">{getText('generic.picker.static.desc')}</div>
+					</div>
+					<div class="field-group aui-field-labelpicker frother-control-renderer add-tests-cycle-prev-module-grp">
+						<label for="addTestsLabels">{getText('project.cycle.schedule.table.column.label')}</label>
+						{if $criteriaInfo.labels}
+						<select class="select  hidden" id="addTestsLabels" multiple="multiple" name="labels" data-remove-null-options="true">
+							<optgroup label="{getText('project.cycle.schedule.table.column.label')}">
+								{foreach $label in $criteriaInfo.labels}
+							  		<option value="{$label.id}">{$label.name}</option>
+							  	{/foreach}
+							</optgroup>
+		    			</select>
+		    			{/if}
+						<div class="description">{getText('generic.picker.static.desc')}</div>
+					</div>
+					<div>
+						<div class="checkbox flex" style="flex-direction: row-reverse; justify-content: flex-end;">
+							<input class="checkbox" type="checkbox" id="addCustomFields" name="{getText('project.cycle.addTests.customFields.label')}" style="position: static; margin-left: 10px"/>
+							<label for="addCustomFields">{getText('project.cycle.addTests.customFields.label')}</label>
+						</div>
+					</div>
+					<div class="checkbox flex" style="flex-direction: row-reverse; justify-content: flex-end;">
+					    <input class="checkbox" type="checkbox" id="addTestDefects" name="{getText('project.cycle.addTests.linkedDefects.label')}" style="position: static; margin-left: 10px"/>
+					    <label for="addTestDefects">{getText('project.cycle.addTests.linkedDefects.label')}</label>
+					</div>
+					<div class="field-group aui-field-statuspicker frother-control-renderer hidden add-tests-cycle-prev-module-grp" style="padding-left:180px;">
+						<label for="addTestsStatus">{getText('project.cycle.addTests.linkedDefects.withRes.label')}</label>
+						<select class="select  hidden" id="addTestsStatus" multiple="multiple" name="labels" data-remove-null-options="true">
+							<optgroup label="{getText('project.cycle.addTests.linkedDefects.withRes.label')}">
+								{foreach $label in $criteriaInfo.issueStatuses}
+							  		<option value="{$label.id}">{$label.name}</option>
+							  	{/foreach}
+							</optgroup>
+		    			</select>
+						<div class="description">{getText('generic.picker.static.desc')}</div>
+					</div>
+				</div>
+			</div>
+	  </fieldset>
+</form>
+</div>
+{/template}
+
+/**
+ * Render the dialog for releasing the done column as a version
+ * @param warningMsg
+ * @param progress
+ * @param percent
+ * @param timeTaken
+ * @param title
+ */
+{template .warningDialogContent autoescape="false"}
+	<h2 class="dialog-title">{$title ? $title : getText('cycle.operation.add.tests.heading')}</h2>
+	<form class="aui" action="#" method="post">
+		{call ZEPHYR.About.evalMessage /}
+		<div class="form-body">
+            <div data-value="{$progress}" class="aui-progress-indicator app-loading-progress-bar">
+                <span style="width:{$percent}%" class="aui-progress-indicator-value"></span>
+            </div>
+            <div class="timeTaken">
+             {getText('zephyr.je.cycle.timeTaken')}: {$timeTaken}
+            </div>
+			<div id="cycle-aui-message-bar">
+				<div class="aui-message info" id="">
+                	<span class="aui-icon icon-info"></span>
+                		{$warningMsg}
+            	</div>
+            </div>
+		</div>
+	</form>
+{/template}
+
+/**
+ * Render the dialog for reorder executions
+ */
+{template .reorderExectionDialog2}
+<section role="dialog" id="reorder-executions-dialog" class="zephyr-dialog2 aui-layer aui-dialog2 aui-dialog2-xxlarge" aria-hidden="true">
+    <!-- Dialog header -->
+    <header class="aui-dialog2-header">
+        <!-- The dialogs title -->
+       <h1 class="aui-dialog2-header-main">{getText('cycle.operation.reorder.executions.label')}</h1>
+    </header>
+    <!-- Main dialog content -->
+    <div class="aui-dialog2-content">
+        {call .renderReorderExeTable/}
+    </div>
+    <!-- Dialog footer -->
+    <footer class="aui-dialog2-footer">
+        <!-- Actions to render on the right of the footer -->
+        <div class="aui-dialog2-footer-actions">
+            <input class="aui-button submit" type="button" id="reorder-executions-dialog-save" value="{getText('zephyr.je.save.button.title')}">
+			<a class="aui-button aui-button-link close-dialog" id="reorder-executions-dialog-close" type="button">{getText('zephyr.je.submit.form.cancel')}</a>
+	     </div>
+    </footer>
+</section>
+{/template}
+
+/**
+ * Render the dialog for reorder executions
+ */
+{template .reorderExectionDialog}
+<div id="reorder-executions-dialog">
+   <h2 class="dialog-title">{getText('cycle.operation.reorder.executions.label')}</h2>
+	<form class="aui" action="#">
+		<div class="reorder-executions-wrapper">
+		   {call .renderReorderExeTable/}
+    	</div>
+		<div class="form-footer buttons-container">
+	        <div class="buttons">
+	            <input class="button" type="submit" id="bulk-update-status-form-submit" value="{getText('zephyr.je.save.button.title')}" />
+	            <a href="#" class="cancel">{getText('zephyr.je.submit.form.cancel')}</a>
+	        </div>
+	    </div>
+	</form>
+</div>
+{/template}
+
+/**
+* Renders reorder Execution Table
+*/
+{template .renderReorderExeTable}
+	{call ZEPHYR.About.evalMessage /}
+    <div class="zephyr-aui-message-bar" id="zephyr-aui-message-bar"></div>
+    <div>{getText('project.cycle.schedule.reorder.msg')}</div>
+    <table id="reorder-executions-table" class="aui">
+        <thead>
+            <tr>
+                <th><!-- order --></th>
+                <th></th>
+                <th class="reorder-issue-key">{getText('cycle.reorder.executions.issue.label')}</th>
+                <th class="reorder-exec-status">{getText('project.cycle.schedule.table.column.status')}</th>
+                <th class="reorder-summary">{getText('project.cycle.schedule.table.column.summary')}</th>
+                <th class="reorder-executed-by">{getText('project.cycle.schedule.table.column.executedBy')}</th>
+                <th class="reorder-executed-on">{getText('project.cycle.schedule.table.column.executedOn')}</th>
+            </tr>
+        </thead>
+        <tbody class="ui-sortable"></tbody>
+    </table>
+{/template}
+
+/**
+ * Render the dialog for reorder executions
+ * @param execution
+ * @param status
+ * @param contextPath
+ */
+{template .reorderExecutionContent}
+	<td class="reorder-draghandler"><span></span></td>
+	<td class="reorder-orderId">{$execution.position + 1}</td>
+	{if $execution.canViewIssue}
+        <td class="reorder-issue-key"><a href="{$contextPath}/browse/{$execution.issueKey}">{$execution.issueKey}</a></td>
+        <td class="reorder-exec-status">
+            <div class="labels exec-status-container">
+                <dl>
+                    <dt>{getText('project.cycle.schedule.table.column.status')}</dt>
+                    <dd title="{$status[$execution.executionStatus].description}" style="background-color:{$status[$execution.executionStatus].color};" class="new-session-status">{$status[$execution.executionStatus].name}</dd>
+                </dl>
+            </div>
+        </td>
+        <td class="reorder-summary"><a title="{$execution.issueKey} - {$execution.summary}" href="{$contextPath}/browse/{$execution.issueKey}">{$execution.summary}</a></td>
+        <td class="reorder-executed-by">
+        {if $execution.executedByDisplay}
+            <a href='{$contextPath}/secure/ViewProfile.jspa?name={$execution.executedBy}'>{$execution.executedByDisplay}</a>
+        {elseif $execution.executedBy}
+            {$execution.executedBy}
+        {/if}
+        </td>
+        <td class="reorder-executed-on">{if $execution.executedOn} {$execution.executedOn} {/if}</td>
+    {else}
+         <td colspan='7' style="text-align:center;vertical-align:middle" class="new-session-status">{getText('zephyr.cycle.noPermissionOnTestAndIssue')} ({$execution.issueKey})</td>
+    {/if}
+{/template}

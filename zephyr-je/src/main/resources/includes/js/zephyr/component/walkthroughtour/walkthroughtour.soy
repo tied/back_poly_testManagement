@@ -1,0 +1,226 @@
+{namespace ZEPHYR.Templates.WalkThroughTour}
+
+/**
+ * Renders a table of selected Projects.
+ * @param elementData
+ * @param isLast
+ * @param skipFirstTime
+ * @param showMoreOptionsFlag
+ */
+{template .walkThroughTourContainer autoescape="true"}
+<div class="walkThroughOuterContainer" id="walk-through-tour">
+    <div class="element-outer-container" id="element-to-show">
+    </div>
+    <div class="walk-through-data-card" id="walk-through-data-catd-container">
+        <div class="walk-through-description" id="element-description">
+        </div>
+        <div class="button-container">
+            <div class="tour-close-button">
+                <div class="close-container">
+                    {if $skipFirstTime}
+                        <span class="link skip-link" onClick="manualStartTourPopup()">
+                            {getText('wlkthrough.templateText.skip')}
+                        </span>
+                    {else}
+                        <span class="link skip-link" onClick="closeClicked()">
+                            {getText('wlkthrough.templateText.skip')}
+                        </span>
+                    {/if}
+                </div>
+                <div class="close-more-page-vertical-line">
+                </div>
+                {if $showMoreOptionsFlag == true}
+                    <div class="next-page-container" onClick="navigatePage()">
+                        <span id="show-more-button" class="link show-more-link">
+                            {getText('wlkthrough.templateText.showMorePage')}
+                        </span>
+                    </div>
+                {else}
+                    <div class="next-page-container">
+                        <span id="show-more-button" class="show-more-link-disable">
+                            {getText('wlkthrough.templateText.showMorePage')}
+                        </span>
+                    </div>
+                {/if}
+            </div>
+
+            {if $elementData.link}
+                <div class="go-to-button-container" onClick="linkTo()">
+                    <span id="tour-next-page-button">{getText('wlkthrough.templateText.goTo')} {$elementData.linkName}</span>
+                </div>
+            {elseif $isLast}
+                <div class="next-feature-container" onClick="navigatePage()">
+                    <span id="tour-last-button">{getText('wlkthrough.templateText.nextFeature')}</span>
+                </div>
+            {else}
+                <div class="next-feature-container" onClick="walkThroughBodyclick()">
+                    <span id="tour-next-button">{getText('wlkthrough.templateText.nextFeature')}</span>
+                </div>
+            {/if}
+        </div>
+    </div>
+    <div class="square-pointer" id="square-pointer"></div>
+</div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ * @param pagesUrlDetails
+ */
+{template .walkThroughPageNavigation autoescape="true"}
+<div class="walkThroughOuterContainer" id="walk-through-tour">
+    <div class="navigation-inner-container">
+        <div class="close-button-container" onClick="closeWalkThroughTour()">
+            <div class="close-button">
+                <span class="aui-icon aui-icon-small aui-iconfont-remove-label cross-icon"></span>
+            </div>
+        </div>
+        <div class="page-options-image-container">
+        </div>
+        <div class="page-options-heading">
+            {getText('wlkthrough.templateText.otherPageFirstHalf')} <b>{getText('wlkthrough.templateText.otherPageSecondHalf')}</b>
+        </div>
+        <div class="other-pages-options-container">
+            {foreach $page in $pagesUrlDetails}
+                <div class="page-option" onClick='changePage("{$page.url}", "{$page.toPage  }")'>
+                     {$page.title}
+                </div>
+                <!-- <a class="page-option" href={$page.url}>
+                    {$page.title}
+                </a> -->
+            {/foreach}
+        </div>
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ */
+{template .manualStartTourPopup autoescape="true"}
+<div class="walkThroughOuterContainer" id="walk-through-tour">
+    <div class="navigation-inner-container">
+        <div class="close-button-container" onClick="closeWalkThroughTour()">
+            <div class="close-button">
+                <span class="aui-icon aui-icon-small aui-iconfont-remove-label cross-icon"></span>
+            </div>
+        </div>
+        <div class="knowledge-tour-icon-image">
+        </div>
+        <div class="page-options-heading">
+            {getText('wlkthrough.templateText.startTourFirstHalf')} <b>{getText('wlkthrough.templateText.startTourSecondtHalf')}</b>
+        </div>
+        <div class="close-feature-outer-container">
+            <div class="next-feature-container close-feature-container" onClick="closeClicked()">
+                <span id="tour-next-button">{getText('wlkthrough.templateText.gotIt')}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ * @param linkDetails
+ */
+{template .changePagePopup autoescape="true"}
+<div class="walkThroughOuterContainer" id="walk-through-tour">
+    <div class="link-popup">
+        <div class="popup-description-container">
+            {getText('wlkthrough.templateText.redirectingStartingText')} <b>{getText('wlkthrough.templateText.redirectingMiddleText')} {$linkDetails.linkName}</b> {getText('wlkthrough.templateText.redirectingLastText')}
+        </div>
+        <div class="popup-button-container">
+            <div class="tour-close-button">
+                <div class="close-container">
+                    <span class="link" id="tour-close-button" onClick="closeWalkThroughTour()">{getText('zephyr.je.submit.form.cancel')}</span>
+                </div>
+                <div class="close-more-page-vertical-line">
+                </div>
+                <div class="next-page-container">
+                    <span class="link" id="show-more-page-button" onClick="navigatePage()">{getText('wlkthrough.templateText.showMorePage')}</span>
+                </div>
+            </div>
+            <div class="tour-next-button-container">
+                <div class="reverse-link" onClick="linkTo()">
+                    {getText('wlkthrough.templateText.goTo')} {$linkDetails.linkName}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ */
+{template .walkThroughToggleOptions autoescape="true"}
+<div id="tour-options-outer-container">
+    <div class="dropdown-up-arrow"></div>
+    <div class="walkThroughToggleOptionsContainer" id="walk-through-toggle-container">
+        <div class="walkThroughOption" onClick="startTour(this)">
+            <div class="walk-through-options take-tour-icon-container">
+            </div>
+            <div class="take-tour-label">
+            {getText('wlkthrough.templateText.takeFeatureTour')}
+            </div>
+        </div>
+        <div class="walkThroughOption" onClick="newPageLayoutStart()">
+            <div class="walk-through-options page-layout-icon-container">
+            </div>
+            <div class="take-tour-label">
+                {getText('wlkthrough.templateText.showNewPageFeatures')}
+            </div>
+        </div>
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ */
+{template .newPageLayout autoescape="true"}
+<div class="newPageLayoutBackground" id="new-page-layout-background">
+    <div class="closeNewPageLayour" id="close-new-page-layout" onClick="closeNewPageLayout()">
+        <div class="closeIcon">
+            <span class="aui-icon aui-icon-small aui-iconfont-remove-label cancel-icon"></span>
+        </div>
+        <div class="closeDescription">
+            {getText('zephyr.je.submit.form.cancel')}
+        </div>
+    </div>
+
+</div>
+{/template}
+
+/**
+ * Renders a table of selected Projects.
+ * @param counter
+ * @param element
+ */
+{template .newPageLayoutEmenent autoescape="true"}
+<div>
+    <div class="newPageLayoutElement" id='new-page-layout-element-{$counter}'>
+
+    </div>
+    <div class="descriptionContainer" id="new-page-layout-element-description-{$counter}">
+        
+    </div>
+    {if $element.direction == 'top-left'}
+        <div class="top-left" id="new-page-layout-element-arrow-{$counter}">
+
+        </div>
+    {elseif $element.direction == 'top-right'}
+        <div class="top-right" id="new-page-layout-element-arrow-{$counter}">
+
+        </div>
+    {elseif $element.direction == 'down-left'}
+        <div class="down-left" id="new-page-layout-element-arrow-{$counter}">
+
+        </div>
+    {elseif $element.direction == 'down-right'}
+        <div class="down-right" id="new-page-layout-element-arrow-{$counter}">
+
+        </div>
+    {/if}
+</div>
+{/template}

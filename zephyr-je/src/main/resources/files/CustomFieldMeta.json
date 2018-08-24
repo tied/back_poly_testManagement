@@ -1,0 +1,69 @@
+{
+	"data": {
+		"customFields": [
+			{
+				"imageClass": "checkbox",
+				"label": "admin.customfield.type.multicheckboxes.name",
+				"description": "admin.customfield.type.multicheckboxes.desc",
+				"options": true,
+				"type": "CHECKBOX"
+			},
+			{
+				"imageClass": "datePicker",
+				"label": "admin.customfield.type.datepicker.name",
+				"description": "admin.customfield.type.datepicker.desc",
+				"options": false,
+				"type": "DATE"
+			},
+			{
+				"imageClass": "dateTimePicker",
+				"label": "admin.customfield.type.datetime.name",
+				"description": "admin.customfield.type.datetime.desc",
+				"options": false,
+				"type": "DATE_TIME"
+			},
+			{
+				"imageClass": "numberField",
+				"label": "admin.customfield.type.float.name",
+				"description": "admin.customfield.type.float.desc",
+				"options": false,
+				"type": "NUMBER"
+			},
+			{
+				"imageClass": "radioButtons",
+				"label": "admin.customfield.type.radiobuttons.name",
+				"description": "admin.customfield.type.radiobuttons.desc",
+				"options": true,
+				"type": "RADIO_BUTTON"
+			},
+			{
+				"imageClass": "selectListMultipleChoices",
+				"label": "admin.customfield.type.multiselect.name",
+				"description": "admin.customfield.type.multiselect.desc",
+				"options": true,
+				"type": "MULTI_SELECT"
+			},
+			{
+				"imageClass": "selectListSingleChoice",
+				"label": "admin.customfield.type.select.name",
+				"description": "admin.customfield.type.select.desc",
+				"options": true,
+				"type": "SINGLE_SELECT"
+			},
+			{
+				"imageClass": "textFieldMultiLine",
+				"label": "admin.customfield.type.textarea.name",
+				"description": "admin.customfield.type.textarea.desc",
+				"options": false,
+				"type": "LARGE_TEXT"
+			},
+			{
+				"imageClass": "textFieldSingleLine",
+				"label": "admin.customfield.type.textfield.name",
+				"description": "admin.customfield.type.textfield.desc",
+				"options": false,
+				"type": "TEXT"
+			}
+		]
+	}
+}

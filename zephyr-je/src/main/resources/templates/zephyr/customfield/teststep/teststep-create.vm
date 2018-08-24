@@ -1,0 +1,53 @@
+#controlHeader ($action $customField.id $customField.name $fieldLayoutItem.required $displayParameters.noHeader)
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-common")
+$webResourceManager.requireResource("com.thed.zephyr.je:zephyr-je-create-steps")
+
+<input type="hidden" value="$fieldLayoutItem.required" id="zephyr-je-customfield-isrequired" />
+<input type="hidden" value="$customField.id" id="zephyr-je-customfield-id" />
+<input type="hidden" value="$customField.name" id="zephyr-je-customfield-name" />
+<input type="hidden" value="$action" id="zephyr-je-action-name" />
+<div id="project-config-panel-versions-teststep" class="project-config-panel">
+ 		#if($errors)
+ 			<input type="hidden" id="zerrors" value="$!errors"/>
+			<div style="opacity:0.9;">
+                <div class="aui-dialog-content">
+                    <div class="form-body">
+                        <div class="zephyr-je-ex-error aui-message error" style="top:10px;">
+						</div>
+                	</div>
+                </div>
+	        </div>
+	        <script type="text/javascript">
+                var isLoadedInIframe = function() {
+                    try {
+                        return (window !== window.parent);
+                    } catch(e) {
+                        return false;
+                    }
+                }
+
+                var InitPageContent = function(initCallback) {
+                    if(isLoadedInIframe()) {
+                        AJS.$(window).load(function(){
+                            initCallback();
+                        });
+                    } else {
+                        AJS.$(document).ready(function(){
+                            initCallback();
+                        });
+                    }
+                }
+
+                InitPageContent(function(){
+                    //console.log("On Page Load ...");
+                    setTimeout(function () {
+                        ZEPHYR.ISSUE.Create.Teststep.showError();
+                    }, 50);
+                });
+			</script>
+		 #else
+        	<table id="teststep-table" class="teststepTable"></table>            
+            <div id="project-config-error-console"></div>
+		#end
+</div>
+</div><!-- Fix for ZFJ-1984-->

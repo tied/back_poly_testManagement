@@ -1,0 +1,244 @@
+{namespace ZEPHYR.MANAGE.FILTERS}
+
+/**
+ * Render the UI for Favourites ZQL Filters.
+ * @param? tabTitle
+ * @param? tabLongDesc
+ * @param? tabId
+ * @param? loggedInUser
+ * @param filters
+ */ 
+{template .showZQLFilters}
+<div>
+	<h2>{$tabTitle}</h2>
+	<p>{$tabLongDesc}</p>
+	<table cellspacing="0" cellpadding="0" class="aui" id="mzf_filterz"
+		style="">
+		<thead>
+			<tr>
+				<th>{getText('common.words.name')}</th>
+				<th title="{getText('view.issue.execution.section.heading.desc')}">{getText('view.issue.execution.section.heading')}</th>
+				<th>{getText('admin.common.words.owner')}</th>
+				<th>{getText('common.concepts.shared.with')}</th>
+				{if $tabId == getText('common.concepts.popular')}	
+					<th title="{getText('filters.favourite.count.desc')}">{getText('common.concepts.popularity')}</th>
+				{else}
+					<th>&nbsp;</th>
+				{/if}				
+			</tr>
+		</thead>
+		<tbody>
+			{foreach $filter in $filters}
+				<tr>
+					<td class="tdOrdering" title="{$filter.filterName}">
+					<div class="favourite-status">
+					{if $filter.isFavorite == true}
+						<a href="#" title="{getText('common.favourites.enabled.SearchRequest')}" class="fav-link aui-icon aui-icon-small aui-iconfont-star enabled"
+						id="mzf-filter-tooglefav-id-{$filter.id}" data-id="{$filter.id}" data-isfav="{$filter.isFavorite}">{getText('common.favourites.enabled.SearchRequest')}</a>	
+					{else}
+						<a href="#" title="{getText('common.favourites.disabled.SearchRequest')}" class="fav-link aui-icon aui-icon-small disabled aui-iconfont-unstar"
+						id="mzf-filter-tooglefav-id-{$filter.id}" data-id="{$filter.id}" data-isfav="{$filter.isFavorite}">{getText('common.favourites.disabled.SearchRequest')}</a>						
+					{/if}
+					</div>	
+					<div class="favourite-item">				
+						<a href="javascript:void(0);" class="filter-link" data-filterId="{$filter.id}" title="{$filter.query}" id="executionFilterQuery">{$filter.filterName}</a>
+					    <div> {$filter.description} </div>
+					</div>	
+					</td>					
+					<td class="tdOrdering" title="{getText('view.issue.execution.section.heading.desc')}">
+                        <a href="javascript:void(0);" class="filter-link" data-filterId="{$filter.id}" title="{$filter.query}" id="numberOfExecutionFilterQuery">{$filter.executionCount}</a>
+					</td>
+					<td class="tdOrdering">{$filter.createdBy}</td>
+					<td class="tdOrdering">
+						{if $filter.sharePerm == 2}
+							{getText('zql.filter.dialog.share.perm.private.label')}
+						{else}
+							{getText('zql.filter.dialog.share.perm.global.label')}
+						{/if}
+					</td>	
+					{if $tabId == getText('common.concepts.popular')}
+						<td class="tdOrdering">{$filter.popularity}</td>
+					{else}
+					<td>	
+						{if $filter.createdBy == $loggedInUser}					
+						<ul class="operations">
+							<li class="aui-dd-parent">
+								<a id="mzf-tools-dropdown-{$filter.id}" href="#" data-id="{$filter.id}" data-fname="{$filter.filterName}" data-fdesc="{$filter.description}" data-isfav="{$filter.isFavorite}" 
+								data-fperm="{$filter.sharePerm}" title="{$filter.description}" 
+								class="header-tools header-operations aui-dropdown-trigger aui-dd-link standard icon-tools" role="button" 
+								style="height:20px"><span>Tools</span></a>
+							</li>
+						</ul>
+						{else}
+						&nbsp;
+						{/if}																	
+					</td>							
+					{/if}					
+				</tr>
+		 	{/foreach}			
+		</tbody>
+	</table>		
+</div>
+{/template}
+
+/**
+ * Manage a ZQL Filters through dropdown
+ * @param filterId
+ * @param filterName
+ * @param filterDesc
+ * @param isFavorite
+ * @param sharePerm
+ */
+{template .showFilterDropDown}
+	<div class="filter-operations aui-list">
+		<ul class="aui-list-section">
+			<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="mzf-filter-edit-id-{$filterId}" data-id="{$filterId}" data-fname="{$filterName}" data-fdesc="{$filterDesc}" 
+			data-isfav="{$isFavorite}" data-fperm="{$sharePerm}" title="{getText('common.words.edit')}">{getText('common.words.edit')}</a></li>			
+		</ul>
+		<ul class="aui-list-section aui-last">
+			<li class="aui-list-item"><a href="#" class="aui-list-item-link" id="mzf-filter-delete-id-{$filterId}" data-id="{$filterId}" data-fname="{$filterName}" title="{getText('common.words.delete')}">{getText('common.words.delete')}</a></li>
+		</ul>
+	</div>
+{/template}	
+
+
+/**
+ * Renders response from ZQL Search 
+ * @param totalCount
+ * @param currentIndex
+ * @param maxAllowed
+ * @param linksNew
+ */
+{template .addFiltersPaginationFooter}
+		<div class="aui-group count-pagination navigator-results" id="displayDetailId">
+			<div class="results-count aui-item">
+				<span class="results-count-text">
+					{if ($currentIndex * $maxAllowed) < $totalCount}
+						 <br/><span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span>-<span class="results-count-end">{$currentIndex * $maxAllowed}</span> of <span class="results-count-total results-count-link"> {$totalCount} </span>
+					{else}
+						 <br/><span class='results-count-start'>{(($currentIndex-1) * $maxAllowed) + 1}</span>-<span class="results-count-end">{$totalCount}</span> of <span class="results-count-total results-count-link"> {$totalCount} </span>
+					{/if}
+					<a href="#" id='refreshZQLId' class="refresh-table" title="Refresh results">Refresh</a>
+				</span>	
+			</div>
+					
+			{if $linksNew.length > 0}
+				<div class="zqlpagination aui-item" id="zqlPageId">
+					{if $currentIndex > 1}
+						<a href='#' id='mzf-pagination-{$currentIndex-2} * {$maxAllowed}' page-id='{$currentIndex-2}*{$maxAllowed}' class='icon icon-previous push-state'><span>Previous &gt;&gt;</span></a>
+					{/if}
+					{foreach $link in $linksNew}
+						{if $link == $currentIndex}
+		        			<strong>{$link}&nbsp;</strong>
+						{else}
+							<a href='#' id='mzf-pagination-{$link-1}*{$maxAllowed}' page-id='{$link-1}*{$maxAllowed}'>{$link}&nbsp;</a>
+						{/if}
+					{/foreach}
+					{if $currentIndex * $maxAllowed < $totalCount}
+						<a href='#' id='mzf-pagination-{$currentIndex} * {$maxAllowed}' page-id='{$currentIndex} * {$maxAllowed}' class='icon icon-next'><span>Next &gt;&gt;</span></a>
+					{/if}
+				</div>
+			{/if}
+		</div>
+{/template}
+
+
+/**
+ * Render the tab for Search Execution Filters. 
+ */
+{template .searchZQLFilters}
+<div>
+	<h2 class="dialog-title">{getText('zql.filter.manage.search.desc')}
+	<a target="_jirahelp"
+		href="https://zephyrdocs.atlassian.net/wiki/display/ZFJ0300/Zephyr+for+JIRA+Documentation+Home#managing_filters"
+		title="Get online help about Saving Searches ('Execution Filters')"
+		class="aui-icon icon-help" style="height:16px;width:16px;"> Get help! </a>
+	</h2>
+	<p>{getText('zql.filter.manage.search.long.desc')}</p>
+
+	<form id="filterSearchForm" class="aui" action="#" method="get" name="filterSearchForm">
+		<div class="field-group">
+        	<label>{getText('common.concepts.search')}:</label>
+			<input class="text" id="filterName" name="filterName" type="text">
+			<div class="description">{getText('filters.search.text.desc')}</div>
+		</div>
+		<div class="field-group">
+        	<label>{getText('admin.common.words.owner')}:</label>
+        	<div class="aui-field-filterpicker frother-control-renderer" style="padding-left:0px;">
+				<select name="searchOwnerUserName" id="searchOwnerUserName" class="hidden" type="single" style="width:580px;" size="4">
+	        	</select>
+	        </div>		
+			<div class="description">{getText('user.picker.ajax.desc')}</div>
+		</div>
+		<div class="field-group">
+        	<label>{getText('common.concepts.shared.with')}:</label>
+			<select id="mzf-share_type_selector" name="searchShareType" class="select medium-field">
+				<option value="1" selected>{getText('zql.filter.dialog.share.perm.global.label')}</option>                
+   				<option value="2">{getText('zql.filter.dialog.share.perm.private.label')}</option>                
+			</select> 	
+			<div class="description">{getText('common.sharing.search.template.any.desc.SearchRequest')}</div>
+		</div>
+		<div class="field-group">
+	    	<input class="aui-button" id="mzf-search-btn" name="Search" type="submit" value="{getText('common.concepts.search')}"/>
+	  	</div>
+	</form>
+	<div class="notifications" id="mzf-srh-message-bar"></div>
+    <div id="mng-srh-filters-content" style="hidden"></div>
+</div>
+{/template}
+
+/**
+ * Render the UI for Favourites ZQL Filters.
+ * @param filters
+ */ 
+{template .zqlSearchContent}
+<div>
+	<table cellspacing="0" cellpadding="0" class="aui" id="mzf_filterz"
+		style="">
+		<thead>
+			<tr>
+				<th>{getText('common.words.name')}</th>
+				<th title="{getText('view.issue.execution.section.heading.desc')}">{getText('view.issue.execution.section.heading')}</th>
+				<th>{getText('admin.common.words.owner')}</th>
+				<th>{getText('common.concepts.shared.with')}</th>
+				<th title="{getText('filters.favourite.count.desc')}">{getText('common.concepts.popularity')}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach $filter in $filters}
+				<tr>					
+					<td class="tdOrdering" title="{$filter.filterName}">
+					<div class="favourite-status">
+					{if $filter.isFavorite == true}
+						<a href="#" title="{getText('common.favourites.enabled.SearchRequest')}" class="fav-link aui-icon aui-icon-small aui-iconfont-star enabled"
+						id="mzf-srh-filter-tooglefav-id-{$filter.id}" data-id="{$filter.id}" data-isfav="{$filter.isFavorite}">{getText('common.favourites.enabled.SearchRequest')}</a>	
+					{else}
+						<a href="#" title="{getText('common.favourites.disabled.SearchRequest')}" class="fav-link aui-icon aui-icon-small disabled aui-iconfont-unstar"
+						id="mzf-srh-filter-tooglefav-id-{$filter.id}" data-id="{$filter.id}" data-isfav="{$filter.isFavorite}">{getText('common.favourites.disabled.SearchRequest')}</a>						
+					{/if}
+					</div>	
+					<div class="favourite-item">				
+						<a href="javascript:void(0);" class="filter-link" title="{$filter.query}" data-filterId="{$filter.id}" id="executionFilterQuerySearch">{$filter.filterName}</a>
+                        <div> {$filter.description} </div>
+					</div>	
+					</td>					
+					<td class="tdOrdering" title="{getText('view.issue.execution.section.heading.desc')}">
+						<a href="javascript:void(0);" class="filter-link" title="{$filter.query}" data-filterId="{$filter.id}" id="executionFilterQuerySearchCnt">{$filter.executionCount}</a>						
+					</td>
+					<td class="tdOrdering">{$filter.createdBy}</td>
+					<td class="tdOrdering">
+						<li>
+						{if $filter.sharePerm == 2}
+							{getText('zql.filter.dialog.share.perm.private.label')}
+						{else}
+							{getText('zql.filter.dialog.share.perm.global.label')}
+						{/if}
+						</li>
+					</td>	
+					<td class="tdOrdering">{$filter.popularity}</td>			
+				</tr>
+		 	{/foreach}			
+		</tbody>
+	</table>		
+</div>
+{/template}

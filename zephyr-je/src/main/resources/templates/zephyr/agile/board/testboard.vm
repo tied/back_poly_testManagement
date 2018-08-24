@@ -1,0 +1,63 @@
+$webResourceManager.requireResource('com.thed.zephyr.je:zephyr-reports-resources')
+<input type="hidden" id="zephyr-tb-agile-board-id" value="$agileBoard.id" />
+<input type="hidden" id="zephyr-tb-agile-board-mode" value="$agileBoard.mode" />
+<script>
+var isLoadedInIframe = function() {
+	try {
+		return (window !== window.parent);
+	} catch(e) {
+		return false;
+	}
+}
+
+var InitPageContent = function(initCallback) {
+	if(isLoadedInIframe()) {
+		AJS.$(window).load(function(){
+			initCallback();
+		});
+	} else {
+		AJS.$(document).ready(function(){
+			initCallback();
+		});
+	}
+}
+
+InitPageContent(function(){
+	var mode = AJS.$('#zephyr-tb-agile-board-mode').val();
+	/**
+	 * Using GH.DetailsView.rapidViewConfig.sprintSupportEnabled to check if JIRA sprint support is enabled or not,
+	 * Also Testborad is displayed only if mode is 'plan' or 'work'.
+	 */
+	if((mode != 'plan' && mode != 'work') || (GH.DetailsView && GH.DetailsView.rapidViewConfig && !GH.DetailsView.rapidViewConfig.sprintSupportEnabled)) {
+			AJS.$('[id^="zephyr-je.test.board.tool.section-button"]').remove();
+	}
+	require(["jira/api/projects"]); // Since global object JIRA.API.Projects is deprecated. We need to access it using require(["jira/api/projects"]) to get the project details
+	ZEPHYR.Agile.TestBoard.setTestBoardParams(); 
+	AJS.$('#zephyr-test-board-sprint').click(function(e){
+        e.preventDefault();
+        
+        ZEPHYR.Agile.TestBoard.navigateToTestBoardView(ZEPHYR.Agile.TestBoard.page.sprint);
+    });   
+    AJS.$('#zephyr-test-board-issues').click(function(e){
+        e.preventDefault();
+        
+        ZEPHYR.Agile.TestBoard.navigateToTestBoardView(ZEPHYR.Agile.TestBoard.page.issues);
+    });   
+    
+    // TODO: Change this approach
+    AJS.$('nav .aui-nav-item').click(function() {
+		AJS.$('#ghx-header, #ghx-operations').show();
+		AJS.$('#zephyr-tb-header, #zephyr-tb-operations').remove();
+    }); 
+	// Initiate the router
+	ZEPHYR.Agile.TestBoard.Router.tbRouter = new ZEPHYR.Agile.TestBoard.Router.TestBoardRouter;	
+
+	// Start Backbone history a necessary step for bookmarkable URL's
+	if(!Backbone.History.started) {
+		Backbone.history.start({
+	        root: '/',
+	        pushState: true
+	    });
+	}
+});
+</script>
